@@ -15,10 +15,10 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-
 class settings:
     """Settings for the xfc command line tool."""
-    JDMA_SERVER_URL = "http://0.0.0.0:8001/jdma_control"  # location of the jdma_control server / app
+#    JDMA_SERVER_URL = "http://0.0.0.0:8001/jdma_control"  # location of the jdma_control server / app
+    JDMA_SERVER_URL = "https://192.168.51.26/jdma_control"
     JDMA_API_URL = JDMA_SERVER_URL + "/api/v1/"
 #    USER = os.environ["USER"] # the USER name
     USER = "vagrant"
@@ -53,6 +53,19 @@ class bcolors:
     ENDC      = '\033[0m'
 
 
+def print_stack_trace(response_content):
+    # extract the stacktrace from a Django response when the HTTP status code is 500
+    lines = response_content.split("\n")
+    print_line = False
+    for line in lines:
+        if line == "Traceback:":
+            print_line = True
+        elif "</textarea>" in line:
+            print_line = False
+        if print_line:
+            print line
+
+
 def do_init(email=""):
     """Send the HTTP request (POST) to initialize a user."""
     url = settings.JDMA_API_URL + "user"
@@ -68,12 +81,14 @@ def do_init(email=""):
               "** SUCCESS ** - user initiliazed with:\n" + bcolors.ENDC +\
               "    username: " + data["name"] + "\n" +\
               "    email: " + data["email"] + "\n")
-    else:
+    elif response.status_code != 500:
         # get the reason why it failed
         error = response.json()['error']
         user = response.json()['name']
         sys.stdout.write(bcolors.RED+\
               "** ERROR ** - cannot initialize user " + user + " : " + error + bcolors.ENDC + "\n")
+    else:
+        print_stack_trace(response.content)
 
 
 def do_email(email=""):
@@ -154,6 +169,7 @@ def get_request_stage(stage):
     request_stages = ["ON_DISK", "PUT_PENDING", "PUT", "ON_TAPE", "GET_PENDING", "GET", "FAILED"]
     return request_stages[stage]
 
+
 def get_permissions_string(p):
     is_dir = 'd'
     dic = {'7':'rwx', '6' :'rw-', '5' : 'r-x', '4':'r--', '0': '---'}
@@ -161,13 +177,11 @@ def get_permissions_string(p):
     return is_dir + ''.join(dic.get(x,x) for x in perm)
 
 
-def do_request(req_id, workspace):
+def do_request(req_id):
     """Send the HTTP request (GET) to get the details about a single request."""
-    url = settings.JDMA_API_URL + "migration?name=" + settings.USER
+    url = settings.JDMA_API_URL + "request?name=" + settings.USER
     if req_id != None:
         url += ";request_id=" + str(req_id)
-    if workspace != None:
-        url += ";workspace=" + workspace
     # send the request
     response = requests.get(url, verify=settings.VERIFY)
     # process if returned
@@ -175,42 +189,30 @@ def do_request(req_id, workspace):
         data = response.json()
         # print the response
         sys.stdout.write(bcolors.MAGENTA)
-        sys.stdout.write("Migration request for user: " + data["user"] + "\n")
+        sys.stdout.write("Request for user: " + data["user"] + "\n")
         sys.stdout.write(bcolors.ENDC)
         sys.stdout.write("    Request id   : " + str(data["request_id"])+"\n")
-        sys.stdout.write("    Workspace    : " + data["workspace"]+"\n")
-        if "label" in data:
-            sys.stdout.write("    Label        : " + data["label"]+"\n")
-        if "registered_date" in data:
-            sys.stdout.write("    Date         : " + data["registered_date"][0:16].replace("T"," ")+"\n")
+        sys.stdout.write("    Batch id     : " + str(data["migration_id"])+"\n")
+        if "migration_label" in data:
+            sys.stdout.write("    Batch label  : " + data["migration_label"]+"\n")
+        if "date" in data:
+            sys.stdout.write("    Request date : " + data["date"][0:16].replace("T"," ")+"\n")
         sys.stdout.write("    Request type : " + get_request_type(data["request_type"])+"\n")
         sys.stdout.write("    Stage        : " + get_request_stage(data["stage"])+"\n")
-        if "et_id" in data:
-            sys.stdout.write("    ET id        : " + str(data["et_id"]) + "\n")
-        sys.stdout.write("    Directory    : " + data["original_path"]+"\n")
-        if "unix_user_id" in data:
-            sys.stdout.write("    Unix uid     : " + data["unix_user_id"]+"\n")
-        if "unix_group_id" in data:
-            sys.stdout.write("    Unix gid     : " + data["unix_group_id"]+"\n")
-        if "unix_permission" in data:
-            sys.stdout.write("    Unix filep   : " + get_permissions_string(data["unix_permission"])+"\n")
-    else:
+    elif response.status_code != 500:
         # get the reason why it failed
         data = response.json()
         error_msg = "** ERROR ** - cannot list request " + str(data["request_id"]) + " for user " + data["name"]
-        if "workspace" in data:
-            error_msg += " in workspace " + data["workspace"]
         error_msg += " : " + data["error"] + "\n"
         sys.stdout.write(bcolors.RED + error_msg)
         sys.stdout.write(bcolors.ENDC)
+    else:
+        print_stack_trace(response.content)
 
 
-def do_list_requests(workspace):
-    """Send the HTTP request (GET) to get the details about all of a user's requests,
-       filtering on the workspace."""
-    url = settings.JDMA_API_URL + "migration?name=" + settings.USER
-    if workspace != None:
-        url += ";workspace=" + workspace
+def do_list_requests():
+    """Send the HTTP request (GET) to get the details about all of a user's requests"""
+    url = settings.JDMA_API_URL + "request?name=" + settings.USER
 
     response = requests.get(url, verify=settings.VERIFY)
     if response.status_code == 200:
@@ -219,37 +221,110 @@ def do_list_requests(workspace):
         n_req = len(data["requests"])
         if n_req == 0:
             error_msg = "** ERROR ** - No requests found for user " + settings.USER
-            if workspace != None:
-                error_msg += " in workspace " + workspace
             error_msg += "\n"
             sys.stdout.write(bcolors.RED + error_msg)
             sys.stdout.write(bcolors.ENDC)
         else:
             # print the header
             sys.stdout.write(bcolors.MAGENTA)
-            print "{:>4} {:<16} {:<16} {:<6} {:<11} {:<16}".format("id", "workspace", "label", "type", "stage", "date")
+            print "{:>4} {:<6} {:<8} {:16} {:<11} {:<16}".format("id", "type", "batch id", "batch label", "stage", "date")
             sys.stdout.write(bcolors.ENDC)
             for r in data["requests"]:
-                print "{:>4} {:<16} {:<16} {:<6} {:<11} {:<16}".format(\
+                print "{:>4} {:<6} {:<8} {:16} {:<11} {:<16}".format(\
                     r["request_id"],
-                    r["workspace"][0:16],
-                    r["label"][0:16],
                     get_request_type(r["request_type"]),
+                    r["migration_id"],
+                    r["migration_label"][0:16],
                     get_request_stage(r["stage"]),
-                    r["registered_date"][0:16].replace("T"," "))
-    else:
+                    r["date"][0:16].replace("T"," "))
+    elif response.status_code != 500:
         error_data = response.json()
         error_msg = "** ERROR ** - cannot list requests for user " + error_data["name"]
-        if "workspace" in error_data:
-            error_msg += " in workspace " + error_data["workspace"]
         error_msg += "\n"
         sys.stdout.write(bcolors.RED + error_msg)
         sys.stdout.write(bcolors.ENDC)
+    else:
+        print_stack_trace(response.content)
+
+
+def do_migration(mig_id, workspace=None):
+    """Send the HTTP request (GET) to get the details of a single migration for the user.
+    Optionally filter on the workspace."""
+    # send the HTTP request
+    url = settings.JDMA_API_URL + "migration?name=" + settings.USER
+    if mig_id != None:
+        url += ";migration_id=" + str(mig_id)
+    response = requests.get(url, verify=settings.VERIFY)
+
+    if response.status_code == 200:
+        data = response.json()
+        sys.stdout.write(bcolors.MAGENTA)
+        sys.stdout.write("Batch for user: " + data["user"] + "\n")
+        sys.stdout.write(bcolors.ENDC)
+        sys.stdout.write("    Batch id     : " + str(data["migration_id"])+"\n")
+        sys.stdout.write("    Workspace    : " + data["workspace"]+"\n")
+        sys.stdout.write("    Label        : " + data["label"]+"\n")
+        if "registered_date" in data:
+            sys.stdout.write("    Date         : " + data["registered_date"][0:16].replace("T"," ")+"\n")
+        sys.stdout.write("    Stage        : " + get_request_stage(data["stage"])+"\n")
+        if "et_id" in data:
+            sys.stdout.write("    ET id        : " + str(data["et_id"]))
+        sys.stdout.write("    Directory    : " + data["original_path"]+"\n")
+        sys.stdout.write("    Unix uid     : " + data["unix_user_id"]+"\n")
+        sys.stdout.write("    Unix gid     : " + data["unix_group_id"]+"\n")
+        sys.stdout.write("    Unix filep   : " + get_permissions_string(data["unix_permission"])+"\n")
+    elif response.status_code != 500:
+        # get the reason why it failed
+        data = response.json()
+        error_msg = "** ERROR ** - cannot list batch " + str(data["migration_id"]) + " for user " + data["name"]
+        error_msg += " : " + data["error"] + "\n"
+        sys.stdout.write(bcolors.RED + error_msg)
+        sys.stdout.write(bcolors.ENDC)
+    else:
+        print_stack_trace(response.content)
+
+
+def do_list_migrations(workspace=None):
+    """Send the HTTP request (GET) to get the details of all the users migrations.
+    Optionally filter on the workspace."""
+
+    # send the HTTP request
+    url = settings.JDMA_API_URL + "migration?name=" + settings.USER
+    response = requests.get(url, verify=settings.VERIFY)
+
+    if response.status_code == 200:
+        data = response.json()
+        n_mig = len(data["migrations"])
+        if n_mig == 0:
+            error_msg = "** ERROR ** - No batches found for user " + settings.USER
+            error_msg += "\n"
+            sys.stdout.write(bcolors.RED + error_msg)
+            sys.stdout.write(bcolors.ENDC)
+        else:
+            # print the header
+            sys.stdout.write(bcolors.MAGENTA)
+            print "{:>8} {:<16} {:16} {:<11} {:<16}".format("batch id", "workspace", "batch label", "stage", "date")
+            sys.stdout.write(bcolors.ENDC)
+            for r in data["migrations"]:
+                print "{:>8} {:<16} {:<16} {:11} {:<16}".format(\
+                    r["migration_id"],
+                    r["workspace"][0:16],
+                    r["label"][0:16],
+                    get_request_stage(r["stage"]),
+                    r["registered_date"][0:16].replace("T"," "))
+    elif response.status_code != 500:
+        error_data = response.json()
+        error_msg = "** ERROR ** - cannot list batches for user " + error_data["name"]
+        error_msg += "\n"
+        sys.stdout.write(bcolors.RED + error_msg)
+        sys.stdout.write(bcolors.ENDC)
+    else:
+        print_stack_trace(response.content)
 
 
 def do_put(path, workspace, label):
     """Send the HTTP request (POST) to indicate a directory is to be migrated."""
-    url = settings.JDMA_API_URL + "migration"
+    url = settings.JDMA_API_URL + "request"
     # set the user and request type data
     data = {"name" : settings.USER,
             "request_type" : "PUT"}
@@ -267,7 +342,7 @@ def do_put(path, workspace, label):
     if response.status_code == 200:
         data = response.json()
         sys.stdout.write(bcolors.GREEN+ \
-                         "** SUCCESS ** - migration requested:\n" + bcolors.ENDC)
+                         "** SUCCESS ** - migration (PUT) requested:\n" + bcolors.ENDC)
         sys.stdout.write("    Request id   : " + str(data["request_id"])+"\n")
         sys.stdout.write("    Workspace    : " + data["workspace"]+"\n")
         sys.stdout.write("    Label        : " + data["label"]+"\n")
@@ -278,7 +353,7 @@ def do_put(path, workspace, label):
         sys.stdout.write("    Unix uid     : " + data["unix_user_id"]+"\n")
         sys.stdout.write("    Unix gid     : " + data["unix_group_id"]+"\n")
         sys.stdout.write("    Unix filep   : " + get_permissions_string(data["unix_permission"])+"\n")
-    else:
+    elif response.status_code != 500:
         # print the error
         error_data = response.json()
         error_msg = "** ERROR ** - cannot PUT directory"
@@ -292,19 +367,64 @@ def do_put(path, workspace, label):
         error_msg += "\n"
         sys.stdout.write(bcolors.RED + error_msg)
         sys.stdout.write(bcolors.ENDC)
+    else:
+        print response.content
+
+
+def do_get(request_id, target_dir):
+    """Send the HTTP request (POST) to add a GET request to the MigrationRequests"""
+    url = settings.JDMA_API_URL + "request"
+    # set the user and request type data
+    data = {"name" : settings.USER,
+            "request_type" : "GET"}
+    # add the path and workspace - if the workspace is none then don't add
+    # in this case the HTTP API will return an error as a workspace is required
+    if request_id:
+        data["request_id"] = request_id
+    if target_dir:
+        data["target_path"] = path
+
+    # do the request (POST)
+    response = requests.post(url, data=json.dumps(data), verify=settings.VERIFY)
+    if response.status_code == 200:
+        data = response.json()
+        print data
+        sys.stdout.write(bcolors.GREEN+\
+                         "** SUCCESS ** - retrieval (GET) requested:\n"+bcolors.ENDC)
+        sys.stdout.write("    Request id   : " + str(data["request_id"])+"\n")
+        sys.stdout.write("    Workspace    : " + data["workspace"]+"\n")
+        sys.stdout.write("    Label        : " + data["label"]+"\n")
+        sys.stdout.write("    Date         : " + data["registered_date"][0:16].replace("T"," ")+"\n")
+        sys.stdout.write("    Request type : " + get_request_type(data["request_type"])+"\n")
+        sys.stdout.write("    Stage        : " + get_request_stage(data["stage"])+"\n")
+        sys.stdout.write("    Target       : " + data["target_path"]+"\n")
+
+    elif response.status_code != 500:
+        error_data = response.json()
+        error_msg = "** ERROR ** - cannot retrieve (GET) migration"
+        if error_data["request_id"]:
+            error_msg += " with request_id: " + str(error_data["request_id"])
+        if error_data["error"]:
+            error_msg += ": " + error_data["error"]
+        error_msg += "\n"
+        sys.stdout.write(bcolors.RED + error_msg)
+        sys.stdout.write(bcolors.ENDC)
+    else:
+        print_stack_trace(response.content)
 
 
 def do_label(req_id, label):
     """Send the HTTP request (PUT) to change a label of a request."""
     url = settings.JDMA_API_URL + "migration?name=" + settings.USER
     if req_id != None:
-        url += ";request_id=" + str(req_id)
+        url += ";migration_id=" + str(req_id)
     data = {}
     if label:
         data["label"] = label
     response = requests.put(url, data=json.dumps(data), verify=settings.VERIFY)
     if response.status_code == 200:
-        pass
+        sys.stdout.write(bcolors.GREEN+ \
+                         "** SUCCESS ** - label changed to: " + bcolors.ENDC + label + "\n")
     else:
         # print the error
         error_data = response.json()
@@ -318,22 +438,27 @@ def do_label(req_id, label):
 def main():
     # help string for the command parsing
     command_help = "Available commands are : \n" +\
-                   "init  <email address>   : Initialize the transfer cache for your JASMIN login\n"+ \
-                   "email <email address>   : Set / update email address\n" + \
+                   "init    <email address> : Initialize the migration app for your JASMIN login\n"+ \
+                   "email   <email address> : Set / update email address\n" + \
                    "info                    : Get the user info\n"+\
                    "notify                  : Switch on / off email notifications of scheduled deletions (default is on)\n"+\
-                   "request <request id>    : List all requests, or a particular request\n"+\
-                   "put     <path>          : Migrate current directory or directory in <path>, with optional --label=\n"+\
-                   "label   <request id>    : Change the label of a request"
+                   "request <request_id>    : List all requests, or a particular request\n"+\
+                   "batch   <request_id>    : List all batches, or a particular batch\n"+\
+                   "put     <path>          : Create a batch upload of the current directory or directory in <path>,\n"+\
+                   "                          with optional --label=\n"+\
+                   "get     <request_id>    : Retrieve a batch upload of a directory with the id <request_id>.\n" +\
+                   "                          Target directory can be specified with --target= \n" +\
+                   "label   <request_id>    : Change the label of a request"
 
     parser = argparse.ArgumentParser(prog="JDMA", formatter_class=argparse.RawTextHelpFormatter,
                                      description="JASMIN data migration app (JDMA) command line tool")
-    parser.add_argument("cmd", choices=["init", "email", "info", "notify", "request", "put", "label"],
+    parser.add_argument("cmd", choices=["init", "email", "info", "notify", "request", "batch", "put", "get", "label"],
                         help=command_help, metavar="command")
     parser.add_argument("arg", help="Argument to the command", default="", nargs="?")
     parser.add_argument("--email", action="store", default="", help="Email address for user in the init and email commands.")
     parser.add_argument("--workspace", action="store", default="", help="Group workspace to use in the request.")
     parser.add_argument("--label", action="store", default="", help="Label to name the request.")
+    parser.add_argument("--target", action="store", default="", help="Optional target directory for GET.")
 
     args = parser.parse_args()
 
@@ -355,6 +480,12 @@ def main():
     else:
         label = None
 
+    # get the target directory if any
+    if args.target:
+        target_dir = args.target
+    else:
+        target_dir = None
+
     # switch on the commands
     if args.cmd == "init":
         do_init(email)
@@ -366,15 +497,26 @@ def main():
         do_notify()
     elif args.cmd == "request":
         if len(args.arg):
-            do_request(int(args.arg), workspace)
+            do_request(int(args.arg))
         else:
-            do_list_requests(workspace)
+            do_list_requests()
+    elif args.cmd == "batch":
+        if len(args.arg):
+            do_migration(int(args.arg), workspace)
+        else:
+            do_list_migrations(workspace)
     elif args.cmd == "put":
         if len(args.arg):
             path = args.arg
         else:
             path = os.getcwd()
         do_put(path, workspace, label)
+    elif args.cmd == "get":
+        if len(args.arg):
+            request_id = int(args.arg)
+        else:
+            request_id = None
+        do_get(request_id, target_dir)
     elif args.cmd == "label":
         if len(args.arg):
             request_id = int(args.arg)
