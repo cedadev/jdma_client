@@ -254,6 +254,9 @@ def do_migration(mig_id, workspace=None):
     url = settings.JDMA_API_URL + "migration?name=" + settings.USER
     if mig_id != None:
         url += ";migration_id=" + str(mig_id)
+    if workspace != None:
+        url += ";workspace=" + workspace
+
     response = requests.get(url, verify=settings.VERIFY)
 
     if response.status_code == 200:
@@ -277,6 +280,8 @@ def do_migration(mig_id, workspace=None):
         # get the reason why it failed
         data = response.json()
         error_msg = "** ERROR ** - cannot list batch " + str(data["migration_id"]) + " for user " + data["name"]
+        if "workspace" in data:
+            error_msg += " in workspace " + data["workspace"]
         error_msg += " : " + data["error"] + "\n"
         sys.stdout.write(bcolors.RED + error_msg)
         sys.stdout.write(bcolors.ENDC)
@@ -290,6 +295,8 @@ def do_list_migrations(workspace=None):
 
     # send the HTTP request
     url = settings.JDMA_API_URL + "migration?name=" + settings.USER
+    if workspace != None:
+        url += ";workspace=" + workspace
     response = requests.get(url, verify=settings.VERIFY)
 
     if response.status_code == 200:
@@ -297,6 +304,8 @@ def do_list_migrations(workspace=None):
         n_mig = len(data["migrations"])
         if n_mig == 0:
             error_msg = "** ERROR ** - No batches found for user " + settings.USER
+            if workspace:
+                error_msg += " in workspace " + workspace
             error_msg += "\n"
             sys.stdout.write(bcolors.RED + error_msg)
             sys.stdout.write(bcolors.ENDC)
