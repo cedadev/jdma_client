@@ -72,7 +72,6 @@ def do_init(email=""):
     data = {"name" : settings.USER}
     if email != "":
         data["email"] = email
-
     response = requests.post(url, data=json.dumps(data), verify=settings.VERIFY)
     # check the response code
     if response.status_code == 200:
@@ -161,12 +160,27 @@ def do_notify():
 
 def get_request_type(req_type):
     """Get a string from a request type integer.  See jdma_control.models.MigrationRequest for details"""
-    request_types = ["PUT", "GET", "VERIFY"]
+    request_types = ["PUT", "GET"]
     return request_types[req_type]
 
 
 def get_request_stage(stage):
-    request_stages = ["ON_DISK", "PUT_PENDING", "PUT", "ON_TAPE", "GET_PENDING", "GET", "FAILED"]
+    request_stages = ["ON_DISK",            # 0  - Migration starts here
+                      "PUT_PENDING",        # 1
+                      "PUTTING",            # 2
+                      "VERIFY_PENDING",     # 3
+                      "VERIFY_GETTING",     # 4
+                      "VERIFYING",          # 5
+                      "ON_TAPE",            # 6
+                      "FAILED",             # 7
+                      "",                   # 8
+                      "",                   # 9
+                      "ON_TAPE",            # 10 - MigrationRequest starts here
+                      "GET_PENDING",        # 11
+                      "GETTING",            # 12
+                      "ON_DISK",            # 13
+                      "FAILED"]             # 14
+
     return request_stages[stage]
 
 
@@ -193,6 +207,7 @@ def do_request(req_id):
         sys.stdout.write(bcolors.ENDC)
         sys.stdout.write("    Request id   : " + str(data["request_id"])+"\n")
         sys.stdout.write("    Batch id     : " + str(data["migration_id"])+"\n")
+        sys.stdout.write("    Workspace    : " + data["workspace"]+"\n")
         if "migration_label" in data:
             sys.stdout.write("    Batch label  : " + data["migration_label"]+"\n")
         if "date" in data:
@@ -227,13 +242,14 @@ def do_list_requests():
         else:
             # print the header
             sys.stdout.write(bcolors.MAGENTA)
-            print "{:>4} {:<6} {:<8} {:16} {:<11} {:<16}".format("id", "type", "batch id", "batch label", "stage", "date")
+            print "{:>11} {:<6} {:<8} {:<16} {:16} {:<11} {:<16}".format("request id", "type", "batch id", "workspace", "batch label", "stage", "date")
             sys.stdout.write(bcolors.ENDC)
             for r in data["requests"]:
-                print "{:>4} {:<6} {:<8} {:16} {:<11} {:<16}".format(\
+                print "{:>11} {:<6} {:<8} {:<16} {:16} {:<11} {:<16}".format(\
                     r["request_id"],
                     get_request_type(r["request_type"]),
                     r["migration_id"],
+                    r["workspace"],
                     r["migration_label"][0:16],
                     get_request_stage(r["stage"]),
                     r["date"][0:16].replace("T"," "))
@@ -247,13 +263,13 @@ def do_list_requests():
         print_stack_trace(response.content)
 
 
-def do_migration(mig_id, workspace=None):
+def do_migration(batch_id, workspace=None):
     """Send the HTTP request (GET) to get the details of a single migration for the user.
     Optionally filter on the workspace."""
     # send the HTTP request
     url = settings.JDMA_API_URL + "migration?name=" + settings.USER
-    if mig_id != None:
-        url += ";migration_id=" + str(mig_id)
+    if batch_id != None:
+        url += ";migration_id=" + str(batch_id)
     if workspace != None:
         url += ";workspace=" + workspace
 
@@ -271,7 +287,7 @@ def do_migration(mig_id, workspace=None):
             sys.stdout.write("    Date         : " + data["registered_date"][0:16].replace("T"," ")+"\n")
         sys.stdout.write("    Stage        : " + get_request_stage(data["stage"])+"\n")
         if "et_id" in data:
-            sys.stdout.write("    ET id        : " + str(data["et_id"]))
+            sys.stdout.write("    ET id        : " + str(data["et_id"])+"\n")
         sys.stdout.write("    Directory    : " + data["original_path"]+"\n")
         sys.stdout.write("    Unix uid     : " + data["unix_user_id"]+"\n")
         sys.stdout.write("    Unix gid     : " + data["unix_group_id"]+"\n")
@@ -380,7 +396,7 @@ def do_put(path, workspace, label):
         print response.content
 
 
-def do_get(request_id, target_dir):
+def do_get(batch_id, target_dir):
     """Send the HTTP request (POST) to add a GET request to the MigrationRequests"""
     url = settings.JDMA_API_URL + "request"
     # set the user and request type data
@@ -388,19 +404,19 @@ def do_get(request_id, target_dir):
             "request_type" : "GET"}
     # add the path and workspace - if the workspace is none then don't add
     # in this case the HTTP API will return an error as a workspace is required
-    if request_id:
-        data["request_id"] = request_id
+    if batch_id:
+        data["migration_id"] = batch_id
     if target_dir:
-        data["target_path"] = path
+        data["target_path"] = target_dir
 
     # do the request (POST)
     response = requests.post(url, data=json.dumps(data), verify=settings.VERIFY)
     if response.status_code == 200:
         data = response.json()
-        print data
         sys.stdout.write(bcolors.GREEN+\
                          "** SUCCESS ** - retrieval (GET) requested:\n"+bcolors.ENDC)
         sys.stdout.write("    Request id   : " + str(data["request_id"])+"\n")
+        sys.stdout.write("    Batch id     : " + str(data["batch_id"])+"\n")
         sys.stdout.write("    Workspace    : " + data["workspace"]+"\n")
         sys.stdout.write("    Label        : " + data["label"]+"\n")
         sys.stdout.write("    Date         : " + data["registered_date"][0:16].replace("T"," ")+"\n")
@@ -411,8 +427,8 @@ def do_get(request_id, target_dir):
     elif response.status_code != 500:
         error_data = response.json()
         error_msg = "** ERROR ** - cannot retrieve (GET) migration"
-        if error_data["request_id"]:
-            error_msg += " with request_id: " + str(error_data["request_id"])
+        if error_data["migration_id"]:
+            error_msg += " with batch id: " + str(error_data["migration_id"])
         if error_data["error"]:
             error_msg += ": " + error_data["error"]
         error_msg += "\n"
@@ -452,22 +468,22 @@ def main():
                    "info                    : Get the user info\n"+\
                    "notify                  : Switch on / off email notifications of scheduled deletions (default is on)\n"+\
                    "request <request_id>    : List all requests, or a particular request\n"+\
-                   "batch   <request_id>    : List all batches, or a particular batch\n"+\
+                   "batch   <batch_id>      : List all batches, or a particular batch\n"+\
                    "put     <path>          : Create a batch upload of the current directory or directory in <path>,\n"+\
                    "                          with optional --label=\n"+\
-                   "get     <request_id>    : Retrieve a batch upload of a directory with the id <request_id>.\n" +\
+                   "get     <batch_id>      : Retrieve a batch upload of a directory with the id <request_id>.\n" +\
                    "                          Target directory can be specified with --target= \n" +\
-                   "label   <request_id>    : Change the label of a request"
+                   "label   <batch_id>      : Change the label of a batch"
 
     parser = argparse.ArgumentParser(prog="JDMA", formatter_class=argparse.RawTextHelpFormatter,
                                      description="JASMIN data migration app (JDMA) command line tool")
     parser.add_argument("cmd", choices=["init", "email", "info", "notify", "request", "batch", "put", "get", "label"],
                         help=command_help, metavar="command")
     parser.add_argument("arg", help="Argument to the command", default="", nargs="?")
-    parser.add_argument("--email", action="store", default="", help="Email address for user in the init and email commands.")
-    parser.add_argument("--workspace", action="store", default="", help="Group workspace to use in the request.")
-    parser.add_argument("--label", action="store", default="", help="Label to name the request.")
-    parser.add_argument("--target", action="store", default="", help="Optional target directory for GET.")
+    parser.add_argument("-e", "--email", action="store", default="", help="Email address for user in the init and email commands.")
+    parser.add_argument("-w", "--workspace", action="store", default="", help="Group workspace to use in the request.")
+    parser.add_argument("-l", "--label", action="store", default="", help="Label to name the request.")
+    parser.add_argument("-r", "--target", action="store", default="", help="Optional target directory for GET.")
 
     args = parser.parse_args()
 
