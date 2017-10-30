@@ -21,7 +21,7 @@ class settings:
     JDMA_SERVER_URL = "https://192.168.51.26/jdma_control"
     JDMA_API_URL = JDMA_SERVER_URL + "/api/v1/"
 #    USER = os.environ["USER"] # the USER name
-    USER = "vagrant"
+    USER = "rmillar"
     VERSION = "0.1" # version of this software
     VERIFY = False
 
@@ -78,8 +78,8 @@ def do_init(email=""):
         data = response.json()
         sys.stdout.write( bcolors.GREEN +\
               "** SUCCESS ** - user initiliazed with:\n" + bcolors.ENDC +\
-              "    username: " + data["name"] + "\n" +\
-              "    email: " + data["email"] + "\n")
+              "    Username : " + data["name"] + "\n" +\
+              "    Email    : " + data["email"] + "\n")
     elif response.status_code != 500:
         # get the reason why it failed
         error = response.json()['error']
@@ -87,6 +87,8 @@ def do_init(email=""):
         sys.stdout.write(bcolors.RED+\
               "** ERROR ** - cannot initialize user " + user + " : " + error + bcolors.ENDC + "\n")
     else:
+        sys.stdout.write(bcolors.RED+\
+              "** ERROR ** - cannot initialize user " + user + " : 500 " + bcolors.ENDC + "\n")
         print_stack_trace(response.content)
 
 
@@ -184,10 +186,19 @@ def get_request_stage(stage):
     return request_stages[stage]
 
 
+def get_permission(permission):
+    # this is user permissions - private, group workspace or all
+    permission_choices = ["PRIVATE",
+                          "GROUP",
+                          "ALL"]
+    return permission_choices[permission]
+
+
 def get_permissions_string(p):
+    # this is unix permissions
     is_dir = 'd'
     dic = {'7':'rwx', '6' :'rw-', '5' : 'r-x', '4':'r--', '0': '---'}
-    perm = str(p)[-3:]
+    perm = oct(p)[-3:]
     return is_dir + ''.join(dic.get(x,x) for x in perm)
 
 
@@ -285,6 +296,8 @@ def do_migration(batch_id, workspace=None):
         sys.stdout.write("    Label        : " + data["label"]+"\n")
         if "registered_date" in data:
             sys.stdout.write("    Date         : " + data["registered_date"][0:16].replace("T"," ")+"\n")
+        if "permission" in data:
+            sys.stdout.write("    Permission   : " + get_permission(data["permission"])+"\n")
         sys.stdout.write("    Stage        : " + get_request_stage(data["stage"])+"\n")
         if "et_id" in data:
             sys.stdout.write("    ET id        : " + str(data["et_id"])+"\n")
@@ -328,15 +341,16 @@ def do_list_migrations(workspace=None):
         else:
             # print the header
             sys.stdout.write(bcolors.MAGENTA)
-            print "{:>8} {:<16} {:16} {:<11} {:<16}".format("batch id", "workspace", "batch label", "stage", "date")
+            print "{:>8} {:<16} {:16} {:<11} {:<16} {:<16}".format("batch id", "workspace", "batch label", "stage", "date", "permission")
             sys.stdout.write(bcolors.ENDC)
             for r in data["migrations"]:
-                print "{:>8} {:<16} {:<16} {:11} {:<16}".format(\
+                print "{:>8} {:<16} {:<16} {:11} {:<16} {:<16}".format(\
                     r["migration_id"],
                     r["workspace"][0:16],
                     r["label"][0:16],
                     get_request_stage(r["stage"]),
-                    r["registered_date"][0:16].replace("T"," "))
+                    r["registered_date"][0:16].replace("T"," "),
+                    get_permission(r["permission"]))
     elif response.status_code != 500:
         error_data = response.json()
         error_msg = "** ERROR ** - cannot list batches for user " + error_data["name"]
@@ -393,7 +407,7 @@ def do_put(path, workspace, label):
         sys.stdout.write(bcolors.RED + error_msg)
         sys.stdout.write(bcolors.ENDC)
     else:
-        print response.content
+        print print_stack_trace(response.content)
 
 
 def do_get(batch_id, target_dir):
@@ -430,7 +444,7 @@ def do_get(batch_id, target_dir):
         if error_data["migration_id"]:
             error_msg += " with batch id: " + str(error_data["migration_id"])
         if error_data["error"]:
-            error_msg += ": " + error_data["error"]
+            error_msg += ": " + str(error_data["error"])
         error_msg += "\n"
         sys.stdout.write(bcolors.RED + error_msg)
         sys.stdout.write(bcolors.ENDC)
@@ -438,11 +452,11 @@ def do_get(batch_id, target_dir):
         print_stack_trace(response.content)
 
 
-def do_label(req_id, label):
-    """Send the HTTP request (PUT) to change a label of a request."""
+def do_label(batch_id, label):
+    """Send the HTTP request (PUT) to change a label of a migration."""
     url = settings.JDMA_API_URL + "migration?name=" + settings.USER
-    if req_id != None:
-        url += ";migration_id=" + str(req_id)
+    if batch_id != None:
+        url += ";migration_id=" + str(batch_id)
     data = {}
     if label:
         data["label"] = label
@@ -450,37 +464,65 @@ def do_label(req_id, label):
     if response.status_code == 200:
         sys.stdout.write(bcolors.GREEN+ \
                          "** SUCCESS ** - label changed to: " + bcolors.ENDC + label + "\n")
-    else:
+    elif response.status_code != 500:
         # print the error
         error_data = response.json()
-        error_msg = "** ERROR ** - cannot relabel request " + str(req_id)
+        error_msg = "** ERROR ** - cannot relabel batch " + str(batch_id)
         error_msg += " : " + error_data["error"]
         error_msg += "\n"
         sys.stdout.write(bcolors.RED + error_msg)
         sys.stdout.write(bcolors.ENDC)
+    else:
+        print_stack_trace(response.content)
+
+
+def do_permission(batch_id, permission):
+    """Send the HTTP request (PUT) to change the permission of a batch."""
+    url = settings.JDMA_API_URL + "migration?name=" + settings.USER
+    if batch_id != None:
+        url += ";migration_id=" + str(batch_id)
+    data = {}
+    if permission:
+        data["permission"] = permission
+    response = requests.put(url, data=json.dumps(data), verify=settings.VERIFY)
+    if response.status_code == 200:
+        sys.stdout.write(bcolors.GREEN+ \
+                         "** SUCCESS ** - permission changed to: " + bcolors.ENDC + permission + "\n")
+    elif response.status_code != 500:
+        # print the error
+        error_data = response.json()
+        error_msg = "** ERROR ** - cannot change permission of batch " + str(batch_id)
+        error_msg += " : " + error_data["error"]
+        error_msg += "\n"
+        sys.stdout.write(bcolors.RED + error_msg)
+        sys.stdout.write(bcolors.ENDC)
+    else:
+        print_stack_trace(response.content)
 
 
 def main():
     # help string for the command parsing
     command_help = "Available commands are : \n" +\
-                   "init    <email address> : Initialize the migration app for your JASMIN login\n"+ \
-                   "email   <email address> : Set / update email address\n" + \
-                   "info                    : Get the user info\n"+\
-                   "notify                  : Switch on / off email notifications of scheduled deletions (default is on)\n"+\
-                   "request <request_id>    : List all requests, or a particular request\n"+\
-                   "batch   <batch_id>      : List all batches, or a particular batch\n"+\
-                   "put     <path>          : Create a batch upload of the current directory or directory in <path>,\n"+\
-                   "                          with optional --label=\n"+\
-                   "get     <batch_id>      : Retrieve a batch upload of a directory with the id <request_id>.\n" +\
-                   "                          Target directory can be specified with --target= \n" +\
-                   "label   <batch_id>      : Change the label of a batch"
+                   "init    <email address>  : Initialize the migration app for your JASMIN login\n"+ \
+                   "email   <email address>  : Set / update email address\n" + \
+                   "info                     : Get the user info\n"+\
+                   "notify                   : Switch on / off email notifications of scheduled deletions (default is on)\n"+\
+                   "request <request_id>     : List all requests, or a particular request\n"+\
+                   "batch   <batch_id>       : List all batches, or a particular batch\n"+\
+                   "put     <path>           : Create a batch upload of the current directory or directory in <path>,\n"+\
+                   "                           with optional --label=\n"+\
+                   "get     <batch_id>       : Retrieve a batch upload of a directory with the id <request_id>\n" +\
+                   "                           Target directory can be specified with --target= \n" +\
+                   "label   <batch_id>       : Change the label of a batch \n" +\
+                   "permission <batch_id> <p>: Change the read permission for the batch, p=PRIVATE|GROUP|ALL"
 
     parser = argparse.ArgumentParser(prog="JDMA", formatter_class=argparse.RawTextHelpFormatter,
                                      description="JASMIN data migration app (JDMA) command line tool")
-    parser.add_argument("cmd", choices=["init", "email", "info", "notify", "request", "batch", "put", "get", "label"],
+    parser.add_argument("cmd", choices=["init", "email", "info", "notify", "request", "batch", "put", "get", "label", "permission"],
                         help=command_help, metavar="command")
     parser.add_argument("arg", help="Argument to the command", default="", nargs="?")
     parser.add_argument("-e", "--email", action="store", default="", help="Email address for user in the init and email commands.")
+    parser.add_argument("-p", "--permission", action="store", default="PRIVATE", help="Permission PRIVATE|GROUP|ALL.")
     parser.add_argument("-w", "--workspace", action="store", default="", help="Group workspace to use in the request.")
     parser.add_argument("-l", "--label", action="store", default="", help="Label to name the request.")
     parser.add_argument("-r", "--target", action="store", default="", help="Optional target directory for GET.")
@@ -510,6 +552,12 @@ def main():
         target_dir = args.target
     else:
         target_dir = None
+
+    # get the permission if any
+    if args.permission:
+        permission = args.permission
+    else:
+        permission = None
 
     # switch on the commands
     if args.cmd == "init":
@@ -548,6 +596,12 @@ def main():
         else:
             request_id = None
         do_label(request_id, label)
+    elif args.cmd == "permission":
+        if len(args.arg):
+            request_id = int(args.arg)
+        else:
+            request_id = None
+        do_permission(request_id, permission)
 
 if __name__ == "__main__":
     main()
