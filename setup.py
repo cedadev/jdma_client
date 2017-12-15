@@ -13,6 +13,9 @@ setup(
     packages=['jdma_client'],
     install_requires=['requests',
                       'python_dateutil',
+                      'pyOpenSSL',
+                      'ndg-httpsclient',
+                      'pyasn1'
     ],
     include_package_data=True,
     license='BSD License',  # example license

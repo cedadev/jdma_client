@@ -1,2 +1,5 @@
 requests==2.12.3
 python_dateutil==2.6.1
+pyOpenSSL==17.3.0
+ndg-httpsclient==0.4.3
+pyasn1==0.3.7

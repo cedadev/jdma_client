@@ -18,10 +18,11 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 class settings:
     """Settings for the xfc command line tool."""
 #    JDMA_SERVER_URL = "http://0.0.0.0:8001/jdma_control"  # location of the jdma_control server / app
-    JDMA_SERVER_URL = "https://192.168.51.26/jdma_control"
+#    JDMA_SERVER_URL = "https://192.168.51.26/jdma_control"
+    JDMA_SERVER_URL = "http://192.168.51.26/jdma_control"
     JDMA_API_URL = JDMA_SERVER_URL + "/api/v1/"
 #    USER = os.environ["USER"] # the USER name
-    USER = "rmillar"
+    USER = "nrmassey"
     VERSION = "0.1" # version of this software
     VERIFY = False
 
@@ -53,17 +54,26 @@ class bcolors:
     ENDC      = '\033[0m'
 
 
-def print_stack_trace(response_content):
-    # extract the stacktrace from a Django response when the HTTP status code is 500
-    lines = response_content.split("\n")
-    print_line = False
-    for line in lines:
-        if line == "Traceback:":
-            print_line = True
-        elif "</textarea>" in line:
-            print_line = False
-        if print_line:
-            print line
+def user_not_initialized_message():
+    sys.stdout.write(bcolors.RED+\
+                  "** ERROR ** - User " + settings.USER + " not initialised yet." + bcolors.ENDC +\
+                  "  Run " + bcolors.YELLOW + "jdma.py init" + bcolors.ENDC + " first.\n")
+
+
+def print_response_error(response):
+    """Print a concise summary of the error, rather than a whole output of html"""
+    for il in response.content.split("\n"):
+        if "Exception" in il:
+            print il
+
+
+def error_from_response(response):
+    try:
+        data = response.json()
+        if "error" in data:
+            sys.stdout.write(bcolors.RED + "** ERROR ** - " + data["error"] + bcolors.ENDC + "\n")
+    except:
+        sys.stdout.write(bcolors.RED + "** ERROR ** " + str(response.status_code) + bcolors.ENDC + "\n")
 
 
 def do_init(email=""):
@@ -89,7 +99,7 @@ def do_init(email=""):
     else:
         sys.stdout.write(bcolors.RED+\
               "** ERROR ** - cannot initialize user " + user + " : 500 " + bcolors.ENDC + "\n")
-        print_stack_trace(response.content)
+        print_response_error(response)
 
 
 def do_email(email=""):
@@ -102,12 +112,14 @@ def do_email(email=""):
         data = response.json()
         sys.stdout.write(bcolors.GREEN+\
               "** SUCCESS ** - user email updated to: " + data["email"] + bcolors.ENDC + "\n")
-    else:
+    elif response.status_code != 500:
         # get the reason why it failed
         error = response.json()['error']
         user = response.json()['name']
         sys.stdout.write(bcolors.RED+\
               "** ERROR ** - cannot update email for user " + user+ " : " + error + bcolors.ENDC + "\n")
+    else:
+        print_response_error(response)
 
 
 def do_info():
@@ -122,12 +134,14 @@ def do_info():
                          "    username: " + data["name"] + "\n" + \
                          "    email   : " + data["email"] + "\n" + \
                          "    notify  : " + ["off", "on"][data["notify"]] +"\n")
-    else:
+    elif response.status_code != 500:
         # get the reason why it failed
         error = response.json()['error']
         user = response.json()['name']
         sys.stdout.write(bcolors.RED+\
               "** ERROR ** - cannot get info for user " + user + " : " + error + bcolors.ENDC + "\n")
+    else:
+        print_response_error(response)
 
 
 def do_notify():
@@ -145,19 +159,23 @@ def do_notify():
         if response.status_code == 200:
             sys.stdout.write(bcolors.GREEN+\
                   "** SUCCESS ** - user notifications updated to: " + ["off", "on"][put_data["notify"]] + bcolors.ENDC +"\n")
-        else:
+        elif response.status_code != 500:
             # get the reason why it failed
             error = response.json()['error']
             user = response.json()['name']
             sys.stdout.write(bcolors.RED+\
                   "** ERROR ** - cannot update notify for user " + user + " : " + error + bcolors.ENDC + "\n")
-
-    else:
+        else:
+            print_response_error(response)
+    elif response.status_code != 500:
         # get the reason why it failed
         error = response.json()['error']
         user = response.json()['name']
         sys.stdout.write(bcolors.RED+\
               "** ERROR ** - cannot update notify for user " + user + " : " + error + bcolors.ENDC + "\n")
+    else:
+        print_response_error(response)
+
 
 
 def get_request_type(req_type):
@@ -173,11 +191,11 @@ def get_request_stage(stage):
                       "VERIFY_PENDING",     # 3
                       "VERIFY_GETTING",     # 4
                       "VERIFYING",          # 5
-                      "ON_TAPE",            # 6
+                      "ON_STORAGE",         # 6
                       "FAILED",             # 7
                       "",                   # 8
                       "",                   # 9
-                      "ON_TAPE",            # 10 - MigrationRequest starts here
+                      "ON_STORAGE",         # 10 - MigrationRequest starts here
                       "GET_PENDING",        # 11
                       "GETTING",            # 12
                       "ON_DISK",            # 13
@@ -233,7 +251,7 @@ def do_request(req_id):
         sys.stdout.write(bcolors.RED + error_msg)
         sys.stdout.write(bcolors.ENDC)
     else:
-        print_stack_trace(response.content)
+        print_response_error(response)
 
 
 def do_list_requests():
@@ -253,10 +271,10 @@ def do_list_requests():
         else:
             # print the header
             sys.stdout.write(bcolors.MAGENTA)
-            print "{:>11} {:<6} {:<8} {:<16} {:16} {:<11} {:<16}".format("request id", "type", "batch id", "workspace", "batch label", "stage", "date")
+            print "{:>11} {:<6} {:<8} {:<24} {:16} {:<11} {:<16}".format("request id", "type", "batch id", "workspace", "batch label", "stage", "date")
             sys.stdout.write(bcolors.ENDC)
             for r in data["requests"]:
-                print "{:>11} {:<6} {:<8} {:<16} {:16} {:<11} {:<16}".format(\
+                print "{:>11} {:<6} {:<8} {:<24} {:16} {:<11} {:<16}".format(\
                     r["request_id"],
                     get_request_type(r["request_type"]),
                     r["migration_id"],
@@ -271,7 +289,7 @@ def do_list_requests():
         sys.stdout.write(bcolors.RED + error_msg)
         sys.stdout.write(bcolors.ENDC)
     else:
-        print_stack_trace(response.content)
+        print_response_error(response)
 
 
 def do_migration(batch_id, workspace=None):
@@ -299,8 +317,8 @@ def do_migration(batch_id, workspace=None):
         if "permission" in data:
             sys.stdout.write("    Permission   : " + get_permission(data["permission"])+"\n")
         sys.stdout.write("    Stage        : " + get_request_stage(data["stage"])+"\n")
-        if "et_id" in data:
-            sys.stdout.write("    ET id        : " + str(data["et_id"])+"\n")
+        if "external_id" in data:
+            sys.stdout.write("    External id  : " + str(data["external_id"])+"\n")
         sys.stdout.write("    Directory    : " + data["original_path"]+"\n")
         sys.stdout.write("    Unix uid     : " + data["unix_user_id"]+"\n")
         sys.stdout.write("    Unix gid     : " + data["unix_group_id"]+"\n")
@@ -315,7 +333,7 @@ def do_migration(batch_id, workspace=None):
         sys.stdout.write(bcolors.RED + error_msg)
         sys.stdout.write(bcolors.ENDC)
     else:
-        print_stack_trace(response.content)
+        print_response_error(response)
 
 
 def do_list_migrations(workspace=None):
@@ -341,10 +359,10 @@ def do_list_migrations(workspace=None):
         else:
             # print the header
             sys.stdout.write(bcolors.MAGENTA)
-            print "{:>8} {:<16} {:16} {:<11} {:<16} {:<16}".format("batch id", "workspace", "batch label", "stage", "date", "permission")
+            print "{:>8} {:<24} {:16} {:<11} {:<16} {:<16}".format("batch id", "workspace", "batch label", "stage", "date", "permission")
             sys.stdout.write(bcolors.ENDC)
             for r in data["migrations"]:
-                print "{:>8} {:<16} {:<16} {:11} {:<16} {:<16}".format(\
+                print "{:>8} {:<24} {:<16} {:11} {:<16} {:<16}".format(\
                     r["migration_id"],
                     r["workspace"][0:16],
                     r["label"][0:16],
@@ -358,7 +376,7 @@ def do_list_migrations(workspace=None):
         sys.stdout.write(bcolors.RED + error_msg)
         sys.stdout.write(bcolors.ENDC)
     else:
-        print_stack_trace(response.content)
+        print_response_error(response)
 
 
 def do_put(path, workspace, label):
@@ -381,7 +399,7 @@ def do_put(path, workspace, label):
     if response.status_code == 200:
         data = response.json()
         sys.stdout.write(bcolors.GREEN+ \
-                         "** SUCCESS ** - migration (PUT) requested:\n" + bcolors.ENDC)
+                         "** SUCCESS ** - batch (PUT) requested:\n" + bcolors.ENDC)
         sys.stdout.write("    Request id   : " + str(data["request_id"])+"\n")
         sys.stdout.write("    Workspace    : " + data["workspace"]+"\n")
         sys.stdout.write("    Label        : " + data["label"]+"\n")
@@ -407,7 +425,7 @@ def do_put(path, workspace, label):
         sys.stdout.write(bcolors.RED + error_msg)
         sys.stdout.write(bcolors.ENDC)
     else:
-        print print_stack_trace(response.content)
+        print_response_error(response)
 
 
 def do_get(batch_id, target_dir):
@@ -440,16 +458,33 @@ def do_get(batch_id, target_dir):
 
     elif response.status_code != 500:
         error_data = response.json()
-        error_msg = "** ERROR ** - cannot retrieve (GET) migration"
+        error_msg = "** ERROR ** - cannot retrieve (GET) batch"
         if error_data["migration_id"]:
-            error_msg += " with batch id: " + str(error_data["migration_id"])
+            error_msg += " with id " + str(error_data["migration_id"])
         if error_data["error"]:
             error_msg += ": " + str(error_data["error"])
         error_msg += "\n"
         sys.stdout.write(bcolors.RED + error_msg)
         sys.stdout.write(bcolors.ENDC)
     else:
-        print_stack_trace(response.content)
+        print_response_error(response)
+
+
+def do_list(batch_id):
+    """Send the HTTP request (GET) to list the files in a Migration"""
+    url = settings.JDMA_API_URL + "migration?name=" + settings.USER
+    if batch_id:
+        url += ";batch_id=" + str(batch_id)
+
+    # do the request (POST)
+    response = requests.get(url, verify=settings.VERIFY)
+    if response.status_code == 200:
+        data = response.json()
+        print data
+    elif response.status_code != 500:
+        pass
+    else:
+        print_response_error(response)
 
 
 def do_label(batch_id, label):
@@ -473,7 +508,7 @@ def do_label(batch_id, label):
         sys.stdout.write(bcolors.RED + error_msg)
         sys.stdout.write(bcolors.ENDC)
     else:
-        print_stack_trace(response.content)
+        print_response_error(response)
 
 
 def do_permission(batch_id, permission):
@@ -497,7 +532,7 @@ def do_permission(batch_id, permission):
         sys.stdout.write(bcolors.RED + error_msg)
         sys.stdout.write(bcolors.ENDC)
     else:
-        print_stack_trace(response.content)
+        print_response_error(response)
 
 
 def main():
@@ -511,14 +546,20 @@ def main():
                    "batch   <batch_id>       : List all batches, or a particular batch\n"+\
                    "put     <path>           : Create a batch upload of the current directory or directory in <path>,\n"+\
                    "                           with optional --label=\n"+\
+                   "migrate <path>           : Create a batch upload of the current directory or directory in <path>,\n"+\
+                   "                           with optional --label=.  The data in the directory will be deleted after the\n"+\
+                   "                           upload is complete\n"+\
                    "get     <batch_id>       : Retrieve a batch upload of a directory with the id <request_id>\n" +\
                    "                           Target directory can be specified with --target= \n" +\
+                   "list    <batch_id>       : List the original path of files in a batch\n"+\
+                   "find    <file substring> : Find the batch(es) containing a file with matching substring\n"+\
                    "label   <batch_id>       : Change the label of a batch \n" +\
                    "permission <batch_id> <p>: Change the read permission for the batch, p=PRIVATE|GROUP|ALL"
 
     parser = argparse.ArgumentParser(prog="JDMA", formatter_class=argparse.RawTextHelpFormatter,
                                      description="JASMIN data migration app (JDMA) command line tool")
-    parser.add_argument("cmd", choices=["init", "email", "info", "notify", "request", "batch", "put", "get", "label", "permission"],
+    parser.add_argument("cmd", choices=["init", "email", "info", "notify", "request", "batch", "put", "get", "list",
+                        "find", "label", "permission"],
                         help=command_help, metavar="command")
     parser.add_argument("arg", help="Argument to the command", default="", nargs="?")
     parser.add_argument("-e", "--email", action="store", default="", help="Email address for user in the init and email commands.")
@@ -590,6 +631,12 @@ def main():
         else:
             request_id = None
         do_get(request_id, target_dir)
+    elif args.cmd == "list":
+        if len(args.arg):
+            request_id = int(args.arg)
+        else:
+            request_id = None
+        do_list(request_id)
     elif args.cmd == "label":
         if len(args.arg):
             request_id = int(args.arg)
