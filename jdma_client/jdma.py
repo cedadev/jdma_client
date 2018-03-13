@@ -75,9 +75,14 @@ def print_response_error(response):
     """Print a concise summary of the error, rather than a whole output of
        html
     """
+    display=False
     for il in response.content.split("\n"):
-        if "Exception" in il:
+        if il == "Traceback:":
+            display=True
+        if display:
             print il
+            if il == "</div>":
+                display=False
 
 
 def error_from_response(response):
@@ -248,24 +253,37 @@ def get_request_type(req_type):
 
 
 def get_request_stage(stage):
-    request_stages = ["ON_DISK",            # 0  - Migration starts here
-                      "PUT_PENDING",        # 1
-                      "PUTTING",            # 2
-                      "VERIFY_PENDING",     # 3
-                      "VERIFY_GETTING",     # 4
-                      "VERIFYING",          # 5
-                      "ON_STORAGE",         # 6
-                      "FAILED",             # 7
-                      "",                   # 8
-                      "",                   # 9
-                      "ON_STORAGE",         # 10 - MigrationRequest starts here
-                      "GET_PENDING",        # 11
-                      "GETTING",            # 12
-                      "ON_DISK",            # 13
-                      "FAILED"]             # 14
+    request_stages = {
+          0 : 'PUT_START',
+          1 : 'PUT_PENDING',
+          2 : 'PUT_PACK',
+          3 : 'PUTTING',
+          4 : 'VERIFY_PENDING',
+          5 : 'VERIFY_GETTING',
+          6 : 'VERIFYING',
+          7 : 'PUT_TIDY',
+          8 : 'PUT_COMPLETED',
+        100 : 'GET_START',
+        101 : 'GET_PENDING',
+        102 : 'GETTING',
+        103 : 'GET_UNPACK',
+        104 : 'GET_RESTORE',
+        105 : 'GET_TIDY',
+        106 : 'GET_COMPLETED',
+        200 : 'FAILED'
+    }
 
     return request_stages[stage]
 
+
+def get_batch_stage(stage):
+    batch_stages = {
+        0 : 'ON_DISK',
+        1 : 'PUTTING',
+        2 : 'ON_STORAGE',
+        3 : 'FAILED'
+    }
+    return batch_stages[stage]
 
 def get_permissions_string(p):
     # this is unix permissions
@@ -355,13 +373,13 @@ def do_list_requests():
             # print the header
             sys.stdout.write(bcolors.MAGENTA)
             sys.stdout.write((
-                "{:>6} {:<8} {:<8} {:<16} {:16} {:<16} {:<16} {:<11}\n"
+                "{:>6} {:<8} {:<8} {:<16} {:16} {:<16} {:<17} {:<11}\n"
             ).format("req id", "type", "batch id", "workspace",
                      "batch label", "storage", "date", "stage"))
             sys.stdout.write(bcolors.ENDC)
             for r in data["requests"]:
                 sys.stdout.write((
-                    "{:>6} {:<8} {:<8} {:<16} {:16} {:<16} {:<16} {:<11}"
+                    "{:>6} {:<8} {:<8} {:<16} {:16} {:<16} {:<17} {:<11}"
                 ).format(
                     r["request_id"],
                     get_request_type(r["request_type"]),
@@ -444,7 +462,7 @@ def do_batch(args):
         ).format(data["filelist"][0]))
         sys.stdout.write((
             "    Stage        : {}\n"
-        ).format(get_request_stage(data["stage"])))
+        ).format(get_batch_stage(data["stage"])))
         if "failure_reason" in data:
             sys.stdout.write((
                 "    Fail reason  : {}\n"
@@ -481,7 +499,7 @@ def do_list_batches(workspace=None):
         if n_mig == 0:
             error_msg = (
                 "{}** ERROR ** - No batches found for user {}"
-            ).format(settings.USER, bcolors.RED)
+            ).format(bcolors.RED, settings.USER)
             if workspace:
                 error_msg += " in workspace " + workspace
             error_msg += bcolors.ENDC + "\n"
@@ -490,20 +508,20 @@ def do_list_batches(workspace=None):
             # print the header
             sys.stdout.write(bcolors.MAGENTA)
             sys.stdout.write((
-                "{:>8} {:<16} {:<16} {:<16} {:<16} {:<11}\n"
+                "{:>8} {:<16} {:<16} {:<16} {:<17} {:<11}\n"
             ).format("batch id", "workspace", "batch label",
                      "storage", "date", "stage"))
             sys.stdout.write(bcolors.ENDC)
             for r in data["migrations"]:
                 sys.stdout.write((
-                    "{:>8} {:<16} {:<16} {:<16} {:<16} {:<11}\n"
+                    "{:>8} {:<16} {:<16} {:<16} {:<17} {:<11}\n"
                 ).format(
                     r["migration_id"],
                     r["workspace"][0:16],
                     r["label"][0:16],
                     r["storage"][0:16],
                     r["registered_date"][0:16].replace("T"," "),
-                    get_request_stage(r["stage"]))
+                    get_batch_stage(r["stage"]))
                 )
     elif response.status_code < 500:
         error_data = response.json()
@@ -642,7 +660,7 @@ def do_migrate_or_put(args, request_type):
         else:
             filelist = current_path
         error_msg = (
-            "** ERROR ** - cannot {} filelist {}... for user "
+            "** ERROR ** - cannot {} filelist {}... for user {}"
         ).format(request_type, filelist, settings.USER)
         if "workspace" in error_data:
             error_msg += " in workspace " + error_data["workspace"]
