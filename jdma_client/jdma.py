@@ -10,6 +10,7 @@ import os
 import argparse
 import requests
 import json
+import math
 
 # switch off warnings
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
@@ -40,7 +41,7 @@ unit_list = zip(['bytes', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB'],
 def sizeof_fmt(num):
     """Human friendly file size"""
     if num > 1:
-        exponent = min(int(log(num, 1024)), len(unit_list) - 1)
+        exponent = min(int(math.log(num, 1024)), len(unit_list) - 1)
         quotient = float(num) / 1024**exponent
         unit, num_decimals = unit_list[exponent]
         format_string = '{:>5.%sf} {}' % (num_decimals)
@@ -112,6 +113,16 @@ def do_help(args):
         print((
             "{}help: supply command to seek help on.{}"
         ).format(bcolors.YELLOW, bcolors.ENDC))
+        # get a list of the commands
+        cmds = []
+        for function in globals():
+            if function[0:3] == "do_" and function != "do_help":
+                cmds.append(function[3:])
+        cmds.sort()
+        print("Available commands are:")
+        for cmd in cmds:
+            print "\t" + cmd
+
 
 def do_init(args):
     ("""init <email address> : Initialise the JASMIN Data Migration App for """
@@ -301,7 +312,7 @@ def do_request(args):
     if len(args.arg):
         req_id = int(args.arg)
     else:
-        do_list_requests()
+        list_requests(args)
         return
 
     url = settings.JDMA_API_URL + "request?name=" + settings.USER
@@ -312,6 +323,9 @@ def do_request(args):
     # process if returned
     if response.status_code == 200:
         data = response.json()
+        if args.json == True:
+            print (data)
+            return
         # print the response
         sys.stdout.write(bcolors.MAGENTA)
         sys.stdout.write("Request for user: {}\n".format(data["user"]))
@@ -355,7 +369,7 @@ def do_request(args):
         print_response_error(response)
 
 
-def do_list_requests():
+def list_requests(args):
     ("""Called from do_requests if request_id is None.  Lists all the """
      """requests.""")
     url = settings.JDMA_API_URL + "request?name=" + settings.USER
@@ -364,6 +378,9 @@ def do_list_requests():
     if response.status_code == 200:
         # get the list of responses from the JSON
         data = response.json()
+        if args.json == True:
+            print (data)
+            return
         n_req = len(data["requests"])
         if n_req == 0:
             sys.stdout.write((
@@ -420,7 +437,7 @@ def do_batch(args):
     if len(args.arg):
         batch_id = int(args.arg)
     else:
-        do_list_batches(workspace)
+        list_batches(workspace, args)
         return
 
     # send the HTTP request
@@ -434,6 +451,10 @@ def do_batch(args):
 
     if response.status_code == 200:
         data = response.json()
+        # check if the JSON option was chosen
+        if args.json == True:
+            print(data)
+            return
         sys.stdout.write(bcolors.MAGENTA)
         sys.stdout.write("Batch for user: {}\n".format(data["user"]))
         sys.stdout.write(bcolors.ENDC)
@@ -482,7 +503,7 @@ def do_batch(args):
         print_response_error(response)
 
 
-def do_list_batches(workspace=None):
+def list_batches(workspace=None, args=None):
     """Called from do_batch when batch_id == None.  Lists all batches=."""
     ### Send the HTTP request (GET) to get the details of all the user's
     ### migrations.  Optionally filter on the workspace."""
@@ -495,6 +516,9 @@ def do_list_batches(workspace=None):
 
     if response.status_code == 200:
         data = response.json()
+        if args is not None and args.json == True:
+            print (data)
+            return
         n_mig = len(data["migrations"])
         if n_mig == 0:
             error_msg = (
@@ -557,7 +581,7 @@ def add_credentials(args, data):
             pass
 
 
-def do_migrate_or_put(args, request_type):
+def migrate_or_put(args, request_type):
     ###Send the HTTP request (POST) to indicate a directory is to be migrated.
     ###
     # get the path, workspace and label (if any) from the args
@@ -678,7 +702,7 @@ def do_put(args):
      """to give the batch a label.  Use --storage to specify which external """
      """storage to target for the migration.  Use command list_storage to """
      """list all the available storage targets.""")
-    do_migrate_or_put(args, "PUT")
+    migrate_or_put(args, "PUT")
 
 
 def do_migrate(args):
@@ -688,7 +712,7 @@ def do_migrate(args):
      """storage to target for the migration.  Use command list_storage to """
      """list all the available storage targets.  The data in the directory """
      """or filelist will be deleted after the upload is completed.""")
-    do_migrate_or_put(args, "MIGRATE")
+    migrate_or_put(args, "MIGRATE")
 
 
 def do_get(args):
@@ -784,12 +808,21 @@ def do_delete(args):
 
 def list_storage():
     """Return a list of the available external storage backends"""
+
+
+
+def do_storage(args):
+    """storage : list the storage targets that batches can be written to"""
+    storage = list_storage()
     url = settings.JDMA_API_URL + "list_backends"
     response = requests.get(url, verify=settings.VERIFY)
     storage = {}
     if response.status_code == 200:
         # parse the JSON that comes back
         data = response.json()
+        if args.json == True:
+            print (data)
+            return
         for r in range(0, len(data)):
             storage[data.keys()[r]] = data[data.keys()[r]]
 
@@ -802,15 +835,11 @@ def list_storage():
             error_msg += " (" + str(response.status_code) + ")"
         error_msg += "\n"
         sys.stdout.write(bcolors.RED + error_msg + bcolors.ENDC)
+        return
     else:
-        print response.status_code
         print_response_error(response)
-    return storage
+        return
 
-
-def do_list_storage(args):
-    """list_storage : list the storage targets that batches can be written to"""
-    storage = list_storage()
     if storage != {}:
         sys.stdout.write(bcolors.MAGENTA)
         print "{:>4} {:<24} {:16}".format("", "Name", "Short ID")
@@ -822,8 +851,8 @@ def do_list_storage(args):
         sys.stdout.write(bcolors.ENDC)
 
 
-def do_list(args):
-    """list <batch_id> : List the original paths of files in a batch."""
+def do_files(args):
+    """files <batch_id> : List the original paths of files in a batch."""
     ###Send the HTTP request (GET) to list the files in a Migration###
     # get the batch id if any
     if len(args.arg):
@@ -831,17 +860,217 @@ def do_list(args):
     else:
         batch_id = None
 
-    url = settings.JDMA_API_URL + "migration?name=" + settings.USER
-    if batch_id:
-        url += ";batch_id=" + str(batch_id)
+    if args.workspace == "default":
+        try:
+            workspace = settings.user_credentials["default_gws"]
+        except:
+            workspace = None
+    else:
+        workspace = args.workspace
 
+    if args.limit:
+        limit = args.limit
+    else:
+        limit = 0
+
+    url = settings.JDMA_API_URL + "file?name=" + settings.USER
+    if batch_id:
+        url += ";migration_id=" + str(batch_id)
+    if workspace:
+        url += ";workspace=" + workspace
+
+    # add the limit (the number of files output)
+    url += ";limit=" + str(limit)
+    # add whether to list the digest or not
+    if args.digest == True:
+        url += ";digest=1"
     # do the request (POST)
     response = requests.get(url, verify=settings.VERIFY)
     if response.status_code == 200:
         data = response.json()
-        print data
+        if args.json == True:
+            print (data)
+            return
+        n_mig = len(data["migrations"])
+        if n_mig == 0:
+            error_msg = (
+                "{}** ERROR ** - No files found for user {}"
+            ).format(bcolors.RED, settings.USER)
+            if batch_id:
+                error_msg += " for batch " + str(batch_id)
+            if workspace:
+                error_msg += " in workspace " + workspace
+            error_msg += bcolors.ENDC + "\n"
+            sys.stdout.write(error_msg)
+        else:
+            # print the header
+            sys.stdout.write(bcolors.MAGENTA)
+            sys.stdout.write((
+                "{:>5} {:<12} {:<12} {:<12} {:<18} {:<64} {:>8}"
+            ).format("b.id", "workspace", "batch label",
+                     "storage", "archive", "file", "size"))
+            if args.digest == True:
+                sys.stdout.write((" {:<64}").format("digest"))
+            sys.stdout.write("\n"+bcolors.ENDC)
+            for r in data["migrations"]:
+                # print the migration details and the first archive details
+                n_a = len(r["archives"])
+                if n_a == 0:
+                    continue
+                c_a = 0
+                for a in r["archives"]:
+                    n_f = len(a["files"])
+                    c_f = 0
+                    for f in a["files"]:
+                        fname = f["path"][-64:]
+                        size = sizeof_fmt(f["size"])[0:8]
+                        # fancy underlining?
+                        if c_f == n_f-1 and c_a == n_a-1:
+                            sys.stdout.write(bcolors.UNDERLINE)
+                        if n_f > 1 and c_f == n_f-1:
+                            ULA = bcolors.UNDERLINE
+                        else:
+                            ULA = ""
+                        # determine what to print out
+                        if c_a == 0 and c_f == 0:
+                            M = r["migration_id"]
+                            W = r["workspace"][0:12]
+                            L = r["label"][0:12]
+                            S = r["storage"][0:12]
+                        else:
+                            M = ""
+                            W = ""
+                            L = ""
+                            S = ""
+                        if c_f == 0:
+                            A = a["archive_id"][0:20]
+                        else:
+                            A = ""
+
+                        sys.stdout.write((
+                            "{:>5} {:<12} {:<12} {:<12}" + ULA + " {:<18} {:<64} {:>8}"
+                        ).format(M, W, L, S, A,
+                                 fname,
+                                 size))
+                        if args.digest == True:
+                            digest = f["digest"]
+                            sys.stdout.write((" {:<64}").format(digest))
+                        sys.stdout.write(bcolors.ENDC+"\n")
+                        c_f += 1
+                    c_a += 1
+
     elif response.status_code < 500:
-        pass
+        error_msg = "** ERROR ** - cannot list files"
+        try:
+            error_data = response.json()
+            error_msg += ": " + str(error_data["error"])
+        except:
+            error_msg += " (" + str(response.status_code) + ")"
+        error_msg += "\n"
+        sys.stdout.write(bcolors.RED + error_msg + bcolors.ENDC)
+    else:
+        print_response_error(response)
+
+
+def do_archives(args):
+    """archives <batch_id> : List the original paths of archives in a batch."""
+    ###Send the HTTP request (GET) to list the archives in a Migration###
+    # get the batch id if any
+    if len(args.arg):
+        batch_id = int(args.arg)
+    else:
+        batch_id = None
+
+    if args.workspace == "default":
+        try:
+            workspace = settings.user_credentials["default_gws"]
+        except:
+            workspace = None
+    else:
+        workspace = args.workspace
+
+    if args.limit:
+        limit = args.limit
+    else:
+        limit = 0
+
+    url = settings.JDMA_API_URL + "archive?name=" + settings.USER
+    if batch_id:
+        url += ";migration_id=" + str(batch_id)
+    if workspace:
+        url += ";workspace=" + workspace
+
+    # add the limit (the number of files output)
+    url += ";limit=" + str(limit)
+    # add whether to list the digest or not
+    if args.digest == True:
+        url += ";digest=1"
+    # do the request (POST)
+    response = requests.get(url, verify=settings.VERIFY)
+    if response.status_code == 200:
+        data = response.json()
+        if args.json == True:
+            print (data)
+            return
+        n_mig = len(data["migrations"])
+        if n_mig == 0:
+            error_msg = (
+                "{}** ERROR ** - No archives found for user {}"
+            ).format(bcolors.RED, settings.USER)
+            if batch_id:
+                error_msg += " for batch " + str(batch_id)
+            if workspace:
+                error_msg += " in workspace " + workspace
+            error_msg += bcolors.ENDC + "\n"
+            sys.stdout.write(error_msg)
+        else:
+            # print the header
+            sys.stdout.write(bcolors.MAGENTA)
+            sys.stdout.write((
+                "{:>5} {:<12} {:<12} {:<12} {:<18} {:>8}"
+            ).format("b.id", "workspace", "batch label",
+                     "storage", "archive", "size"))
+            if args.digest == True:
+                sys.stdout.write((" {:<32}").format("digest"))
+            sys.stdout.write("\n"+bcolors.ENDC)
+            for r in data["migrations"]:
+                # print the migration details and the first archive details
+                a = r["archives"][0]
+                sys.stdout.write((
+                    "{:>5} {:<12} {:<12} {:<12} {:<18} {:>8}"
+                ).format(r["migration_id"],
+                         r["workspace"][0:12],
+                         r["label"][0:12],
+                         r["storage"][0:12],
+                         a["archive_id"][0:20],
+                         sizeof_fmt(a["size"])))
+                if args.digest == True:
+                    sys.stdout.write((" {:<32}").format(a["digest"]))
+                sys.stdout.write("\n")
+                # underline the last one
+                ac = 1
+                for a in r["archives"][1:]:
+                    if ac == len(r["archives"])-1:
+                        sys.stdout.write(bcolors.UNDERLINE)
+                    sys.stdout.write((
+                        "{:>5} {:<12} {:<12} {:<12} {:<18} {:>8}"
+                    ).format("","","", "",
+                         a["archive_id"][0:20],
+                         sizeof_fmt(a["size"])))
+                    if args.digest == True:
+                        sys.stdout.write((" {:<32}").format(a["digest"]))
+                    sys.stdout.write("\n"+bcolors.ENDC)
+                    ac += 1
+
+    elif response.status_code < 500:
+        error_msg = "** ERROR ** - cannot list archives"
+        try:
+            error_data = response.json()
+            error_msg += ": " + str(error_data["error"])
+        except:
+            error_msg += " (" + str(response.status_code) + ")"
+        error_msg += "\n"
+        sys.stdout.write(bcolors.RED + error_msg + bcolors.ENDC)
     else:
         print_response_error(response)
 
@@ -914,8 +1143,9 @@ def read_credentials_file():
 def main():
     command_help = "Type help <command> to get help on a specific command"
     command_choices = ["init", "email", "info", "notify", "request", "batch",
-                       "put", "get", "list", "find", "label", "migrate",
-                       "get_files", "delete", "list_storage", "help"]
+                       "put", "get", "files", "find", "label", "migrate",
+                       "archives", "get_files", "delete", "storage",
+                       "help"]
     command_text = "[" + " | ".join(command_choices) + "]"
 
     parser = argparse.ArgumentParser(
@@ -951,14 +1181,34 @@ def main():
         help=(
             "Specify external storage to use for migration.  Use {}"
             "list_migration{} to list the available storage targets.  Default "
-            "is elastictape."
+            "is given in the config file ~/.jdma.json."
         ).format(bcolors.BOLD, bcolors.ENDC)
+    )
+    parser.add_argument(
+        "-n", "--limit", action="store", default="0",
+        help=("Limit the number of files output when using the list_files or"
+              " list_archives command.")
+    )
+    parser.add_argument(
+        "-d", "--digest", action="store_true", default="False",
+        help=("Show the SHA256 digest when using the list_files or "
+              " list_archives command.")
+    )
+    parser.add_argument(
+        "-j", "--json", action="store_true", default="False",
+        help=("Output JSON, rather than formatted output, for the batch, "
+              "archives, files, storage and request commands.")
     )
 
     # read the credentials file
     settings.user_credentials = read_credentials_file()
 
-    args = parser.parse_args()
+    try:
+        args = parser.parse_args()
+    except:
+        print ('JDMA: error: no command supplied.  Use "jdma help" to list the '
+               'commands and "jdma help <command>" to show help for a command')
+        sys.exit()
 
     method = globals().get("do_" + args.cmd)
 
