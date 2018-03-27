@@ -23,11 +23,12 @@ class settings:
     # location of the jdma_control server / app
 #    JDMA_SERVER_URL = "http://0.0.0.0:8001/jdma_control"
     # location of the test server / vagrant version
-    JDMA_SERVER_URL = "https://192.168.51.26/jdma_control"
+    JDMA_SERVER_URL = "http://192.168.51.26/jdma_control"
     JDMA_API_URL = JDMA_SERVER_URL + "/api/v1/"
     # get the user from the environment
 #    USER = os.environ["USER"] # the USER name
     USER = "nrmassey"
+#    USER = "mpritcha"
     # version of this software
     VERSION = "0.1"
     VERIFY = False
@@ -51,6 +52,11 @@ def sizeof_fmt(num):
     else:
         return '0 bytes'
 
+def output_json(json):
+    # output json to the command line in a format that can be read by jq
+    json_string = str(json)
+    json_string2 = json_string.replace("'", '"').replace('u"', '"')
+    print(json_string2)
 
 class bcolors:
     MAGENTA = '\033[95m'
@@ -89,6 +95,10 @@ def print_response_error(response):
 def error_from_response(response):
     try:
         data = response.json()
+        if args.json == True:
+            output_json(data)
+            return
+
         if "error" in data:
             sys.stdout.write((
                 "{}** ERROR ** - {}{}"
@@ -140,6 +150,9 @@ def do_init(args):
     # check the response code
     if response.status_code == 200:
         data = response.json()
+        if args.json == True:
+            output_json(data)
+            return
         sys.stdout.write((
               "{}** SUCCESS ** - user initiliazed with{}:\n"
               "    Username : {}\n"
@@ -149,6 +162,9 @@ def do_init(args):
         # get the reason why it failed
         error = response.json()['error']
         user = response.json()['name']
+        if args.json == True:
+            output_json(response.json())
+            return
         sys.stdout.write((
             "{}** ERROR ** - cannot initialise user {} : {}{}\n"
         ).format(bcolors.RED, user, error, bcolors.ENDC))
@@ -174,6 +190,9 @@ def do_email(args):
     response = requests.put(url, data=json.dumps(data), verify=settings.VERIFY)
     if response.status_code == 200:
         data = response.json()
+        if args.json == True:
+            output_json(data)
+            return
         sys.stdout.write((
             "{}** SUCCESS ** - user email updated to: {}{}\n"
         ).format(bcolors.GREEN, data["email"],bcolors.ENDC))
@@ -181,6 +200,10 @@ def do_email(args):
         # get the reason why it failed
         error = response.json()['error']
         user = response.json()['name']
+        if args.json == True:
+            output_json(response.json())
+            return
+
         sys.stdout.write((
             "{}** ERROR ** - cannot update email for user {} : {}{}\n"
         ).format(bcolors.RED, user, error, bcolors.ENDC))
@@ -197,6 +220,9 @@ def do_info(args):
     response = requests.get(url, data=json.dumps(data), verify=settings.VERIFY)
     if response.status_code == 200:
         data = response.json()
+        if args.json == True:
+            output_json(data)
+            return
         sys.stdout.write((
             "{}** SUCCESS ** - user info:\n{}"
             "    username: {}\n"
@@ -206,6 +232,10 @@ def do_info(args):
                  ["off", "on"][data["notify"]]))
     elif response.status_code < 500:
         # get the reason why it failed
+        if args.json == True:
+            output_json(response.json())
+            return
+
         error = response.json()['error']
         user = response.json()['name']
         sys.stdout.write((
@@ -225,6 +255,9 @@ def do_notify(args):
     response = requests.get(url, verify=settings.VERIFY)
     if response.status_code == 200:
         data = response.json()
+        if args.json == True:
+            output_json(data)
+            return
         notify = data["notify"]
         # update to inverse
         put_data = {"name" : settings.USER,
@@ -237,6 +270,10 @@ def do_notify(args):
             ).format(bcolors.GREEN, ["off", "on"][put_data["notify"]],
                      bcolors.ENDC))
         elif response.status_code < 500:
+            if args.json == True:
+                output_json(response.json())
+                return
+
             # get the reason why it failed
             error = response.json()['error']
             user = response.json()['name']
@@ -259,7 +296,7 @@ def do_notify(args):
 def get_request_type(req_type):
     ("""Get a string from a request type integer.  See """
      """jdma_control.models.MigrationRequest for details""")
-    request_types = ["PUT", "GET", "MIGRATE"]
+    request_types = ["PUT", "GET", "MIGRATE", "DELETE"]
     return request_types[req_type]
 
 
@@ -281,7 +318,12 @@ def get_request_stage(stage):
         104 : 'GET_RESTORE',
         105 : 'GET_TIDY',
         106 : 'GET_COMPLETED',
-        200 : 'FAILED'
+        200 : 'DELETE_START',
+        201 : 'DELETE_PENDING',
+        202 : 'DELETING',
+        203 : 'DELETE_TIDY',
+        204 : 'DELETE_COMPLETED',
+       1000 : 'FAILED'
     }
 
     return request_stages[stage]
@@ -324,7 +366,7 @@ def do_request(args):
     if response.status_code == 200:
         data = response.json()
         if args.json == True:
-            print (data)
+            output_json(data)
             return
         # print the response
         sys.stdout.write(bcolors.MAGENTA)
@@ -360,6 +402,9 @@ def do_request(args):
     elif response.status_code < 500:
         # get the reason why it failed
         data = response.json()
+        if args.json == True:
+            output_json(data)
+            return
         error_msg = (
             "{}** ERROR ** - cannot list request {} for user {} : {}{}\n"
         ).format(bcolors.RED, data["request_id"], data["name"], data["error"],
@@ -379,7 +424,7 @@ def list_requests(args):
         # get the list of responses from the JSON
         data = response.json()
         if args.json == True:
-            print (data)
+            output_json(data)
             return
         n_req = len(data["requests"])
         if n_req == 0:
@@ -409,6 +454,10 @@ def list_requests(args):
                 )
     elif response.status_code < 500:
         error_data = response.json()
+        if args.json == True:
+            output_json(data)
+            return
+
         error_msg = (
             "** ERROR ** - cannot list requests for user {}"
         ).format(error_data["name"])
@@ -448,7 +497,6 @@ def do_batch(args):
         url += ";workspace=" + workspace
 
     response = requests.get(url, verify=settings.VERIFY)
-
     if response.status_code == 200:
         data = response.json()
         # check if the JSON option was chosen
@@ -492,6 +540,10 @@ def do_batch(args):
     elif response.status_code < 500:
         # get the reason why it failed
         data = response.json()
+        if args.json == True:
+            output_json(data)
+            return
+
         error_msg = (
             "** ERROR ** - cannot list batch {} for user {}"
         ).format(str(data["migration_id"]), data["name"])
@@ -517,7 +569,7 @@ def list_batches(workspace=None, args=None):
     if response.status_code == 200:
         data = response.json()
         if args is not None and args.json == True:
-            print (data)
+            output_json(data)
             return
         n_mig = len(data["migrations"])
         if n_mig == 0:
@@ -549,9 +601,14 @@ def list_batches(workspace=None, args=None):
                 )
     elif response.status_code < 500:
         error_data = response.json()
+        if args.json == True:
+            output_json(data)
+            return
+
         error_msg = (
             "{}** ERROR ** - cannot list batches for user {}{}\n"
         ).format(bcolors.RED, error_data["name"], bcolors.ENDC)
+        sys.stdout.write(error_msg)
     else:
         print_response_error(response)
 
@@ -617,9 +674,13 @@ def migrate_or_put(args, request_type):
         fh.close()
     # file or directory not found
     else:
-        sys.stdout.write((
-            "{}** ERROR ** - directory or filelist not found: {}{}\n"
-        ).format(bcolors.RED, args.arg, bcolors.ENDC))
+        error_msg = "{}** ERROR ** - directory or filelist not found: {}{}\n"
+        if args.json == True:
+            output_json({"error" : error_msg})
+        else:
+            sys.stdout.write((
+                error_msg
+            ).format(bcolors.RED, args.arg, bcolors.ENDC))
         sys.exit()
 
     # Add the workspace - if the workspace is the default then try to add
@@ -644,12 +705,21 @@ def migrate_or_put(args, request_type):
     response = requests.post(url, data=json.dumps(data), verify=settings.VERIFY)
     if response.status_code == 200:
         data = response.json()
+        if args.json == True:
+            output_json(data)
+            return
         sys.stdout.write((
             "{}** SUCCESS ** - batch ({}) requested:\n{}"
         ).format(bcolors.GREEN, request_type, bcolors.ENDC))
         sys.stdout.write((
             "    Request id   : {}\n"
         ).format(str(data["request_id"])))
+        sys.stdout.write((
+            "    Request type : {}\n"
+        ).format(get_request_type(data["request_type"])))
+        sys.stdout.write((
+            "    Batch id     : {}\n"
+        ).format(str(data["batch_id"])))
         sys.stdout.write((
             "    Workspace    : {}\n"
         ).format(data["workspace"]))
@@ -659,9 +729,6 @@ def migrate_or_put(args, request_type):
         sys.stdout.write((
             "    Date         : {}\n"
         ).format(data["registered_date"][0:16].replace("T"," ")))
-        sys.stdout.write((
-            "    Request type : {}\n"
-        ).format(get_request_type(data["request_type"])))
         sys.stdout.write((
             "    Ex. storage  : {}\n"
         ).format(data["storage"]))
@@ -678,6 +745,9 @@ def migrate_or_put(args, request_type):
     elif response.status_code < 500:
         # print the error
         error_data = response.json()
+        if args.json == True:
+            output_json(error_data)
+            return
         # get the filelist name
         if len(error_data["filelist"]) > 0:
             filelist = error_data["filelist"][0]
@@ -714,6 +784,92 @@ def do_migrate(args):
      """or filelist will be deleted after the upload is completed.""")
     migrate_or_put(args, "MIGRATE")
 
+def do_delete(args):
+    """delete <batch_id> : Delete the batch with <batch_id> from the storage"""
+    ### Send the HTTP request (POST) to add a DELETE request to the
+    ### MigrationRequests###
+
+    # get the batch id
+    if len(args.arg):
+        batch_id = int(args.arg)
+    else:
+        batch_id = None
+
+    if args.force == True:
+        force = True
+    else:
+        force = False
+    # don't prompt if force flag set
+    if not force:
+        # Print a warning message! and the batch info:
+        warning_message = "** WARNING ** - this will delete the following batch: \n"
+        sys.stdout.write(bcolors.RED + warning_message + bcolors.ENDC + " ")
+        do_batch(args)
+        prompt_message = "Do you wish to continue? [y/N] "
+        # prompt user to confirm
+        sys.stdout.write(bcolors.RED + prompt_message)
+        answer = raw_input()
+        sys.stdout.write(bcolors.ENDC)
+        if answer != "y" and answer != "Y":
+            return # do nothing
+
+    # use the same POST URL as GET and PUT
+    url = settings.JDMA_API_URL + "request"
+    # set the user and request type data
+    data = {"name" : settings.USER,
+            "request_type" : "DELETE"}
+    if batch_id:
+        data["migration_id"] = batch_id
+
+    # add the credentials to the request
+    add_credentials(args, data)
+
+    # do the request (POST)
+    response = requests.post(url, data=json.dumps(data), verify=settings.VERIFY)
+    if response.status_code == 200:
+        data = response.json()
+        if args.json == True:
+            output_json(data)
+            return
+
+        sys.stdout.write((
+            "{}** SUCCESS ** - removal (DELETE) requested:{}\n"
+        ).format(bcolors.GREEN, bcolors.ENDC))
+        sys.stdout.write((
+            "    Request id   : {}\n"
+        ).format(str(data["request_id"])))
+        sys.stdout.write((
+            "    Batch id     : {}\n"
+        ).format(str(data["batch_id"])))
+        sys.stdout.write((
+            "    Workspace    : {}\n"
+        ).format(data["workspace"]))
+        sys.stdout.write((
+            "    Label        : {}\n"
+        ).format(data["label"]))
+        sys.stdout.write((
+            "    Date         : {}\n"
+        ).format(data["registered_date"][0:16].replace("T"," ")))
+        sys.stdout.write((
+            "    Request type : {}\n"
+        ).format(get_request_type(data["request_type"])))
+        sys.stdout.write((
+            "    Stage        : {}\n"
+        ).format(get_request_stage(data["stage"])))
+
+    elif response.status_code < 500:
+        error_data = response.json()
+        if args.json == True:
+            output_json(error_data)
+            return
+
+        error_msg = "** ERROR ** - cannot remove (DELETE) batch"
+        if error_data["error"]:
+            error_msg += ": " + str(error_data["error"])
+        error_msg += "\n"
+        sys.stdout.write(bcolors.RED + error_msg + bcolors.ENDC)
+    else:
+        print_response_error(response)
 
 def do_get(args):
     ("""get <batch_id> : Retrieve a batch upload of a directory or filelist """
@@ -722,7 +878,7 @@ def do_get(args):
      """)
     ### Send the HTTP request (POST) to add a GET request to the
     ### MigrationRequests###
-    # get the request id
+    # get the batch id
     if len(args.arg):
         batch_id = int(args.arg)
     else:
@@ -738,8 +894,10 @@ def do_get(args):
     # set the user and request type data
     data = {"name" : settings.USER,
             "request_type" : "GET"}
-    # add the path and workspace - if the workspace is none then don't add
-    # in this case the HTTP API will return an error as a workspace is required
+    # add the migration_id and target_path if either have been given in the
+    # command line
+    # in this case the HTTP API will return an error as the migration_id and
+    # target_path are both required
     if batch_id:
         data["migration_id"] = batch_id
     if target_dir:
@@ -752,6 +910,10 @@ def do_get(args):
     response = requests.post(url, data=json.dumps(data), verify=settings.VERIFY)
     if response.status_code == 200:
         data = response.json()
+        if args.json == True:
+            output_json(data)
+            return
+
         sys.stdout.write((
             "{}** SUCCESS ** - retrieval (GET) requested:{}\n"
         ).format(bcolors.GREEN, bcolors.ENDC))
@@ -782,6 +944,10 @@ def do_get(args):
 
     elif response.status_code < 500:
         error_data = response.json()
+        if args.json == True:
+            output_json(error_data)
+            return
+
         error_msg = "** ERROR ** - cannot retrieve (GET) batch"
         if error_data["migration_id"]:
             error_msg += " with id " + str(error_data["migration_id"])
@@ -801,19 +967,8 @@ def do_get_files(args):
     raise NotImplementedError
 
 
-def do_delete(args):
-    """delete <batch_id> : Delete the batch with <batch_id> from the storage"""
-    raise NotImplementedError
-
-
-def list_storage():
-    """Return a list of the available external storage backends"""
-
-
-
 def do_storage(args):
     """storage : list the storage targets that batches can be written to"""
-    storage = list_storage()
     url = settings.JDMA_API_URL + "list_backends"
     response = requests.get(url, verify=settings.VERIFY)
     storage = {}
@@ -821,7 +976,7 @@ def do_storage(args):
         # parse the JSON that comes back
         data = response.json()
         if args.json == True:
-            print (data)
+            output_json(data)
             return
         for r in range(0, len(data)):
             storage[data.keys()[r]] = data[data.keys()[r]]
@@ -830,6 +985,10 @@ def do_storage(args):
         error_msg = "** ERROR ** - cannot list storage"
         try:
             error_data = response.json()
+            if args.json == True:
+                output_json(error_data)
+                return
+
             error_msg += ": " + str(error_data["error"])
         except:
             error_msg += " (" + str(response.status_code) + ")"
@@ -889,7 +1048,7 @@ def do_files(args):
     if response.status_code == 200:
         data = response.json()
         if args.json == True:
-            print (data)
+            output_json(data)
             return
         n_mig = len(data["migrations"])
         if n_mig == 0:
@@ -963,6 +1122,10 @@ def do_files(args):
         error_msg = "** ERROR ** - cannot list files"
         try:
             error_data = response.json()
+            if args.json == True:
+                output_json(error_data)
+                return
+
             error_msg += ": " + str(error_data["error"])
         except:
             error_msg += " (" + str(response.status_code) + ")"
@@ -1010,7 +1173,7 @@ def do_archives(args):
     if response.status_code == 200:
         data = response.json()
         if args.json == True:
-            print (data)
+            output_json(data)
             return
         n_mig = len(data["migrations"])
         if n_mig == 0:
@@ -1066,6 +1229,10 @@ def do_archives(args):
         error_msg = "** ERROR ** - cannot list archives"
         try:
             error_data = response.json()
+            if args.json == True:
+                output_json(error_data)
+                return
+
             error_msg += ": " + str(error_data["error"])
         except:
             error_msg += " (" + str(response.status_code) + ")"
@@ -1098,12 +1265,19 @@ def do_label(args):
         data["label"] = label
     response = requests.put(url, data=json.dumps(data), verify=settings.VERIFY)
     if response.status_code == 200:
+        if args.json == True:
+            output_json(response.json)
+            return
         sys.stdout.write((
             "{}** SUCCESS ** - label of batch {} changed to: {}{}\n"
         ).format(bcolors.GREEN, str(batch_id), label, bcolors.ENDC))
     elif response.status_code < 500:
         # print the error
         error_data = response.json()
+        if args.json == True:
+            output_json(error_data)
+            return
+
         sys.stdout.write((
             "{}** ERROR ** - cannot relabel batch {} : {}{}\n"
         ).format(bcolors.RED, str(batch_id), error_data["error"], bcolors.ENDC))
@@ -1144,7 +1318,7 @@ def main():
     command_help = "Type help <command> to get help on a specific command"
     command_choices = ["init", "email", "info", "notify", "request", "batch",
                        "put", "get", "files", "find", "label", "migrate",
-                       "archives", "get_files", "delete", "storage",
+                       "archives", "get_files", "delete", "retry", "storage",
                        "help"]
     command_text = "[" + " | ".join(command_choices) + "]"
 
@@ -1198,6 +1372,11 @@ def main():
         "-j", "--json", action="store_true", default="False",
         help=("Output JSON, rather than formatted output, for the batch, "
               "archives, files, storage and request commands.")
+    )
+    parser.add_argument(
+        "-f", "--force", action="store_true", default="False",
+        help=("Force deletion of batch, rather than prompting for user "
+              "confirmation")
     )
 
     # read the credentials file
