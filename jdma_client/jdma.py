@@ -79,9 +79,9 @@ def user_not_initialized_message():
 
 
 def print_response_error(response):
-    """Print a concise summary of the error, rather than a whole output of
+    ("""Print a concise summary of the error, rather than a whole output of
        html
-    """
+    """)
     display=False
     for il in response.content.split("\n"):
         if il == "Traceback:":
@@ -556,7 +556,7 @@ def do_batch(args):
 
 
 def list_batches(workspace=None, args=None):
-    """Called from do_batch when batch_id == None.  Lists all batches=."""
+    ("""Called from do_batch when batch_id == None.  Lists all batches=.""")
     ### Send the HTTP request (GET) to get the details of all the user's
     ### migrations.  Optionally filter on the workspace."""
 
@@ -638,6 +638,24 @@ def add_credentials(args, data):
             pass
 
 
+def read_filelist(path):
+    filelist = []
+    fh = open(path)
+    flist = fh.read()
+    # split the file and add to the data as "filelist" - add the absolute
+    # paths, though
+    flist_split = flist.split()
+    flist_split = map(str.strip, flist_split)
+
+    filelist = []
+    for f in flist_split:
+        filelist.append(os.path.abspath(f))
+    fh.close()
+    if len(filelist) == 0:
+        raise Exception("Filelist {} has no files".format(path))
+    return filelist
+
+
 def migrate_or_put(args, request_type):
     ###Send the HTTP request (POST) to indicate a directory is to be migrated.
     ###
@@ -656,22 +674,11 @@ def migrate_or_put(args, request_type):
         data["filelist"] = [current_path]
     # does the filelist exist?
     elif os.path.exists(current_path):
-        # read the filelist in and add the list of files in the filelist to the
-        # data
-        fh = open(current_path)
-        flist = fh.read()
-        # split the file and add to the data as "filelist" - add the absolute
-        # paths, though
-        flist_split = flist.split()
-        flist_split = map(str.strip, flist_split)
-
-        data["filelist"] = []
-        for f in flist_split:
-            data["filelist"].append(os.path.abspath(f))
+        # read the filelist in and add it to the data
+        data["filelist"] = read_filelist(current_path)
         # set the label to (the non absolute path of) the filelist - this may
         # be overriden later if args.label is not None
         data["label"] = args.arg
-        fh.close()
     # file or directory not found
     else:
         error_msg = "{}** ERROR ** - directory or filelist not found: {}{}\n"
@@ -749,7 +756,7 @@ def migrate_or_put(args, request_type):
             output_json(error_data)
             return
         # get the filelist name
-        if len(error_data["filelist"]) > 0:
+        if "filelist" in error_data and len(error_data["filelist"]) > 0:
             filelist = error_data["filelist"][0]
         else:
             filelist = current_path
@@ -768,24 +775,24 @@ def migrate_or_put(args, request_type):
 
 def do_put(args):
     ("""put <path>|<filelist>: Create a batch upload of the current """
-     """directory, or directory in <path> or a list of files.  Use --label= """
-     """to give the batch a label.  Use --storage to specify which external """
-     """storage to target for the migration.  Use command list_storage to """
+     """directory, or directory in <path> or a list of files.\nUse --label= """
+     """to give the batch a label.\nUse --storage to specify which external """
+     """storage to target for the migration.  Use command storage to """
      """list all the available storage targets.""")
     migrate_or_put(args, "PUT")
 
 
 def do_migrate(args):
     ("""migrate <path>|<filelist>: Create a batch upload of the current """
-     """directory, or directory in <path> or a list of files.  Use --label= """
-     """to give the batch a label.  Use --storage to specify which external """
-     """storage to target for the migration.  Use command list_storage to """
-     """list all the available storage targets.  The data in the directory """
+     """directory, or directory in <path> or a list of files.\nUse --label= """
+     """to give the batch a label.\nUse --storage to specify which external """
+     """storage to target for the migration.\nUse command storage to """
+     """list all the available storage targets.\nThe data in the directory """
      """or filelist will be deleted after the upload is completed.""")
     migrate_or_put(args, "MIGRATE")
 
 def do_delete(args):
-    """delete <batch_id> : Delete the batch with <batch_id> from the storage"""
+    ("""delete <batch_id> : Delete the batch with <batch_id> from the storage""")
     ### Send the HTTP request (POST) to add a DELETE request to the
     ### MigrationRequests###
 
@@ -873,9 +880,14 @@ def do_delete(args):
 
 def do_get(args):
     ("""get <batch_id> : Retrieve a batch upload of a directory or filelist """
-     """with the id <request_id>.  A different target directory to the """
-     """original directory can be specified with --target=.
-     """)
+     """with the id <request_id>.\nA different target directory to the """
+     """original directory can be specified with --target=. """
+     """\nget <batch_id> <filelist> : Retrieve a (subset) list of files """
+     """from a batch with <batch_id>.\n<filelist> is the name of a file """
+     """containing a list of filenames to retrieve.\nThe filenames in the """
+     """filelist must be the relative path, as obtained by """
+     """--simple files <batch_id>."""
+    )
     ### Send the HTTP request (POST) to add a GET request to the
     ### MigrationRequests###
     # get the batch id
@@ -883,6 +895,11 @@ def do_get(args):
         batch_id = int(args.arg)
     else:
         batch_id = None
+
+    if len(args.opts):
+        filelist = args.opts
+    else:
+        filelist = None
 
     # get the target directory if any
     if args.target:
@@ -902,7 +919,8 @@ def do_get(args):
         data["migration_id"] = batch_id
     if target_dir:
         data["target_path"] = target_dir
-
+    if filelist:
+        data["filelist"] = read_filelist(filelist)
     # add the credentials to the request
     add_credentials(args, data)
 
@@ -959,16 +977,8 @@ def do_get(args):
         print_response_error(response)
 
 
-def do_get_files(args):
-    ("""get_files <batch_id> <filelist> : Retrieve a (subset) list of files """
-     """from a batch with <batch_id>.  <filelist> is the name of a file """
-     """containing a list of filenames to retrieve.  The filenames in the """
-     """filelist must be the full path, as obtained by list <batch_id>.""")
-    raise NotImplementedError
-
-
 def do_storage(args):
-    """storage : list the storage targets that batches can be written to"""
+    ("""storage : list the storage targets that batches can be written to.""")
     url = settings.JDMA_API_URL + "list_backends"
     response = requests.get(url, verify=settings.VERIFY)
     storage = {}
@@ -1011,7 +1021,9 @@ def do_storage(args):
 
 
 def do_files(args):
-    """files <batch_id> : List the original paths of files in a batch."""
+    ("""files <batch_id> : List the original paths of files in a batch.\n"""
+     """Use --simple option to produce a simply formatted list which can be """
+     """used in conjunction with the get command to get a subset of the batch.""")
     ###Send the HTTP request (GET) to list the files in a Migration###
     # get the batch id if any
     if len(args.arg):
@@ -1062,15 +1074,16 @@ def do_files(args):
             error_msg += bcolors.ENDC + "\n"
             sys.stdout.write(error_msg)
         else:
-            # print the header
-            sys.stdout.write(bcolors.MAGENTA)
-            sys.stdout.write((
-                "{:>5} {:<12} {:<12} {:<12} {:<18} {:<64} {:>8}"
-            ).format("b.id", "workspace", "batch label",
-                     "storage", "archive", "file", "size"))
-            if args.digest == True:
-                sys.stdout.write((" {:<64}").format("digest"))
-            sys.stdout.write("\n"+bcolors.ENDC)
+            if args.simple != True:
+                # print the header
+                sys.stdout.write(bcolors.MAGENTA)
+                sys.stdout.write((
+                    "{:>5} {:<12} {:<12} {:<12} {:<18} {:<64} {:>8}"
+                ).format("b.id", "workspace", "batch label",
+                         "storage", "archive", "file", "size"))
+                if args.digest == True:
+                    sys.stdout.write((" {:<64}").format("digest"))
+                sys.stdout.write("\n"+bcolors.ENDC)
             for r in data["migrations"]:
                 # print the migration details and the first archive details
                 n_a = len(r["archives"])
@@ -1081,6 +1094,9 @@ def do_files(args):
                     n_f = len(a["files"])
                     c_f = 0
                     for f in a["files"]:
+                        if args.simple == True:
+                            print f["path"]
+                            continue
                         fname = f["path"][-64:]
                         size = sizeof_fmt(f["size"])[0:8]
                         # fancy underlining?
@@ -1136,7 +1152,8 @@ def do_files(args):
 
 
 def do_archives(args):
-    """archives <batch_id> : List the original paths of archives in a batch."""
+    ("""archives <batch_id> : List the original paths of archives in a batch."""
+    )
     ###Send the HTTP request (GET) to list the archives in a Migration###
     # get the batch id if any
     if len(args.arg):
@@ -1243,7 +1260,8 @@ def do_archives(args):
 
 
 def do_label(args):
-    """label <batch_id> : Change the label of the batch with <batch_id>."""
+    ("""label <batch_id> : Change the label of the batch with <batch_id>."""
+    )
     ###Send the HTTP request (PUT) to change a label of a migration.###
     # get batch id if any
     if len(args.arg):
@@ -1286,7 +1304,8 @@ def do_label(args):
 
 
 def read_credentials_file():
-    """Read in the credentials file.  It is JSON formatted"""
+    ("""Read in the credentials file.  It is JSON formatted"""
+    )
     # path is in user directory
     user_home = os.environ["HOME"]
 
@@ -1318,7 +1337,7 @@ def main():
     command_help = "Type help <command> to get help on a specific command"
     command_choices = ["init", "email", "info", "notify", "request", "batch",
                        "put", "get", "files", "find", "label", "migrate",
-                       "archives", "get_files", "delete", "retry", "storage",
+                       "archives", "delete", "retry", "storage",
                        "help"]
     command_text = "[" + " | ".join(command_choices) + "]"
 
@@ -1333,6 +1352,9 @@ def main():
     )
     parser.add_argument(
         "arg", help="Argument to the command", default="", nargs="?"
+    )
+    parser.add_argument(
+        "opts", help="Options for the command", default="", nargs="?"
     )
     parser.add_argument(
         "-e", "--email", action="store", default="",
@@ -1354,24 +1376,27 @@ def main():
         "-s", "--storage", action="store", default="default",
         help=(
             "Specify external storage to use for migration.  Use {}"
-            "list_migration{} to list the available storage targets.  Default "
+            "storage{} to list the available storage targets.  Default "
             "is given in the config file ~/.jdma.json."
         ).format(bcolors.BOLD, bcolors.ENDC)
     )
     parser.add_argument(
         "-n", "--limit", action="store", default="0",
-        help=("Limit the number of files output when using the list_files or"
-              " list_archives command.")
+        help=("Limit the number of files output when using the files or"
+              " archives command.")
     )
     parser.add_argument(
         "-d", "--digest", action="store_true", default="False",
-        help=("Show the SHA256 digest when using the list_files or "
-              " list_archives command.")
+        help=("Show the SHA256 digest when using the files or "
+              " archives command.")
     )
     parser.add_argument(
         "-j", "--json", action="store_true", default="False",
-        help=("Output JSON, rather than formatted output, for the batch, "
-              "archives, files, storage and request commands.")
+        help=("Output JSON, rather than formatted output, for all commands.")
+    )
+    parser.add_argument(
+        "-t", "--simple", action="store_true", default="False",
+        help=("Output simple listings for files and archives commands.")
     )
     parser.add_argument(
         "-f", "--force", action="store_true", default="False",
@@ -1385,13 +1410,18 @@ def main():
     try:
         args = parser.parse_args()
     except:
-        print ('JDMA: error: no command supplied.  Use "jdma help" to list the '
+        print ('JDMA: error: Use "jdma help" to list the '
                'commands and "jdma help <command>" to show help for a command')
         sys.exit()
 
     method = globals().get("do_" + args.cmd)
 
-    method(args)
+    try:
+        method(args)
+    except Exception as e:
+        sys.stdout.write((
+            "{}** ERROR ** - {} {}\n"
+        ).format(bcolors.RED, str(e), bcolors.ENDC))
 
 
 if __name__ == "__main__":
