@@ -649,7 +649,7 @@ def read_filelist(path):
 
     filelist = []
     for f in flist_split:
-        filelist.append(os.path.abspath(f))
+        filelist.append(f)
     fh.close()
     if len(filelist) == 0:
         raise Exception("Filelist {} has no files".format(path))
@@ -900,7 +900,6 @@ def do_get(args):
         filelist = args.opts
     else:
         filelist = None
-
     # get the target directory if any
     if args.target:
         target_dir = os.path.abspath(args.target)
@@ -959,6 +958,10 @@ def do_get(args):
         sys.stdout.write((
             "    Target       : {}\n"
         ).format(data["target_path"]))
+        if (data["filelist"]):
+            sys.stdout.write((
+                "    Filelist     : {}...\n"
+            ).format(data["filelist"][0]))
 
     elif response.status_code < 500:
         error_data = response.json()
