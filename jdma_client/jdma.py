@@ -35,8 +35,8 @@ class settings:
     user_credentials = {}
 
 
-unit_list = zip(['bytes', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB'],
-                [0, 0, 1, 1, 1, 1, 1])
+unit_list = list(zip(['bytes', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB'],
+                     [0, 0, 1, 1, 1, 1, 1]))
 
 
 def sizeof_fmt(num):
@@ -83,11 +83,12 @@ def print_response_error(response):
        html
     """)
     display=False
-    for il in response.content.split("\n"):
+    response_str = response.content.decode('utf-8')
+    for il in response_str.split("\n"):
         if il == "Traceback:":
             display=True
         if display:
-            print il
+            print(il)
             if il == "</div>":
                 display=False
 
@@ -131,7 +132,7 @@ def do_help(args):
         cmds.sort()
         print("Available commands are:")
         for cmd in cmds:
-            print "\t" + cmd
+            print ("\t" + cmd)
 
 
 def do_init(args):
@@ -526,9 +527,10 @@ def do_batch(args):
         if "external_id" in data:
             sys.stdout.write(("    External id  : {}\n"
         ).format(str(data["external_id"])))
-        sys.stdout.write((
-            "    Filelist     : {}...\n"
-        ).format(data["filelist"][0]))
+        if "filelist" in data and len(data["filelist"]) > 0:
+            sys.stdout.write((
+                "    Filelist     : {}...\n"
+            ).format(data["filelist"][0]))
         sys.stdout.write((
             "    Stage        : {}\n"
         ).format(get_batch_stage(data["stage"])))
@@ -815,7 +817,7 @@ def do_delete(args):
         prompt_message = "Do you wish to continue? [y/N] "
         # prompt user to confirm
         sys.stdout.write(bcolors.RED + prompt_message)
-        answer = raw_input()
+        answer = input()
         sys.stdout.write(bcolors.ENDC)
         if answer != "y" and answer != "Y":
             return # do nothing
@@ -871,7 +873,7 @@ def do_delete(args):
             return
 
         error_msg = "** ERROR ** - cannot remove (DELETE) batch"
-        if error_data["error"]:
+        if "error" in error_data:
             error_msg += ": " + str(error_data["error"])
         error_msg += "\n"
         sys.stdout.write(bcolors.RED + error_msg + bcolors.ENDC)
@@ -970,9 +972,9 @@ def do_get(args):
             return
 
         error_msg = "** ERROR ** - cannot retrieve (GET) batch"
-        if error_data["migration_id"]:
+        if "migration_id" in error_data:
             error_msg += " with id " + str(error_data["migration_id"])
-        if error_data["error"]:
+        if "error" in error_data:
             error_msg += ": " + str(error_data["error"])
         error_msg += "\n"
         sys.stdout.write(bcolors.RED + error_msg + bcolors.ENDC)
@@ -992,7 +994,8 @@ def do_storage(args):
             output_json(data)
             return
         for r in range(0, len(data)):
-            storage[data.keys()[r]] = data[data.keys()[r]]
+            k = list(data)
+            storage[k[r]] = data[k[r]]
 
     elif response.status_code < 500:
         error_msg = "** ERROR ** - cannot list storage"
@@ -1014,7 +1017,7 @@ def do_storage(args):
 
     if storage != {}:
         sys.stdout.write(bcolors.MAGENTA)
-        print "{:>4} {:<24} {:16}".format("", "Name", "Short ID")
+        sys.stdout.write("{:>4} {:<24} {:16}\n".format("", "Name", "Short ID"))
         sys.stdout.write(bcolors.ENDC)
         r = 0
         for k in storage:
@@ -1098,7 +1101,7 @@ def do_files(args):
                     c_f = 0
                     for f in a["files"]:
                         if args.simple == True:
-                            print f["path"]
+                            sys.stdout.write("{}\n".format(f["path"]))
                             continue
                         fname = f["path"][-64:]
                         size = sizeof_fmt(f["size"])[0:8]
@@ -1324,9 +1327,10 @@ def read_credentials_file():
         fp.close()
     except IOError:
         sys.stdout.write((
-            "{}** ERROR ** - User credentials file does not exist"
+            "{}** ERROR ** - User credentials file does not exist "
             "with path: {}{}\n"
         ).format(bcolors.RED, jdma_user_config_filename, bcolors.ENDC))
+        sys.exit(1)
     except Exception:
         sys.stdout.write((
             "{}** ERROR ** - Error in credentials file at: {}{}\n"
@@ -1419,9 +1423,11 @@ def main():
 
     method = globals().get("do_" + args.cmd)
 
-    try:
+#    try:
+    if True:
         method(args)
-    except Exception as e:
+#    except Exception as e:
+    else:
         sys.stdout.write((
             "{}** ERROR ** - {} {}\n"
         ).format(bcolors.RED, str(e), bcolors.ENDC))
