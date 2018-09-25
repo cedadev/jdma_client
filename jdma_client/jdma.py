@@ -21,7 +21,7 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 class settings:
     """Settings for the xfc command line tool."""
     # location of the jdma_control server / app
-    JDMA_SERVER_URL = "https://130.246.129.87/jdma_control"
+    JDMA_SERVER_URL = "https://172.16.149.183/jdma_control"
     # location of the test server / vagrant version
 #    JDMA_SERVER_URL = "http://192.168.51.26/jdma_control"
     JDMA_API_URL = JDMA_SERVER_URL + "/api/v1/"
