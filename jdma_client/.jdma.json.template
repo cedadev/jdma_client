@@ -5,12 +5,6 @@
             "required_credentials" : {
                 "username" : {{ et_user }}
             }
-        },
-        "objectstore": {
-            "required_credentials" : {
-                "access_key" : {{ os_access }}, 
-                "secret_key" : {{ os_secret }}
-            }
         }
     },
     "default_storage" : {{ default_storage }},
