@@ -21,14 +21,12 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 class settings:
     """Settings for the xfc command line tool."""
     # location of the jdma_control server / app
-#    JDMA_SERVER_URL = "http://0.0.0.0:8001/jdma_control"
+    JDMA_SERVER_URL = "https://130.246.129.87/jdma_control"
     # location of the test server / vagrant version
-    JDMA_SERVER_URL = "http://192.168.51.26/jdma_control"
+#    JDMA_SERVER_URL = "http://192.168.51.26/jdma_control"
     JDMA_API_URL = JDMA_SERVER_URL + "/api/v1/"
     # get the user from the environment
-#    USER = os.environ["USER"] # the USER name
-    USER = "nrmassey"
-#    USER = "mpritcha"
+    USER = os.environ["USER"] # the USER name
     # version of this software
     VERSION = "0.1"
     VERIFY = False
