@@ -6,6 +6,11 @@ for users who are logged into JASMIN and have full JASMIN accounts."""
 # Date   : 28/07/2017
 
 import sys
+# switch off warnings
+if not sys.warnoptions:
+    import warnings
+    warnings.simplefilter("ignore")
+
 import os
 import argparse
 import requests
