@@ -22,9 +22,9 @@ To install in a virtualenv, so that you can connect to the jdma-test.ceda.ac.uk 
 
 5. install a user credentials file into your home directory:
 
-  * `cp jdma_venv/src/jdma-client/jdma_client/.jdma.json.template ~/.jdma.json`
+  * `cp ~/jdma_venv/src/jdma-client/jdma_client/.jdma.json.template ~/.jdma.json`
 
-6. edit the ~/.jdma.json file:
+6. edit the `~/.jdma.json` file:
 
   * change `{{ default_storage }}` to `"elastictape"`
   * change `{{ default_gws }}` to your default groupworkspace (with "" around)
