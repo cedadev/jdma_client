@@ -15,7 +15,9 @@ setup(
                       'python_dateutil',
                       'pyOpenSSL',
                       'ndg-httpsclient',
-                      'pyasn1'
+                      'jinja2',
+                      'pyasn1',
+                      'python-ldap'
     ],
     include_package_data=True,
     license='BSD License',  # example license

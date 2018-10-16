@@ -1,7 +1,7 @@
 
 # jdma_client
 
-A command line client to access the JASMIN data migration app service on groupworkspaces on JASMIN.
+A command line client to access the JASMIN data migration app service for group workspaces on JASMIN.
 
 ### Installing in a virtualenv for beta testing on JASMIN
 
@@ -20,23 +20,20 @@ To install in a virtualenv, so that you can connect to the jdma-test.ceda.ac.uk 
 
   * `pip install -e git+https://github.com/cedadev/jdma_client#egg=jdma_client`
 
-5. install a user credentials file into your home directory:
-
-  * `cp ~/jdma_venv/src/jdma-client/jdma_client/.jdma.json.template ~/.jdma.json`
-
-6. edit the `~/.jdma.json` file:
-
-  * change `{{ default_storage }}` to `"elastictape"`
-  * change `{{ default_gws }}` to your default groupworkspace (with "" around)
-  * change `{{ et_user }}` to you elastic tape user name (with "" around)
-
-7. create your user account:
+5. create your user account:
 
   * `jdma -e neil.massey@stfc.ac.uk init`
 
-  * note: you might get the error "JDMA already initialized for this user".
-   This is because we have imported all the groupworkspace managers for elastic tape into the JDMA system already.
+  * note: you might get the error "JDMA already initialised for this user".
+   This is because we have imported all the group workspace managers for elastic tape into the JDMA system already.
 
-8. migrate some data:
+6. this will create a configuration file called `.jdma.json` in your home directory, even if you get the error message in step 5.  This configuration file contains some "best guess" defaults, based on your JASMIN login credentials and any group workspaces that you belong to.
+You can edit this file via (e.g.) `nano $HOME/.jdma.json`:
+
+  * currently `default_storage` should always be `"elastictape"`.  This may change when more storage types become available for use by JDMA.
+  * change `default_gws` to your default group workspace (with "" around)
+  * change `et_user` to your elastic tape user name (with "" around)
+
+7. migrate some data:
 
   * `jdma put <path_to_some_data>`

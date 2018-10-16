@@ -1,5 +1,6 @@
 #! /usr/bin/env python
-"""Command line tool for interacting with the JASMIN data migration app (JDMA)
+"""
+Command line tool for interacting with the JASMIN data migration app (JDMA)
 for users who are logged into JASMIN and have full JASMIN accounts."""
 
 # Author : Neil R Massey
@@ -16,23 +17,28 @@ import argparse
 import requests
 import json
 import math
+import ldap
+
+from jinja2 import Environment, FunctionLoader
 
 # switch off warnings
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-
 class settings:
-    """Settings for the xfc command line tool."""
+    """Settings for the jdma command line tool."""
     # location of the jdma_control server / app
     JDMA_SERVER_URL = "https://jdma-test.ceda.ac.uk/jdma_control"
 #    JDMA_SERVER_URL = "https://172.16.149.183/jdma_control"
+#    JDMA_SERVER_URL = "https://192.168.51.26/jdma_control"
     JDMA_API_URL = JDMA_SERVER_URL + "/api/v1/"
+    # template for the .config file
+    JDMA_CONFIG_URL = "https://raw.githubusercontent.com/cedadev/jdma_client/master/jdma_client/.jdma.json.template"
     # get the user from the environment
     USER = os.environ["USER"] # the USER name
     # version of this software
-    VERSION = "0.1"
+    VERSION = "0.2"
     VERIFY = False
     user_credentials = {}
     DEBUG = True
@@ -61,6 +67,7 @@ def output_json(json):
     json_string2 = json_string.replace("'", '"').replace('u"', '"')
     print(json_string2)
 
+
 class bcolors:
     MAGENTA = '\033[95m'
     BLUE = '\033[94m'
@@ -71,6 +78,19 @@ class bcolors:
     UNDERLINE = '\033[4m'
     INVERT = '\033[7m'
     ENDC = '\033[0m'
+
+
+def load_template_from_url(url):
+    """Load a Jinja2 template from a URL"""
+    # fetch the template from the URL as a string
+    response = requests.get(url)
+    if response.status_code != 200:
+        raise Exception(
+            "Could not fetch the configuration template from the URL {}".format(
+                url
+            )
+        )
+    return response.text
 
 
 def user_not_initialized_message():
@@ -152,8 +172,11 @@ def error_message(response, message, output_json):
 
 def do_init(args):
     ("""init <email address> : Initialise the JASMIN Data Migration App for """
-     """your JASMIN login.""")
+     """your JASMIN login.  Creates a configuration file at ~/.jdma.json. """)
     ### Send the HTTP request (POST) to initialise a user.###
+
+    # create the credentials file - this function will check whether it exists
+    create_credentials_file()
     # get the email from the args
     email = args.arg
     if args.email:
@@ -170,7 +193,7 @@ def do_init(args):
             output_json(data)
             return
         sys.stdout.write((
-              "{}** SUCCESS ** - user initiliazed with{}:\n"
+              "{}** SUCCESS ** - user initiliased with{}:\n"
               "    Username : {}\n"
               "    Email    : {}\n"
         ).format(bcolors.GREEN, bcolors.ENDC, data["name"], data["email"]))
@@ -1152,6 +1175,39 @@ def do_label(args):
         error_message(response, error_msg, args.json)
 
 
+def create_credentials_file():
+    ("""Create the credentials file.  It is JSON formatted""")
+    # get the default groupworkspace from the ldap
+    conn = ldap.initialize("ldap://homer.esc.rl.ac.uk")
+    query = "memberUid={}".format(settings.USER)
+    result = conn.search_s(
+        "OU=ceda,OU=Groups,O=hpc,DC=rl,DC=ac,DC=uk",
+        ldap.SCOPE_SUBTREE,
+        query)
+    workspace = ""
+    for r in result:
+        group = (r[1]['cn'])
+        if b"gws" in group[0]:
+            workspace = group[0][4:].decode("utf-8")
+            break
+    # check that a workspace was found for this user
+    if workspace == "":
+        raise Exception("User {} is not a member of any group workspace".format(
+            settings.USER
+        ))
+    # form the config file name
+    jdma_user_config_filename = os.environ["HOME"] + "/" + ".jdma.json"
+    if not os.path.exists(jdma_user_config_filename):
+        env = Environment(loader=FunctionLoader(load_template_from_url))
+        template = env.get_template(settings.JDMA_CONFIG_URL)
+        with open(jdma_user_config_filename, 'w') as fh:
+            fh.write(template.render(
+                et_user='"{}"'.format(settings.USER),
+                default_storage='"elastictape"',
+                default_gws='"{}"'.format(workspace)
+            ))
+
+
 def read_credentials_file():
     ("""Read in the credentials file.  It is JSON formatted"""
     )
@@ -1254,15 +1310,16 @@ def main():
               "confirmation")
     )
 
-    # read the credentials file
-    settings.user_credentials = read_credentials_file()
-
     try:
         args = parser.parse_args()
     except:
         print ('JDMA: error: Use "jdma help" to list the '
                'commands and "jdma help <command>" to show help for a command')
         sys.exit()
+
+    # read the credentials file if we are not initialising the user
+    if args.cmd != "init":
+        settings.user_credentials = read_credentials_file()
 
     method = globals().get("do_" + args.cmd)
 
