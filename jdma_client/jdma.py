@@ -17,32 +17,17 @@ import argparse
 import requests
 import json
 import math
-import ldap
 
 from jinja2 import Environment, FunctionLoader
+
+# import the jdma_lib library
+from .jdma_lib import *
+from .jdma_lib import settings as settings
 
 # switch off warnings
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-
-class settings:
-    """Settings for the jdma command line tool."""
-    # location of the jdma_control server / app
-    JDMA_SERVER_URL = "https://jdma-test.ceda.ac.uk/jdma_control"
-#    JDMA_SERVER_URL = "https://172.16.149.183/jdma_control"
-#    JDMA_SERVER_URL = "https://192.168.51.26/jdma_control"
-    JDMA_API_URL = JDMA_SERVER_URL + "/api/v1/"
-    # template for the .config file
-    JDMA_CONFIG_URL = "https://raw.githubusercontent.com/cedadev/jdma_client/master/jdma_client/.jdma.json.template"
-    # get the user from the environment
-    USER = os.environ["USER"] # the USER name
-    # version of this software
-    VERSION = "0.2"
-    VERIFY = False
-    user_credentials = {}
-    DEBUG = True
-
 
 unit_list = list(zip(['bytes', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB'],
                      [0, 0, 1, 1, 1, 1, 1]))
@@ -173,19 +158,14 @@ def error_message(response, message, output_json):
 def do_init(args):
     ("""init <email address> : Initialise the JASMIN Data Migration App for """
      """your JASMIN login.  Creates a configuration file at ~/.jdma.json. """)
-    ### Send the HTTP request (POST) to initialise a user.###
 
-    # create the credentials file - this function will check whether it exists
-    create_credentials_file()
     # get the email from the args
     email = args.arg
     if args.email:
         email = args.email
-    url = settings.JDMA_API_URL + "user"
-    data = {"name" : settings.USER}
-    if email != "":
-        data["email"] = email
-    response = requests.post(url, data=json.dumps(data), verify=settings.VERIFY)
+
+    # call the library function
+    response = create_user(settings.USER, email)
     # check the response code
     if response.status_code == 200:
         data = response.json()
@@ -204,16 +184,12 @@ def do_init(args):
 def do_email(args):
     ("""email <email address> : Set / update your email address for """
      """notifications.""")
-    ### Send the HTTP request (PUT) to update the email address of the user by
-    ### sending a PUT request.###
     # get the email from the args
     email = args.arg
     if args.email:
         email = args.email
-    url = settings.JDMA_API_URL + "user?name=" + settings.USER
-    data = {"name" : settings.USER}
-    data["email"] = email
-    response = requests.put(url, data=json.dumps(data), verify=settings.VERIFY)
+    # call the library function
+    response = update_user(settings.USER, email)
     if response.status_code == 200:
         data = response.json()
         if args.json == True:
@@ -229,10 +205,7 @@ def do_email(args):
 def do_info(args):
     ("""info : get information about you, including email address and """
      """notification setting.""")
-    ###Send the HTTP request (GET) to return information about the user###
-    url = settings.JDMA_API_URL + "user?name=" + settings.USER
-    data = {"name" : settings.USER}
-    response = requests.get(url, data=json.dumps(data), verify=settings.VERIFY)
+    response = info_user(settings.USER)
     if response.status_code == 200:
         data = response.json()
         if args.json == True:
@@ -255,81 +228,21 @@ def do_notify(args):
     ### Send the HTTP request (PUT) to switch on / off notifications for the
     ### user ###
     # first get the status of notifications
-    url = settings.JDMA_API_URL + "user?name=" + settings.USER
-    response = requests.get(url, verify=settings.VERIFY)
+    response = info_user(settings.USER)
     if response.status_code == 200:
         data = response.json()
-        if args.json == True:
-            output_json(data)
-            return
         notify = data["notify"]
         # update to inverse
-        put_data = {"name" : settings.USER,
-                    "notify": not notify}
-        response = requests.put(url, data=json.dumps(put_data),
-                                verify=settings.VERIFY)
+        response = update_user(settings.USER, notify=not notify)
         if response.status_code == 200:
             sys.stdout.write((
                 "{}** SUCCESS ** - user notifications updated to: {}{}\n"
-            ).format(bcolors.GREEN, ["off", "on"][put_data["notify"]],
+            ).format(bcolors.GREEN, ["off", "on"][not notify],
                      bcolors.ENDC))
         else:
             error_message(response, "cannot update notify for user", args.json)
     else:
         error_message(response, "cannot update notify for user", args.json)
-
-
-def get_request_type(req_type):
-    ("""Get a string from a request type integer.  See """
-     """jdma_control.models.MigrationRequest for details""")
-    request_types = ["PUT", "GET", "MIGRATE", "DELETE"]
-    return request_types[req_type]
-
-
-def get_request_stage(stage):
-    request_stages = {
-          0 : 'PUT_START',
-          1 : 'PUT_PENDING',
-          2 : 'PUT_PACK',
-          3 : 'PUTTING',
-          4 : 'VERIFY_PENDING',
-          5 : 'VERIFY_GETTING',
-          6 : 'VERIFYING',
-          7 : 'PUT_TIDY',
-          8 : 'PUT_COMPLETED',
-        100 : 'GET_START',
-        101 : 'GET_PENDING',
-        102 : 'GETTING',
-        103 : 'GET_UNPACK',
-        104 : 'GET_RESTORE',
-        105 : 'GET_TIDY',
-        106 : 'GET_COMPLETED',
-        200 : 'DELETE_START',
-        201 : 'DELETE_PENDING',
-        202 : 'DELETING',
-        203 : 'DELETE_TIDY',
-        204 : 'DELETE_COMPLETED',
-       1000 : 'FAILED'
-    }
-
-    return request_stages[stage]
-
-
-def get_batch_stage(stage):
-    batch_stages = {
-        0 : 'ON_DISK',
-        1 : 'PUTTING',
-        2 : 'ON_STORAGE',
-        3 : 'FAILED'
-    }
-    return batch_stages[stage]
-
-def get_permissions_string(p):
-    # this is unix permissions
-    is_dir = 'd'
-    dic = {'7':'rwx', '6' :'rw-', '5' : 'r-x', '4':'r--', '0': '---'}
-    perm = oct(p)[-3:]
-    return is_dir + ''.join(dic.get(x,x) for x in perm)
 
 
 def do_request(args):
@@ -1047,7 +960,7 @@ def do_files(args):
 
 
 def do_archives(args):
-    ("""archives <batch_id> : List the original paths of archives in a batch."""
+    ("""archives <batch_id> : List the archives in a batch."""
     )
     ###Send the HTTP request (GET) to list the archives in a Migration###
     # get the batch id if any
@@ -1173,70 +1086,6 @@ def do_label(args):
     else:
         error_msg = "cannot relabel batch {} for user".format(batch_id)
         error_message(response, error_msg, args.json)
-
-
-def create_credentials_file():
-    ("""Create the credentials file.  It is JSON formatted""")
-    # get the default groupworkspace from the ldap
-    conn = ldap.initialize("ldap://homer.esc.rl.ac.uk")
-    query = "memberUid={}".format(settings.USER)
-    result = conn.search_s(
-        "OU=ceda,OU=Groups,O=hpc,DC=rl,DC=ac,DC=uk",
-        ldap.SCOPE_SUBTREE,
-        query)
-    workspace = ""
-    for r in result:
-        group = (r[1]['cn'])
-        if b"gws" in group[0]:
-            workspace = group[0][4:].decode("utf-8")
-            break
-    # check that a workspace was found for this user
-    if workspace == "":
-        raise Exception("User {} is not a member of any group workspace".format(
-            settings.USER
-        ))
-    # form the config file name
-    jdma_user_config_filename = os.environ["HOME"] + "/" + ".jdma.json"
-    if not os.path.exists(jdma_user_config_filename):
-        env = Environment(loader=FunctionLoader(load_template_from_url))
-        template = env.get_template(settings.JDMA_CONFIG_URL)
-        with open(jdma_user_config_filename, 'w') as fh:
-            fh.write(template.render(
-                et_user='"{}"'.format(settings.USER),
-                default_storage='"elastictape"',
-                default_gws='"{}"'.format(workspace)
-            ))
-
-
-def read_credentials_file():
-    ("""Read in the credentials file.  It is JSON formatted"""
-    )
-    # path is in user directory
-    user_home = os.environ["HOME"]
-
-    # add the config file name
-    jdma_user_config_filename = user_home + "/" + ".jdma.json"
-
-    # open the file
-    try:
-        fp = open(jdma_user_config_filename)
-        # deserialize from the JSON
-        jdma_user_credentials = json.load(fp)
-        # close the config file
-        fp.close()
-    except IOError:
-        sys.stdout.write((
-            "{}** ERROR ** - User credentials file does not exist "
-            "with path: {}{}\n"
-        ).format(bcolors.RED, jdma_user_config_filename, bcolors.ENDC))
-        sys.exit(1)
-    except Exception:
-        sys.stdout.write((
-            "{}** ERROR ** - Error in credentials file at: {}{}\n"
-        ).format(bcolors.RED, jdma_user_config_filename, bcolors.ENDC))
-        sys.exit(1)
-
-    return jdma_user_credentials
 
 
 def main():

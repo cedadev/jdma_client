@@ -11,6 +11,7 @@ To install in a virtualenv, so that you can connect to the jdma-test.ceda.ac.uk 
 2. create a virtual environment in your home directory (or wherever you choose):
 
   * `virtualenv ~/jdma_venv`
+  * (or with python 3 on another client machine: `python3 -m venv ~/jdma_venv`)
 
 3. activate the virtual environment:
 
