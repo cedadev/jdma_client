@@ -18,11 +18,9 @@ import requests
 import json
 import math
 
-from jinja2 import Environment, FunctionLoader
-
 # import the jdma_lib library
-from .jdma_lib import *
-from .jdma_lib import settings as settings
+from jdma_client.jdma_lib import *
+from jdma_client.jdma_lib import settings as settings
 
 # switch off warnings
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
@@ -51,31 +49,6 @@ def output_json(json):
     json_string = str(json)
     json_string2 = json_string.replace("'", '"').replace('u"', '"')
     print(json_string2)
-
-
-class bcolors:
-    MAGENTA = '\033[95m'
-    BLUE = '\033[94m'
-    GREEN = '\033[92m'
-    YELLOW = '\033[93m'
-    RED = '\033[91m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-    INVERT = '\033[7m'
-    ENDC = '\033[0m'
-
-
-def load_template_from_url(url):
-    """Load a Jinja2 template from a URL"""
-    # fetch the template from the URL as a string
-    response = requests.get(url)
-    if response.status_code != 200:
-        raise Exception(
-            "Could not fetch the configuration template from the URL {}".format(
-                url
-            )
-        )
-    return response.text
 
 
 def user_not_initialized_message():
@@ -434,9 +407,9 @@ def list_batches(workspace=None, args=None):
     if workspace != None:
         url += ";workspace=" + workspace
     response = requests.get(url, verify=settings.VERIFY)
-
     if response.status_code == 200:
         data = response.json()
+        print(data)
         if args is not None and args.json == True:
             output_json(data)
             return
@@ -662,7 +635,7 @@ def do_delete(args):
             prompt_message = "Do you wish to continue? [y/N] "
             # prompt user to confirm
             sys.stdout.write(bcolors.RED + prompt_message)
-            answer = input()
+            answer = str(raw_input())
             sys.stdout.write(bcolors.ENDC)
             if answer != "y" and answer != "Y":
                 return # do nothing
@@ -1092,7 +1065,7 @@ def main():
     command_help = "Type help <command> to get help on a specific command"
     command_choices = ["init", "email", "info", "notify", "request", "batch",
                        "put", "get", "files", "find", "label", "migrate",
-                       "archives", "delete", "retry", "storage",
+                       "archives", "delete", "storage",
                        "help"]
     command_text = "[" + " | ".join(command_choices) + "]"
 
@@ -1174,6 +1147,8 @@ def main():
 
     try:
         method(args)
+    except KeyboardInterrupt:
+        sys.stdout.write(("{}\n").format(bcolors.ENDC))
     except Exception as e:
         sys.stdout.write((
             "{}** ERROR ** - {} {}\n"
