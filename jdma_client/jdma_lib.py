@@ -10,188 +10,11 @@ Requires: requests library (pip install requests)
 
 import requests
 import json
-import ldap
-import os
-import sys
-from jinja2 import Environment, FunctionLoader
-
 # switch off warnings
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
-
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-####################### Settings for the user / server etc ####################
-
-class settings:
-    """Settings for the jdma command line tool."""
-    # location of the jdma_control server / app
-    #JDMA_SERVER_URL = "https://jdma-test.ceda.ac.uk/jdma_control"
-    JDMA_SERVER_URL = "https://192.168.51.26/jdma_control"
-    JDMA_API_URL = JDMA_SERVER_URL + "/api/v1/"
-    # template for the .config file
-    JDMA_CONFIG_URL = "https://raw.githubusercontent.com/cedadev/jdma_client/master/jdma_client/.jdma.json.template"
-    # get the user from the environment
-    USER = os.environ["USER"] # the USER name
-    USER = "nrmassey"
-    # version of this software
-    VERSION = "0.2"
-    VERIFY = False
-    user_credentials = {}
-    DEBUG = True
-
-##### Lovely colours! ######
-
-class bcolors:
-    MAGENTA = '\033[95m'
-    BLUE = '\033[94m'
-    GREEN = '\033[92m'
-    YELLOW = '\033[93m'
-    RED = '\033[91m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-    INVERT = '\033[7m'
-    ENDC = '\033[0m'
-
-
-##### Jinja2 function #####
-
-def load_template_from_url(url):
-    """Load a Jinja2 template from a URL"""
-    # fetch the template from the URL as a string
-    response = requests.get(url)
-    if response.status_code != 200:
-        raise Exception(
-            "Could not fetch the configuration template from the URL {}".format(
-                url
-            )
-        )
-    return response.text
-
-##### Some helper functions to convert the numerical request types, stages #####
-##### and batch stages into strings                                        #####
-
-def get_request_type(req_type):
-    ("""Get a string from a request type integer.  See """
-     """jdma_control.models.MigrationRequest for details""")
-    request_types = ["PUT", "GET", "MIGRATE", "DELETE"]
-    return request_types[req_type]
-
-
-def get_request_stage(stage):
-    request_stages = {
-          0 : 'PUT_START',
-          1 : 'PUT_PENDING',
-          2 : 'PUT_PACK',
-          3 : 'PUTTING',
-          4 : 'VERIFY_PENDING',
-          5 : 'VERIFY_GETTING',
-          6 : 'VERIFYING',
-          7 : 'PUT_TIDY',
-          8 : 'PUT_COMPLETED',
-        100 : 'GET_START',
-        101 : 'GET_PENDING',
-        102 : 'GETTING',
-        103 : 'GET_UNPACK',
-        104 : 'GET_RESTORE',
-        105 : 'GET_TIDY',
-        106 : 'GET_COMPLETED',
-        200 : 'DELETE_START',
-        201 : 'DELETE_PENDING',
-        202 : 'DELETING',
-        203 : 'DELETE_TIDY',
-        204 : 'DELETE_COMPLETED',
-       1000 : 'FAILED'
-    }
-
-    return request_stages[stage]
-
-
-def get_batch_stage(stage):
-    batch_stages = {
-        0 : 'ON_DISK',
-        1 : 'PUTTING',
-        2 : 'ON_STORAGE',
-        3 : 'FAILED',
-        4 : 'DELETING',
-        5 : 'DELETED'
-    }
-    return batch_stages[stage]
-
-##### Helper function to convert permission numbers into string representations
-
-def get_permissions_string(p):
-    # this is unix permissions
-    is_dir = 'd'
-    dic = {'7':'rwx', '6' :'rw-', '5' : 'r-x', '4':'r--', '0': '---'}
-    perm = oct(p)[-3:]
-    return is_dir + ''.join(dic.get(x,x) for x in perm)
-
-##### Create / read the credentials file stored in ~/.jdma.json ################
-
-def create_credentials_file(name):
-    ("""Create the credentials file.  It is JSON formatted""")
-    # get the default groupworkspace from the ldap
-    conn = ldap.initialize("ldap://homer.esc.rl.ac.uk")
-    query = "memberUid={}".format(name)
-    result = conn.search_s(
-        "OU=ceda,OU=Groups,O=hpc,DC=rl,DC=ac,DC=uk",
-        ldap.SCOPE_SUBTREE,
-        query)
-    workspace = ""
-    for r in result:
-        group = (r[1]['cn'])
-        if b"gws" in group[0]:
-            workspace = group[0][4:].decode("utf-8")
-            break
-    # check that a workspace was found for this user
-    if workspace == "":
-        raise Exception("User {} is not a member of any group workspace".format(
-            name
-        ))
-    # form the config file name
-    jdma_user_config_filename = os.environ["HOME"] + "/" + ".jdma.json"
-    if not os.path.exists(jdma_user_config_filename):
-        env = Environment(loader=FunctionLoader(load_template_from_url))
-        template = env.get_template(settings.JDMA_CONFIG_URL)
-        with open(jdma_user_config_filename, 'w') as fh:
-            fh.write(template.render(
-                et_user='"{}"'.format(name),
-                default_storage='"elastictape"',
-                default_gws='"{}"'.format(workspace)
-            ))
-
-
-def read_credentials_file(user_home=""):
-    ("""Read in the credentials file.  It is JSON formatted"""
-    )
-    # path is in user directory
-    if user_home == "":
-        user_home = os.environ["HOME"]
-
-    # add the config file name
-    jdma_user_config_filename = user_home + "/" + ".jdma.json"
-
-    # open the file
-    try:
-        fp = open(jdma_user_config_filename)
-        # deserialize from the JSON
-        jdma_user_credentials = json.load(fp)
-        # close the config file
-        fp.close()
-    except IOError:
-        sys.stdout.write((
-            "{}** ERROR ** - User credentials file does not exist "
-            "with path: {}{}\n"
-        ).format(bcolors.RED, jdma_user_config_filename, bcolors.ENDC))
-        sys.exit(1)
-    except Exception:
-        sys.stdout.write((
-            "{}** ERROR ** - Error in credentials file at: {}{}\n"
-        ).format(bcolors.RED, jdma_user_config_filename, bcolors.ENDC))
-        sys.exit(1)
-
-    return jdma_user_credentials
-
+from jdma_common import *
 
 ##### User functions - interact with HTTP API to manipulate users         ######
 
@@ -209,7 +32,7 @@ def create_user(name, email=None):
                         - 403 FORBIDDEN: User already initialized
                         - 404 NOT FOUND: name not supplied in POST request
 
-                    - **json()** (`Dictionary`): information about the request,
+                    - **json()** (`Dictionary`): information about the user,
                          the possible keys are:
 
                         - **name**  (`string`): the name of the user
@@ -245,7 +68,7 @@ def update_user(name, email=None, notify=None):
                         - 200 OK: Request was successful
                         - 404 NOT FOUND: name not supplied in POST request
 
-                    - **json()** (`Dictionary`): information about the request,
+                    - **json()** (`Dictionary`): information about the user,
                          the possible keys are:
 
                         - **name**  (`string`): the name of the user
@@ -270,28 +93,27 @@ def update_user(name, email=None, notify=None):
 
 def info_user(name):
     """Get a user's information with the username: name
-       :param string name: (`required`) name of the user to create
+       :param string name: (`required`) name of the user
        :param string email: (`optional`) email address of user for notifications
        :param bool notify: (`optional`) whether the user should be notified,
        via email, of their requests completing.
 
-       :return: A HTTP Response object. The two most important elements of this
-                object are:
+       :return: A HTTP Response object. The two most important elements of this object are:
 
-                    - **status_code** (`integer`): the HTTP status code:
+            - **status_code** (`integer`): the HTTP status code:
 
-                        - 200 OK: Request was successful
-                        - 403 FORBIDDEN: User not initialized yet
-                        - 404 NOT FOUND: name not supplied in POST request
+                - 200 OK: Request was successful
+                - 403 FORBIDDEN: User not initialized yet
+                - 404 NOT FOUND: name not supplied in POST request
 
-                    - **json()** (`Dictionary`): information about the request,
-                         the possible keys are:
+            - **json()** (`Dictionary`): information about the user,
+                 the possible keys are:
 
-                        - **name**  (`string`): the name of the user
-                        - **email** (`string`): the email address of the user
-                        - **notify** (`bool`): whether to notify the user
-                        - **error** (`string`): information about the error, if
-                        one occurred
+                - **name**  (`string`): the name of the user
+                - **email** (`string`): the email address of the user
+                - **notify** (`bool`): whether to notify the user
+                - **error** (`string`): information about the error, if
+                one occurred
 
        :rtype: `requests.Response <http://docs.python-requests.org/en/master/api/#requests.Response>`_
     """
@@ -302,3 +124,263 @@ def info_user(name):
 
 
 ##### Request functions - interact with HTTP API to manipulate requests   ######
+
+def get_request(name, req_id=None):
+    """Get a list of a user's requests or the details of a single request.
+       :param string name: (`required`) name of the user.
+       :param integer req_id: (`optional`) request id to list.  If `none` then get all of the user's requests.
+
+       :return: A HTTP Response object. The two most important elements of this object are:
+
+            - **status_code** (`integer`): the HTTP status code:
+
+                - 200 OK: Request was successful
+                - 404 NOT FOUND: request id was not found (for the user)
+
+            - **json()** (`Dictionary`): information about the request (or a list of Dictionaries), the possible keys are:
+
+                - **request_id** (`integer`): the unique request id
+                - **user** (`string`): the name of the user that the request belongs to
+                - **request_type** (`string`): one of GET|PUT|MIGRATE|DELETE
+                - **migration_id** (`integer`): the batch id / migration id that the request refers to
+                - **migration_label** (`string`): the label of the batch / migration
+                - **workspace** (`string`): the workspace that the migration belongs to
+                - **storage** (`string`): the storage system the migration resides on
+                - **stage** (`string`): the stage of the request, see documentation
+                - **date** (`date`): the time and date the request was made
+                - **filelist** (`filelist`): the list of files in the request for GET|PUT|MIGRATE
+                - **error** (`string`): information about the error, if one occurred
+
+       :rtype: `requests.Response <http://docs.python-requests.org/en/master/api/#requests.Response>`_
+    """
+    url = settings.JDMA_API_URL + "request?name=" + name
+    if req_id != None:
+        url += ";request_id=" + str(req_id)
+    # send the request
+    response = requests.get(url, verify=settings.VERIFY)
+    return response
+
+
+def get_batch(name, batch_id=None, workspace=None):
+    """Get a list of a user's migrations / batches or the details of a single batch.
+       :param string name: (`required`) name of the user.
+       :param integer batch_id: (`optional`) batch id to list.  If `none` then get all of the users' batches.
+       :param string workspace: (`optional`) workspace to list batches for.  If `none` then list batch(es) for all of the users' workspaces.
+
+       :return: A HTTP Response object. The two most important elements of this object are:
+
+            - **status_code** (`integer`): the HTTP status code:
+
+                - 200 OK: Request was successful
+                - 404 NOT FOUND: batch id was not found (for the user)
+
+            - **json()** (`Dictionary`): information about the batch (or a list of Dictionaries), the possible keys are:
+
+                - **migration_id** (`integer`) batch / migration ID.
+                - **user** (`string`) the name of the user that the batch belongs to.
+                - **workspace** (`string`) the workspace the batch belongs to
+                - **label** (`string`) the label for the batch
+                - **stage** (`string`) the stage of the migration / batch
+                - **storage** (`string`) the external storage the batch is on
+                - **external_id** (`string`) the unique id of the batch on the external storage
+                - **registered_date** (`string`) the date the batch was uploaded
+    """
+    # send the HTTP request
+    url = settings.JDMA_API_URL + "migration?name=" + name
+    if batch_id != None:
+        url += ";migration_id=" + str(batch_id)
+    if workspace != None:
+        url += ";workspace=" + workspace
+    response = requests.get(url, verify=settings.VERIFY)
+    return response
+
+
+def get_storage():
+    """Get a list of storage backends.
+       :return: A HTTP Response object. The two most important elements of this object are:
+
+            - **status_code** (`integer`): the HTTP status code:
+
+                - 200 OK: Request was successful
+                - 404 NOT FOUND: URL not found
+
+            - **json()** (`Dictionary`): a Dictionary of backends, the format is:
+
+                - **key** (`integer`) the numeric id of the storage backend
+                - **value** (`string`) the name of the backend
+    """
+    url = settings.JDMA_API_URL + "list_backends"
+    response = requests.get(url, verify=settings.VERIFY)
+    return response
+
+
+def get_files(name, batch_id=None, workspace=None, limit=0, digest=0):
+    """Get a list of files that belong to a batch.
+       :param string name: (`required`) name of the user to get files for.
+       :param integer batch_id: (`optional`) batch id to list files for.  If `none` then get all of the users' files.
+       :param string workspace: (`optional`) workspace to list files for.  If `none` then list files for all of the users' workspaces.
+       :param integer limit: (`optional`) limit the number of files returned.
+       :param integer digest: (`optional`) output the digest (checksum) for each file.
+
+       :return: A HTTP Response object. The two most important elements of this object are:
+
+            - **status_code** (`integer`): the HTTP status code:
+
+                - 200 OK: Request was successful
+                - 404 NOT FOUND: batch id was not found (for the user)
+
+            - **json()** (`List`): a list of migrations, each one containing a Dictionary, the format is:
+
+                - **migration_id** (`integer`) the unique ID of the batch / migration
+                - **user** (`string`) the user the batch belongs to
+                - **workspace** (`string`) the workspace the batch resides in
+                - **label** (`string`) the batch label
+                - **storage** (`string`) the external storage the batch resides on
+                - **archives** (`list of dictionaries`) a list of archives that makes up the batch, each entry in the list is a dictionary, the format of which is:
+
+                    - **archive_id** (`string`) the unique ID of the archive
+                    - **pk** (`integer`) the numeric ID of the archive
+                    - **size** (`integer`) the total size of the archive in bytes
+                    - **limit** (`integer`) the limit of the returned number of files
+                    - **digest** (`string`) the SHA256 digest (checksum) of the total archive (if packed)
+                    - **files** (`list of dictionaries`) a list of files that make up the archive.  Each entry is a dictionary, the format of which is:
+
+                        - **pk** (`integer`) the numeric ID of the file
+                        - **path** (`string`) the full, original path of the file
+                        - **size** (`integer`) the size of the file, in bytes
+                        - **digest** (`string`) the SH256 digest (checksum) of the file
+    """
+
+    url = settings.JDMA_API_URL + "file?name=" + settings.USER
+    if batch_id is not None:
+        url += ";migration_id=" + str(batch_id)
+    if workspace is not None:
+        url += ";workspace=" + workspace
+
+    # add the limit (the number of files output)
+    url += ";limit=" + str(limit)
+    # add whether to list the digest or not
+    url += ";digest="+ str(digest)
+    # do the request (POST)
+    response = requests.get(url, verify=settings.VERIFY)
+    return response
+
+
+def get_archives(name, batch_id=None, workspace=None, limit=0, digest=0):
+    """Get a list of archives that are in a batch / migration
+       :param string name: (`required`) name of the user to get archives for.
+       :param integer batch_id: (`optional`) batch id to list archives for.  If `none` then get all of the users' archives.
+       :param string workspace: (`optional`) workspace to list archives for.  If `none` then list archives for all of the users' workspaces.
+       :param integer limit: (`optional`) limit the number of archives returned.
+       :param integer digest: (`optional`) output the digest (checksum) for each archive.
+
+       :return: A HTTP Response object. The two most important elements of this object are:
+
+            - **status_code** (`integer`): the HTTP status code:
+
+                - 200 OK: Request was successful
+                - 404 NOT FOUND: batch id was not found (for the user)
+
+            - **json()** (`List`): a list of migrations, each one containing a Dictionary, the format is:
+
+                - **migration_id** (`integer`) the unique ID of the batch / migration
+                - **user** (`string`) the user the batch belongs to
+                - **workspace** (`string`) the workspace the batch resides in
+                - **label** (`string`) the batch label
+                - **storage** (`string`) the external storage the batch resides on
+                - **archives** (`list of dictionaries`) a list of archives that makes up the batch, each entry in the list is a dictionary, the format of which is:
+
+                    - **archive_id** (`string`) the unique ID of the archive
+                    - **pk** (`integer`) the numeric ID of the archive
+                    - **size** (`integer`) the total size of the archive in bytes
+                    - **limit** (`integer`) the limit of the returned number of files
+                    - **digest** (`string`) the SHA256 digest (checksum) of the total archive (if packed)
+    """
+    url = settings.JDMA_API_URL + "archive?name=" + settings.USER
+    if batch_id:
+        url += ";migration_id=" + str(batch_id)
+    if workspace:
+        url += ";workspace=" + workspace
+
+    # add the limit (the number of files output)
+    url += ";limit=" + str(limit)
+    # add whether to list the digest or not
+    url += ";digest=" + str(digest)
+    # do the request (POST)
+    response = requests.get(url, verify=settings.VERIFY)
+
+    return response
+
+
+def put_files(name, workspace=None, filelist=[], label=None, request_type=None,
+              storage=None, credentials=None):
+    """Put a list of files to a storage backend.
+       :param string name: (`required`) name of the user to get archives for.
+       :param string workspace: (`optional`) workspace to put files to.
+       :param list[`string`] filelist: (`optional`) list of files to put to storage.  Absolute paths must be used.
+       :param string label: (`optional`) user label to give to the batch.  If omitted a default will be used.
+       :param string request_type: (`optional`) request type for putting files to storage.  Can be either `PUT`, which is non-destructive, or `MIGRATE` which will delete the source files after a successfull migration.
+       :param string storage: (`optional`) the storage backend to put the files to.  e.g. `objecstore` or `elastictape`.
+       :param Dictionary[`string`] credentials (`optional`) value:key pairs of credentials required by backend and groupworkspace.
+    """
+    # build the URL
+    url = settings.JDMA_API_URL + "request"
+
+    # set the data
+    data = {"name" : name,
+            "workspace" : workspace,
+            "filelist" : filelist,
+            "label" : label,
+            "request_type" : request_type,
+            "storage" : storage,
+            "credentials" : credentials}
+
+    # do the request (POST)
+    response = requests.post(url, data=json.dumps(data), verify=settings.VERIFY)
+    return response
+
+
+def delete_batch(name, batch_id=None, storage=None, credentials=None):
+    """Delete a single batch from a storage backend.
+       :param string name: (`required`) name of the user to get archives for.
+       :param integer batch_id: (`required`) unique id of the batch / migration
+       :param Dictionary[`string`] credentials (`optional`) value:key pairs of credentials required by backend and groupworkspace.
+    """
+    # use the same POST URL as GET and PUT
+    url = settings.JDMA_API_URL + "request"
+    # set the user and request type data
+    data = {"name" : name,
+            "request_type" : "DELETE",
+            "migration_id" : batch_id,
+            "storage" : storage,
+            "credentials" : credentials}
+    # do the request (POST)
+    response = requests.post(url, data=json.dumps(data), verify=settings.VERIFY)
+
+    return response
+
+
+def get_files(name, batch_id=None, filelist=[], target_dir=None,
+              credentials=None):
+    """Download files from a storage backend.
+       :param string name: (`required`) name of the user to get archives for.
+       :param integer batch_id: (`required`) unique id of the batch / migration
+       :param list[`string`] filelist: (`optional`) list of files to put to storage.  Absolute paths must be used.
+       :param string target_dir: (`optional`) path to download the files to.
+       :param Dictionary[`string`] credentials (`optional`) value:key pairs of credentials required by backend and groupworkspace.
+    """
+    # use the same POST URL as DELETE and PUT
+    url = settings.JDMA_API_URL + "request"
+
+    data = {"name" : name,
+            "request_type" : "GET",
+            "migration_id" : batch_id,
+            "target_path" : target_dir,
+            "credentials" : credentials}
+    # Only add filelist if non-empty
+    if filelist != []:
+        data["filelist"] = filelist
+    # do the request (POST)
+    response = requests.post(url, data=json.dumps(data), verify=settings.VERIFY)
+
+    return response
