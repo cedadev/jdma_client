@@ -343,7 +343,7 @@ def put_files(name, workspace=None, filelist=[], label=None, request_type=None,
 def delete_batch(name, batch_id=None, storage=None, credentials=None):
     """Delete a single batch from a storage backend.
        :param string name: (`required`) name of the user to get archives for.
-       :param integer batch_id: (`required`) unique id of the batch / migration
+       :param integer batch_id: (`optional`) unique id of the batch / migration
        :param Dictionary[`string`] credentials (`optional`) value:key pairs of credentials required by backend and groupworkspace.
     """
     # use the same POST URL as GET and PUT
@@ -364,7 +364,7 @@ def get_files(name, batch_id=None, filelist=[], target_dir=None,
               credentials=None):
     """Download files from a storage backend.
        :param string name: (`required`) name of the user to get archives for.
-       :param integer batch_id: (`required`) unique id of the batch / migration
+       :param integer batch_id: (`optional`) unique id of the batch / migration
        :param list[`string`] filelist: (`optional`) list of files to put to storage.  Absolute paths must be used.
        :param string target_dir: (`optional`) path to download the files to.
        :param Dictionary[`string`] credentials (`optional`) value:key pairs of credentials required by backend and groupworkspace.
@@ -383,4 +383,22 @@ def get_files(name, batch_id=None, filelist=[], target_dir=None,
     # do the request (POST)
     response = requests.post(url, data=json.dumps(data), verify=settings.VERIFY)
 
+    return response
+
+
+def modify_batch(name, batch_id=None, label=None):
+    """Modify the details of a batch.  Currently limited to changing the label
+       :param string name: (`required`) name of the user to get archives for.
+       :param integer batch_id: (`required`) unique id of the batch / migration
+       :param string label: (`optional`) new batch label
+    """
+    # PUT URL for migration
+    url = settings.JDMA_API_URL + "migration/?name=" + settings.USER
+    if batch_id:
+        url += ";migration_id=" + str(batch_id)
+    data = {}
+    if label:
+        data["label"] = label
+    # do the request (PUT)
+    response = requests.put(url, data=json.dumps(data), verify=settings.VERIFY)
     return response

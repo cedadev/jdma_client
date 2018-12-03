@@ -14,16 +14,11 @@ if not sys.warnoptions:
 
 import os
 import argparse
-import requests
 import json
 
 # import the jdma_lib library
 from jdma_client.jdma_lib import *
 from jdma_client.jdma_common import *
-
-# switch off warnings
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 # definitions for commands
 
@@ -912,14 +907,12 @@ def do_label(args):
         label = args.label
     else:
         label = None
-
-    url = settings.JDMA_API_URL + "migration/?name=" + settings.USER
-    if batch_id != None:
-        url += ";migration_id=" + str(batch_id)
-    data = {}
-    if label:
-        data["label"] = label
-    response = requests.put(url, data=json.dumps(data), verify=settings.VERIFY)
+    # call the library function
+    response = modify_batch(
+        name = settings.USER,
+        batch_id = batch_id,
+        label = label
+    )
     if response.status_code == 200:
         if args.json == True:
             output_json(response.json)
