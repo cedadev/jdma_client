@@ -23,7 +23,7 @@ class settings:
     VERIFY = False
     user_credentials = {}
     DEBUG = True
-
+    
 ##### Lovely colours! ######
 
 class bcolors:

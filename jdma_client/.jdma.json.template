@@ -9,4 +9,5 @@
     },
     "default_storage" : {{ default_storage }},
     "default_gws" : {{ default_gws }}
+    ""
 }

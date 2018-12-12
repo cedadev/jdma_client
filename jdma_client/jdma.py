@@ -23,7 +23,7 @@ from jdma_client.jdma_common import *
 # definitions for commands
 
 def do_help(args):
-    """help <command> : get help for a command"""
+    """**help** *<command>* : get help for a command."""
     if len(args.arg):
         method = globals().get("do_" + args.arg)
         if method != None:
@@ -48,8 +48,8 @@ def do_help(args):
 
 
 def do_init(args):
-    ("""init <email address> : Initialise the JASMIN Data Migration App for """
-     """your JASMIN login.  Creates a configuration file at ~/.jdma.json. """)
+    ("""**init** *<email address>* : Initialise the JASMIN Data Migration App for """
+     """your JASMIN login.  Creates a configuration file at ``~/.jdma.json``.""")
 
     # get the email from the args
     email = args.arg
@@ -74,7 +74,7 @@ def do_init(args):
 
 
 def do_email(args):
-    ("""email <email address> : Set / update your email address for """
+    ("""**email** *<email address>* : Set / update your email address for """
      """notifications.""")
     # get the email from the args
     email = args.arg
@@ -95,7 +95,7 @@ def do_email(args):
 
 
 def do_info(args):
-    ("""info : get information about you, including email address and """
+    ("""**info** : get information about you, including email address and """
      """notification setting.""")
     response = info_user(settings.USER)
     if response.status_code == 200:
@@ -115,7 +115,7 @@ def do_info(args):
 
 
 def do_notify(args):
-    ("""notify : Switch on / off email notifications of the completion of """
+    ("""**notify** : Switch on / off email notifications of the completion of """
      """GET | PUT | MIGRATE requests.  Default is on.""")
     ### Send the HTTP request (PUT) to switch on / off notifications for the
     ### user ###
@@ -138,7 +138,7 @@ def do_notify(args):
 
 
 def do_request(args):
-    ("""request <request_id> : List all requests, or the details of a """
+    ("""**request** *<request_id>* : List all requests, or the details of a """
      """particular request with <request_id>.""")
     ###Send the HTTP request (GET) to get the details about a single request.
     # determine whether to list one request or all
@@ -173,10 +173,10 @@ def do_request(args):
             "    Batch id     : {}\n"
         ).format(str(data["migration_id"])))
         sys.stdout.write("    Workspace    : {}\n".format(data["workspace"]))
-        if "migration_label" in data:
+        if "label" in data:
             sys.stdout.write((
                 "    Batch label  : {}\n"
-            ).format(data["migration_label"]))
+            ).format(data["label"]))
         if "storage" in data:
             sys.stdout.write("    Ex. storage  : {}\n".format(data["storage"]))
         if "date" in data:
@@ -218,7 +218,7 @@ def list_requests(data):
                 get_request_type(r["request_type"]),
                 r["migration_id"],
                 r["workspace"],
-                r["migration_label"][0:16],
+                r["label"][0:16],
                 r["storage"][0:16],
                 r["date"][0:16].replace("T"," "),
                 get_request_stage(r["stage"]))+"\n"
@@ -264,8 +264,8 @@ def display_batch(data):
 
 
 def do_batch(args):
-    ("""batch <batch_id> : List all batches, or all the details of a """
-     """particular batch with <batch_id>.""")
+    ("""**batch** *<batch_id>* : List all batches, or all the details of a """
+     """particular batch with *<batch_id>*.""")
     ### Send the HTTP request (GET) to get the details of a single migration
     ### for the user.
     ### Optionally filter on the workspace.
@@ -388,7 +388,7 @@ def migrate_or_put(args, request_type):
     # get the credentials for the request
     storage, credentials = get_credentials(args.storage)
     # call the library function to start the migration or put
-    response = put_files(
+    response = upload_files(
         name=settings.USER,
         workspace=workspace,
         filelist=filelist,
@@ -454,28 +454,26 @@ def migrate_or_put(args, request_type):
 
 
 def do_put(args):
-    ("""put <path>|<filelist>: Create a batch upload of the current """
-     """directory, or directory in <path> or a list of files.\nUse --label= """
-     """to give the batch a label.\nUse --storage to specify which external """
-     """storage to target for the migration.  Use command storage to """
+    ("""**put** *<path>|<filelist>*: Create a batch upload of the current """
+     """directory, or directory in *<path>* or a list of files.\nUse *--label=* """
+     """to give the batch a label.\nUse *--storage* to specify which external """
+     """storage to target for the migration.  Use command **storage** to """
      """list all the available storage targets.""")
     migrate_or_put(args, "PUT")
 
 
 def do_migrate(args):
-    ("""migrate <path>|<filelist>: Create a batch upload of the current """
-     """directory, or directory in <path> or a list of files.\nUse --label= """
-     """to give the batch a label.\nUse --storage to specify which external """
-     """storage to target for the migration.\nUse command storage to """
+    ("""**migrate** *<path>|<filelist>*: Create a batch upload of the current """
+     """directory, or directory in *<path>* or a list of files.\nUse *--label=* """
+     """to give the batch a label.\nUse *--storage* to specify which external """
+     """storage to target for the migration.\nUse command **storage** to """
      """list all the available storage targets.\nThe data in the directory """
      """or filelist will be deleted after the upload is completed.""")
     migrate_or_put(args, "MIGRATE")
 
 def do_delete(args):
-    ("""delete <batch_id> : Delete the batch with <batch_id> from the storage""")
-    ### Send the HTTP request (POST) to add a DELETE request to the
-    ### MigrationRequests###
-
+    ("""**delete** *<batch_id>* : Delete the batch with *<batch_id>* from the
+    storage""")
     # get the batch id
     if len(args.arg):
         batch_id = int(args.arg)
@@ -556,14 +554,14 @@ def do_delete(args):
         error_message(response, error_msg, args.json)
 
 def do_get(args):
-    ("""get <batch_id> : Retrieve a batch upload of a directory or filelist """
-     """with the id <request_id>.\nA different target directory to the """
-     """original directory can be specified with --target=. """
-     """\nget <batch_id> <filelist> : Retrieve a (subset) list of files """
-     """from a batch with <batch_id>.\n<filelist> is the name of a file """
+    ("""**get** *<batch_id>* : Retrieve a batch upload of a directory or filelist """
+     """with the id *<request_id>*.\nA different target directory to the """
+     """original directory can be specified with *--target=*. """
+     """\n\n**get** *<batch_id>* *<filelist>* : Retrieve a (subset) list of files """
+     """from a batch with *<batch_id>*.\n*<filelist>* is the name of a file """
      """containing a list of filenames to retrieve.\nThe filenames in the """
      """filelist must be the relative path, as obtained by """
-     """--simple files <batch_id>."""
+     """``jdma --simple files <batch_id>``."""
     )
     ### Send the HTTP request (POST) to add a GET request to the
     ### MigrationRequests###
@@ -593,7 +591,7 @@ def do_get(args):
     storage, credentials = get_credentials(args.storage)
 
     # do the request
-    response = get_files(
+    response = download_files(
         name=settings.USER,
         batch_id=batch_id,
         filelist=filelist,
@@ -648,7 +646,7 @@ def do_get(args):
 
 
 def do_storage(args):
-    ("""storage : list the storage targets that batches can be written to.""")
+    ("""**storage** : list the storage targets that batches can be written to.""")
     response = get_storage()
     storage = {}
     if response.status_code == 200:
@@ -678,9 +676,9 @@ def do_storage(args):
 
 
 def do_files(args):
-    ("""files <batch_id> : List the original paths of files in a batch.\n"""
-     """Use --simple option to produce a simply formatted list which can be """
-     """used in conjunction with the get command to get a subset of the batch.""")
+    ("""**files** *<batch_id>* : List the original paths of files in a batch.\n"""
+     """Use the *--simple* option to produce a simply formatted list which can be """
+     """used in conjunction with the **get** command to get a subset of the batch.""")
     ###Send the HTTP request (GET) to list the files in a Migration###
     # get the batch id if any
     if len(args.arg):
@@ -798,7 +796,7 @@ def do_files(args):
 
 
 def do_archives(args):
-    ("""archives <batch_id> : List the archives in a batch."""
+    ("""**archives** *<batch_id>* : List the archives in a batch."""
     )
     ###Send the HTTP request (GET) to list the archives in a Migration###
     # get the batch id if any
@@ -893,7 +891,7 @@ def do_archives(args):
 
 
 def do_label(args):
-    ("""label <batch_id> : Change the label of the batch with <batch_id>."""
+    ("""**label** *<batch_id>* : Change the label of the batch with *<batch_id>*."""
     )
     ###Send the HTTP request (PUT) to change a label of a migration.###
     # get batch id if any
@@ -926,6 +924,28 @@ def do_label(args):
 
 
 def main():
+    """
+| ``-e|--email=EMAIL`` : Email address for user in the init and email commands.
+
+| ``-w|--workspace=WORKSPACE`` : Group workspace to use in the request.
+
+| ``-l|--label=LABEL`` : Label to name or update the request."
+
+| ``-r | --target`` : Optional target directory for GET."
+
+| ``-s | --storage`` : Specify external storage to use for migration.  Use command **storage** to list the available storage targets.  Default is given in the config file ``~/.jdma.json``.
+
+| ``-n | --limit`` : Limit the number of files output when using the **files** or **archives** command.
+
+| ``-d | --digest`` : Show the SHA256 digest when using the files or archives command.
+
+| ``-j | --json`` : Output JSON, rather than formatted output, for all commands.
+
+| ``-t | --simple`` : Output simple listings for files and archives commands.
+
+| ``-f | --force`` : Force deletion of batch, rather than prompting for user confirmation.
+
+    """
     command_help = "Type help <command> to get help on a specific command"
     command_choices = ["init", "email", "info", "notify", "request", "batch",
                        "put", "get", "files", "find", "label", "migrate",
