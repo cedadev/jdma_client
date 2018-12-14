@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 """
-Command line tool for interacting with the JASMIN data migration app (JDMA)
-for users who are logged into JASMIN and have full JASMIN accounts."""
+Command line tool for interacting with the joint-storage data migration app
+(JDMA) for users who are logged into JASMIN and have full JASMIN accounts."""
 
 # Author : Neil R Massey
 # Date   : 28/07/2017
@@ -48,7 +48,7 @@ def do_help(args):
 
 
 def do_init(args):
-    ("""**init** *<email address>* : Initialise the JASMIN Data Migration App for """
+    ("""**init** *<email address>* : Initialise the Joint-Storage Data Migration App for """
      """your JASMIN login.  Creates a configuration file at ``~/.jdma.json``.""")
 
     # get the email from the args
@@ -956,7 +956,7 @@ def main():
     parser = argparse.ArgumentParser(
         prog="JDMA",
         formatter_class=argparse.RawTextHelpFormatter,
-        description="JASMIN data migration app (JDMA) command line tool",
+        description="join-storage data migration app (JDMA) command line tool",
         epilog=command_help
     )
     parser.add_argument(

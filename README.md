@@ -1,7 +1,7 @@
 
 # jdma_client
 
-A command line client to access the JASMIN data migration app service for group workspaces on JASMIN.
+A command line client to access the joint-storage data migration app service for group workspaces on JASMIN.
 
 ### Installing in a virtualenv for beta testing on JASMIN
 

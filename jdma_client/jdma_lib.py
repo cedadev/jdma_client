@@ -146,6 +146,7 @@ def get_request(name, req_id=None):
                 - **workspace** (`string`): the workspace that the batch belongs to
                 - **storage** (`string`): the storage system the batch resides on
                 - **stage** (`string`): the stage of the request, see documentation
+                - **failure_reason** (`string`): why the request failed if stage==FAILED
                 - **date** (`date`): the time and date the request was made
                 - **filelist** (`filelist`): the list of files in the request for GET|PUT|MIGRATE
                 - **error** (`string`): information about the error, if one occurred

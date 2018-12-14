@@ -8,11 +8,12 @@ Welcome to jdma_client's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
+   jdma_client/intro
    jdma_client/jdma_client
    jdma_client/jdma_lib
-   jdma_client/config_file
+   jdma_client/transfer_states
+   jdma_client/configuration_file
 
 
 Indices and tables
