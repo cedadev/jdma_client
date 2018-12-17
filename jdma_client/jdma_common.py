@@ -1,5 +1,5 @@
 """Common functions for the jdma client"""
-import ldap
+import ldap3
 from jinja2 import Environment, FunctionLoader
 import os
 import sys
@@ -11,13 +11,14 @@ import math
 class settings:
     """Settings for the jdma command line tool."""
     # location of the jdma_control server / app
-    #JDMA_SERVER_URL = "https://jdma-test.ceda.ac.uk/jdma_control"
-    JDMA_SERVER_URL = "https://192.168.51.26/jdma_control"
+    JDMA_SERVER_URL = "https://jdma-test.ceda.ac.uk/jdma_control"
+#    JDMA_SERVER_URL = "https://192.168.51.26/jdma_control"
     JDMA_API_URL = JDMA_SERVER_URL + "/api/v1/"
     # template for the .config file
     JDMA_CONFIG_URL = "https://raw.githubusercontent.com/cedadev/jdma_client/master/jdma_client/.jdma.json.template"
     # get the user from the environment
-    USER = os.environ["USER"] # the USER name
+#    USER = os.environ["USER"] # the USER name
+    USER = 'nrmassey'
     # version of this software
     VERSION = "0.2"
     VERIFY = False
@@ -115,17 +116,16 @@ def get_permissions_string(p):
 def create_credentials_file(name):
     ("""Create the credentials file.  It is JSON formatted""")
     # get the default groupworkspace from the ldap
-    conn = ldap.initialize("ldap://homer.esc.rl.ac.uk")
-    query = "memberUid={}".format(name)
-    result = conn.search_s(
-        "OU=ceda,OU=Groups,O=hpc,DC=rl,DC=ac,DC=uk",
-        ldap.SCOPE_SUBTREE,
-        query)
+    server = ldap3.Server("ldap://homer.esc.rl.ac.uk")
+    base = "OU=ceda,OU=Groups,O=hpc,DC=rl,DC=ac,DC=uk"
+    query = "(memberUid={})".format(name)
+    with ldap3.Connection(server, auto_bind=True) as conn:
+        result = conn.search(base, query, attributes=['*'])
     workspace = ""
-    for r in result:
-        group = (r[1]['cn'])
-        if b"gws" in group[0]:
-            workspace = group[0][4:].decode("utf-8")
+    for r in conn.entries:
+        group = r.cn.value
+        if "gws" in group:
+            workspace = group[4:].decode("utf-8")
             break
     # check that a workspace was found for this user
     if workspace == "":

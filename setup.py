@@ -17,7 +17,7 @@ setup(
                       'ndg-httpsclient',
                       'jinja2',
                       'pyasn1',
-                      'python-ldap'
+                      'ldap3'
     ],
     include_package_data=True,
     license='BSD License',  # example license
