@@ -297,7 +297,7 @@ def do_batch(args):
             print(data)
             return
         if batch_id is None:
-            list_batches(data)
+            list_batches(data, workspace)
             return
         display_batch(data)
         return True
@@ -311,7 +311,7 @@ def do_batch(args):
         return False
 
 
-def list_batches(data):
+def list_batches(data, workspace=None):
     ("""Called from do_batch when batch_id == None.  Lists all batches=.""")
     ### Send the HTTP request (GET) to get the details of all the user's
     ### migrations.  Optionally filter on the workspace."""
