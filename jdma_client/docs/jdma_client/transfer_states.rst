@@ -138,7 +138,7 @@ FAILED state
 +--------+------------+---------------------------------------------------------------------------------+
 |``1000``|``'FAILED'``| - The request has failed. The failure reason is given by the ``request`` command|
 |        |            |   of the ``jdma`` command line client or by the ``get_request`` function of the |
-|        |            |   ``jdma_lib``                                                                  |
+|        |            |   ``jdma_lib``, in the "failure_reason" field in the returned JSON              |
 +--------+------------+---------------------------------------------------------------------------------+
 
 Batch states

@@ -443,7 +443,7 @@ def delete_batch(name, batch_id=None, storage=None, credentials=None):
 
 
 def download_files(name, batch_id=None, filelist=[], target_dir=None,
-              credentials=None):
+                   credentials=None):
     """Download files from a storage backend.
 
        :param string name: (`required`) name of the user to get archives for.
@@ -471,6 +471,7 @@ def download_files(name, batch_id=None, filelist=[], target_dir=None,
                 - 404 NOT FOUND: Batch not found
                 - 404 NOT FOUND: Target path not supplied
                 - 404 NOT FOUND: Parent of target path does not exist
+                - 404 NOT FOUND: Requested file list contains zero files that belong to batch
 
             - **json()** (`List`): a Dictionary containing information about the downloaded batch, the format is:
 

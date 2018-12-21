@@ -306,7 +306,7 @@ def do_batch(args):
         error_msg = ("cannot list batch {}").format(str(batch_id))
         if workspace != None:
             error_msg += " in workspace " + workspace
-        error_msg += " for user "
+        error_msg += " for user"
         error_message(response, error_msg, args.json)
         return False
 
@@ -587,8 +587,28 @@ def do_get(args):
     else:
         filelist = []
 
+    # get the batch so we can get the storage type and then get the credentials
+    # for the storage type
+    storage = args.storage
+    response = get_batch(
+        name=settings.USER,
+        batch_id=batch_id,
+    )
+
+    if response.status_code == 200:
+        data = response.json()
+        storage = data["storage"]
+    else:
+        error_data = response.json()
+        error_msg = "cannot retrieve (GET) batch"
+        if "migration_id" in error_data:
+            error_msg += " with id " + str(error_data["migration_id"])
+        error_msg += " for user"
+        error_message(response, error_msg, args.json)
+        return
+
     # get the credentials for the request
-    storage, credentials = get_credentials(args.storage)
+    storage, credentials = get_credentials(storage)
 
     # do the request
     response = download_files(

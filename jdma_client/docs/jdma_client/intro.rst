@@ -17,57 +17,10 @@ JDMA ​was designed with the following usability criteria in mind:
     systems, should be identical.
   - The user should not be responsible for maintaining the connection to the
     storage system in the case of asynchronous transfers.
+  - User and group ownership and permissions should be preserved and restored
+    on downloading the data
   - The user should receive notifications when the transfers are complete.
   - Users should be able to transfer data from one storage system to another
   - JDMA is only a request and query layer.  Any cataloguing of data should be
     carried out by the backend system.  So that, if JDMA fails, then the data is
     still available, independently of JDMA, from the storage backend.
-
-Glossary
---------
-
-.. _Interfaces:
-
-Interfaces to JDMA
-^^^^^^^^^^^^^^^^^^
-Using JDMA programmatically
-
-.. _Storage:
-
-Storage
-^^^^^^^
-
-.. _Workspaces:
-
-Workspaces and quotas
-^^^^^^^^^^^^^^^^^^^^^
-
-.. _Batches:
-
-Batches
-^^^^^^^
-
-.. _Archives:
-
-Archives
-^^^^^^^^
-
-.. _Files:
-
-Files
-^^^^^
-
-.. _Requests:
-
-Requests
-^^^^^^^^
-
-.. _Notification:
-
-Notifications
-^^^^^^^^^^^^^
-
-.. _DataFlow:
-
-Data flow
-^^^^^^^^^

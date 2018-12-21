@@ -12,6 +12,7 @@ JDMA documentation
    jdma_client/intro
    jdma_client/installation
    jdma_client/tutorial
+   jdma_client/glossary
    jdma_client/jdma_client
    jdma_client/jdma_lib
    jdma_client/transfer_states
