@@ -190,7 +190,7 @@ def do_request(args):
             sys.stdout.write((
                 "    Fail reason  : {}\n"
             ).format(data["failure_reason"]))
-    elif response.status_code < 500:
+    else:
         # get the reason why it failed
         message = "cannot list request {} for user".format(req_id)
         error_message(response, message, args.json)
@@ -438,18 +438,21 @@ def migrate_or_put(args, request_type):
             ).format(flist_display))
     else:
         # print the error
-        error_data = response.json()
-        # get the filelist name
-        if "filelist" in error_data and len(error_data["filelist"]) > 0:
-            filelist = error_data["filelist"][0]
-        else:
-            filelist = current_path
-        error_msg = (
-            "cannot {} filelist {}..."
-        ).format(request_type, filelist)
-        if "workspace" in error_data:
-            error_msg += " in workspace " + error_data["workspace"]
-        error_msg += " for user"
+        try:
+            error_data = response.json()
+            # get the filelist name
+            if "filelist" in error_data and len(error_data["filelist"]) > 0:
+                filelist = error_data["filelist"][0]
+            else:
+                filelist = current_path
+            error_msg = (
+                "cannot {} filelist {}..."
+            ).format(request_type, filelist)
+            if "workspace" in error_data:
+                error_msg += " in workspace " + error_data["workspace"]
+            error_msg += " for user"
+        except:
+            error_msg = ""
         error_message(response, error_msg, args.json)
 
 
@@ -488,9 +491,10 @@ def do_delete(args):
     batch_response = get_batch(name=settings.USER, batch_id=batch_id)
     # check the return
     if batch_response.status_code != 200:
-        error_msg = ("cannot list batch {}").format(str(batch_id))
+        error_msg = ("cannot delete batch {}").format(str(batch_id))
         error_msg += " for user"
-        error_message(response, error_msg, args.json)
+        error_message(batch_response, error_msg, args.json)
+        return
 
     batch_data = batch_response.json()    # don't prompt if force flag set
 
@@ -968,7 +972,7 @@ def main():
     """
     command_help = "Type help <command> to get help on a specific command"
     command_choices = ["init", "email", "info", "notify", "request", "batch",
-                       "put", "get", "files", "find", "label", "migrate",
+                       "put", "get", "files", "label", "migrate",
                        "archives", "delete", "storage",
                        "help"]
     command_text = "[" + " | ".join(command_choices) + "]"
@@ -976,7 +980,7 @@ def main():
     parser = argparse.ArgumentParser(
         prog="JDMA",
         formatter_class=argparse.RawTextHelpFormatter,
-        description="join-storage data migration app (JDMA) command line tool",
+        description="joint-storage data migration app (JDMA) command line tool",
         epilog=command_help
     )
     parser.add_argument(

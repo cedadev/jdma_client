@@ -21,7 +21,7 @@ class settings:
     VERSION = "0.2.2"
     VERIFY = False
     user_credentials = {}
-    DEBUG = True
+    DEBUG = False
 
 ##### Lovely colours! ######
 
