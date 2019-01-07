@@ -7,7 +7,6 @@ SPHINXBUILD   = sphinx-build
 SPHINXPROJ    = jdma_client
 SOURCEDIR     = .
 BUILDDIR      = _build
-GH_PAGES_SOURCES = jdma_client Makefile
 
 # Put it first so that "make" without argument is like "make help".
 help:
@@ -21,7 +20,6 @@ publish:
 	git checkout master $(GH_PAGES_SOURCES)
 	git reset HEAD
 	make html
-	mv -fv build/html/* ./
 #	rm -rf $(GH_PAGES_SOURCES) build
 	# git add -A
 	# git ci -m "Generated gh-pages for `git log master -1 --pretty=short --abbrev-commit`"
