@@ -1,0 +1,304 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Glossary &mdash; JDMA 0.2 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="JDMA 0.2 documentation" href="../index.html"/>
+        <link rel="next" title="Command Reference" href="jdma_client.html"/>
+        <link rel="prev" title="Tutorial" href="tutorial.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> JDMA
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction to JDMA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Glossary</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#interfaces-to-jdma">Interfaces to JDMA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#storage">Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#workspaces-and-quotas">Workspaces and quotas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#batches">Batches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#archives">Archives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#files">Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#requests">Requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#notifications">Notifications</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="jdma_client.html">Command Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jdma_lib.html">JDMA library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transfer_states.html">Transfer states</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration_file.html">Configuration File</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">JDMA</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Glossary</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/jdma_client/glossary.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="glossary">
+<h1>Glossary<a class="headerlink" href="#glossary" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="interfaces-to-jdma">
+<span id="interfaces"></span><h2>Interfaces to JDMA<a class="headerlink" href="#interfaces-to-jdma" title="Permalink to this headline">¶</a></h2>
+<p>JDMA offers three interfaces to interact with the JDMA server.  They are:</p>
+<ol class="arabic simple">
+<li>JDMA command line client, command name is <code class="docutils literal notranslate"><span class="pre">jdma</span></code>.  This should be used by
+most users who just wish to transfer data to JDMA from the command line.</li>
+<li>JDMA python-library, module name is <code class="docutils literal notranslate"><span class="pre">jdma_lib</span></code>.  This should be used by
+users who wish to automate their workflows.</li>
+<li>JDMA HTTP-API, available directly from the JDMA server.  This is recommended
+only for very advanced users.  Users who wish to automate workflows should use
+the <code class="docutils literal notranslate"><span class="pre">jdma_lib</span></code> python-library.</li>
+</ol>
+</div>
+<div class="section" id="storage">
+<span id="id1"></span><h2>Storage<a class="headerlink" href="#storage" title="Permalink to this headline">¶</a></h2>
+<p>JDMA has the capability of transferring user data to one or more different types
+of storage system using the same set of commands in the command-line client or
+the same calls to the python-library.  These storage systems may be Elastic
+Tape, FTP or ObjectStore.</p>
+<p>Some storage systems require the data to be packed into tarfiles.  Each tarfile
+is an <strong>archive</strong>.  Storage systems that do not require the data to be packed
+may still organise the files into archives.  These can then be thought of as
+subdirectories of the batch root directory.</p>
+</div>
+<div class="section" id="workspaces-and-quotas">
+<span id="workspaces"></span><h2>Workspaces and quotas<a class="headerlink" href="#workspaces-and-quotas" title="Permalink to this headline">¶</a></h2>
+<p>JDMA uses the concept of <strong>workspaces</strong> to group together data from users.  This
+is analogous to the groupworkspaces under JASMIN.</p>
+<p>On JASMIN, a groupworkspace
+is a portion of disk allocated for a project where collaborating users can share
+network attached storage.</p>
+<p>For JDMA, a workspace is a portion of a storage
+system that collaborating users can upload and download data from.  An important
+distinction to make is that any user who is a member of the workspace can
+download the data of any other user who is also in the workspace.</p>
+<p>Each workspace has a quota that cannot be exceeded.  This quota is for the whole
+workspace and is allocated to the workspace, not to individual members of the
+workspace.</p>
+<p>A user must be a member of a workspace before they can transfer data to that
+workspace.</p>
+</div>
+<div class="section" id="batches">
+<span id="id2"></span><h2>Batches<a class="headerlink" href="#batches" title="Permalink to this headline">¶</a></h2>
+<p>Data is arranged on the storage systems, and accounted for in JDMA, as batches.</p>
+<p>Each <code class="docutils literal notranslate"><span class="pre">put</span></code> or <code class="docutils literal notranslate"><span class="pre">migrate</span></code> request will create one batch in JDMA, and the files
+in the request will be uploaded to the storage as a batch.</p>
+<p>Subsequent <code class="docutils literal notranslate"><span class="pre">get</span></code> or <code class="docutils literal notranslate"><span class="pre">delete</span></code> requests reference the batch the user wishes to
+download or delete.</p>
+</div>
+<div class="section" id="archives">
+<span id="id3"></span><h2>Archives<a class="headerlink" href="#archives" title="Permalink to this headline">¶</a></h2>
+<p>The external storage system may split the batch into a number of archives.</p>
+<p>Some storage systems require the data to be packed into tarfiles.  Each tarfile
+is then an archive.</p>
+<p>Storage systems that do not require files to be in tarfiles may still split the
+batch into archives, so as to avoid lots of files, or a large volume of data, in
+one directory or container.  Here the archives can be thought of as
+subdirectories of the batch root directory, and the files appear in the archive
+subdirectory.</p>
+</div>
+<div class="section" id="files">
+<span id="id4"></span><h2>Files<a class="headerlink" href="#files" title="Permalink to this headline">¶</a></h2>
+<p>Each file uploaded to JDMA is contained in an archive, which are in turn
+contained in a batch.</p>
+</div>
+<div class="section" id="requests">
+<span id="id5"></span><h2>Requests<a class="headerlink" href="#requests" title="Permalink to this headline">¶</a></h2>
+<p>Users interact with the JDMA via requests.  These may be instructions to move
+data (<code class="docutils literal notranslate"><span class="pre">put</span></code>, <code class="docutils literal notranslate"><span class="pre">migrate</span></code>, <code class="docutils literal notranslate"><span class="pre">get</span></code>, <code class="docutils literal notranslate"><span class="pre">delete</span></code>) or to get information about
+the requests (<code class="docutils literal notranslate"><span class="pre">request</span></code>), the user (<code class="docutils literal notranslate"><span class="pre">info</span></code>) or the batches (<code class="docutils literal notranslate"><span class="pre">batch</span></code>)
+uploaded to JDMA.</p>
+<p>Requests to move data are put in a queue, with JDMA dealing with the requests
+on a first-come-first-served basis.  JDMA carries out the requests on behalf of
+the user and asynchronously.</p>
+</div>
+<div class="section" id="notifications">
+<span id="id6"></span><h2>Notifications<a class="headerlink" href="#notifications" title="Permalink to this headline">¶</a></h2>
+<p>Notifications send users emails when their <code class="docutils literal notranslate"><span class="pre">put</span></code>, <code class="docutils literal notranslate"><span class="pre">migrate</span></code>, <code class="docutils literal notranslate"><span class="pre">get</span></code> or
+<code class="docutils literal notranslate"><span class="pre">delete</span></code> requests have completed.</p>
+<p>Users can switch notifications on or off using the command line client.</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="jdma_client.html" class="btn btn-neutral float-right" title="Command Reference" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="tutorial.html" class="btn btn-neutral" title="Tutorial" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Centre for Environmental Data Analysis, Science and Technologies Facilities Council, UK Research and Innovation..
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/language_data.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

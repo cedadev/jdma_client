@@ -1,0 +1,913 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>JDMA library &mdash; JDMA 0.2 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="JDMA 0.2 documentation" href="../index.html"/>
+        <link rel="next" title="Transfer states" href="transfer_states.html"/>
+        <link rel="prev" title="Command Reference" href="jdma_client.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> JDMA
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction to JDMA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jdma_client.html">Command Reference</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">JDMA library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#user-functions">User functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#query-functions">Query functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#file-transfer-functions">File transfer functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="transfer_states.html">Transfer states</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration_file.html">Configuration File</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">JDMA</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>JDMA library</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/jdma_client/jdma_lib.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="jdma-library">
+<h1>JDMA library<a class="headerlink" href="#jdma-library" title="Permalink to this headline">¶</a></h1>
+<p>To enable the JDMA to be used programatically in automated workflows, a
+Python library is provided to expose the functionality of the JDMA as an API.
+The functions of the API are outlined below.</p>
+<div class="section" id="user-functions">
+<h2>User functions<a class="headerlink" href="#user-functions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="jdma_lib.create_user">
+<code class="descclassname">jdma_lib.</code><code class="descname">create_user</code><span class="sig-paren">(</span><em>name</em>, <em>email=None</em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_lib.create_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a user with the username: name</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>string</em>) – (<cite>required</cite>) name of the user to create</li>
+<li><strong>email</strong> (<em>string</em>) – (<cite>optional</cite>) email address of user for notifications</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>A HTTP Response object. The two most important elements of this object are:</p>
+<ul>
+<li><p class="first"><strong>status_code</strong> (<cite>integer</cite>): the HTTP status code:</p>
+<blockquote>
+<div><ul class="simple">
+<li>200 OK: Request was successful</li>
+<li>403 FORBIDDEN: User already initialized</li>
+<li>404 NOT FOUND: Name not supplied in POST request</li>
+<li>404 NOT FOUND: Email not supplied in POST request</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>json()</strong> (<cite>Dictionary</cite>): information about the user, the possible keys are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>name</strong>  (<cite>string</cite>): the name of the user</li>
+<li><strong>email</strong> (<cite>string</cite>): the email address of the user</li>
+<li><strong>error</strong> (<cite>string</cite>): information about the error, if one occurred</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://docs.python-requests.org/en/master/api/#requests.Response">requests.Response</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="jdma_lib.update_user">
+<code class="descclassname">jdma_lib.</code><code class="descname">update_user</code><span class="sig-paren">(</span><em>name</em>, <em>email=None</em>, <em>notify=None</em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_lib.update_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a user’s information with the username: name</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>string</em>) – (<cite>required</cite>) name of the user to modify</li>
+<li><strong>email</strong> (<em>string</em>) – (<cite>optional</cite>) email address of user for notifications</li>
+<li><strong>notify</strong> (<em>bool</em>) – (<cite>optional</cite>) whether the user should be notified, via email, of their requests completing.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>A HTTP Response object. The two most important elements of this object are:</p>
+<ul>
+<li><p class="first"><strong>status_code</strong> (<cite>integer</cite>): the HTTP status code:</p>
+<blockquote>
+<div><ul class="simple">
+<li>200 OK: Request was successful</li>
+<li>403 FORBIDDEN: User not initialised yet</li>
+<li>404 NOT FOUND: name not supplied in POST request</li>
+<li>404 NOT FOUND: email not supplied</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>json()</strong> (<cite>Dictionary</cite>): information about the user, the possible keys are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>name</strong>  (<cite>string</cite>): the name of the user</li>
+<li><strong>email</strong> (<cite>string</cite>): the email address of the user</li>
+<li><strong>notify</strong> (<cite>bool</cite>): whether to notify the user</li>
+<li><strong>error</strong> (<cite>string</cite>): information about the error, if one occurred</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><p><a class="reference external" href="http://docs.python-requests.org/en/master/api/#requests.Response">requests.Response</a></p>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="jdma_lib.info_user">
+<code class="descclassname">jdma_lib.</code><code class="descname">info_user</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_lib.info_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a user’s information with the username: name</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>string</em>) – (<cite>required</cite>) name of the user</li>
+<li><strong>email</strong> (<em>string</em>) – (<cite>optional</cite>) email address of user for notifications</li>
+<li><strong>notify</strong> (<em>bool</em>) – (<cite>optional</cite>) whether the user should be notified, via email, of their requests completing.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>A HTTP Response object. The two most important elements of this object are:</p>
+<ul>
+<li><p class="first"><strong>status_code</strong> (<cite>integer</cite>): the HTTP status code:</p>
+<blockquote>
+<div><ul class="simple">
+<li>200 OK: Request was successful</li>
+<li>403 FORBIDDEN: User not initialized yet</li>
+<li>404 NOT FOUND: Name not supplied in GET request</li>
+<li>404 NOT FOUND: User not found</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>json()</strong> (<cite>Dictionary</cite>): information about the user, the possible keys are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>name</strong>  (<cite>string</cite>): the name of the user</li>
+<li><strong>email</strong> (<cite>string</cite>): the email address of the user</li>
+<li><strong>notify</strong> (<cite>bool</cite>): whether to notify the user</li>
+<li><strong>error</strong> (<cite>string</cite>): information about the error, if one occurred</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><p><a class="reference external" href="http://docs.python-requests.org/en/master/api/#requests.Response">requests.Response</a></p>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="query-functions">
+<h2>Query functions<a class="headerlink" href="#query-functions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="jdma_lib.get_storage">
+<code class="descclassname">jdma_lib.</code><code class="descname">get_storage</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#jdma_lib.get_storage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of storage backends.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A HTTP Response object. The two most important elements of this object are:<ul>
+<li><strong>status_code</strong> (<cite>integer</cite>): the HTTP status code:<blockquote>
+<div><ul class="simple">
+<li>200 OK: Request was successful</li>
+<li>404 NOT FOUND: URL not found</li>
+</ul>
+</div></blockquote>
+</li>
+<li><strong>json()</strong> (<cite>Dictionary</cite>): a Dictionary of backends, the format is:<blockquote>
+<div><ul class="simple">
+<li><strong>key</strong> (<cite>integer</cite>) the numeric id of the storage backend</li>
+<li><strong>value</strong> (<cite>string</cite>) the name of the backend</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.python-requests.org/en/master/api/#requests.Response">requests.Response</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="jdma_lib.get_request">
+<code class="descclassname">jdma_lib.</code><code class="descname">get_request</code><span class="sig-paren">(</span><em>name</em>, <em>req_id=None</em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_lib.get_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of a user’s requests or the details of a single request.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>string</em>) – (<cite>required</cite>) name of the user.</li>
+<li><strong>req_id</strong> (<em>integer</em>) – (<cite>optional</cite>) request id to list.  If <cite>none</cite> then get all of the user’s requests.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>A HTTP Response object. The two most important elements of this object are:</p>
+<ul>
+<li><p class="first"><strong>status_code</strong> (<cite>integer</cite>): the HTTP status code:</p>
+<blockquote>
+<div><ul class="simple">
+<li>200 OK: Request was successful</li>
+<li>404 NOT FOUND: name not supplied in GET request</li>
+<li>404 NOT FOUND: request id was not found (for the user)</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>json()</strong> (<cite>Dictionary</cite>): information about the request (or a list of Dictionaries), the possible keys are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>request_id</strong> (<cite>integer</cite>): the unique request id</li>
+<li><strong>user</strong> (<cite>string</cite>): the name of the user that the request belongs to</li>
+<li><strong>request_type</strong> (<cite>string</cite>): one of GET|PUT|MIGRATE|DELETE</li>
+<li><strong>migration_id</strong> (<cite>integer</cite>): the batch id that the request refers to</li>
+<li><strong>label</strong> (<cite>string</cite>): the label of the batch</li>
+<li><strong>workspace</strong> (<cite>string</cite>): the workspace that the batch belongs to</li>
+<li><strong>storage</strong> (<cite>string</cite>): the storage system the batch resides on</li>
+<li><strong>stage</strong> (<cite>string</cite>): the stage of the request, see documentation</li>
+<li><strong>failure_reason</strong> (<cite>string</cite>): why the request failed if stage==FAILED</li>
+<li><strong>date</strong> (<cite>date</cite>): the time and date the request was made</li>
+<li><strong>filelist</strong> (<cite>filelist</cite>): the list of files in the request for GET|PUT|MIGRATE</li>
+<li><strong>error</strong> (<cite>string</cite>): information about the error, if one occurred</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><p><a class="reference external" href="http://docs.python-requests.org/en/master/api/#requests.Response">requests.Response</a></p>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="jdma_lib.get_batch">
+<code class="descclassname">jdma_lib.</code><code class="descname">get_batch</code><span class="sig-paren">(</span><em>name</em>, <em>batch_id=None</em>, <em>workspace=None</em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_lib.get_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of a user’s batches or the details of a single batch.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>string</em>) – (<cite>required</cite>) name of the user.</li>
+<li><strong>batch_id</strong> (<em>integer</em>) – (<cite>optional</cite>) batch id to list.  If <cite>none</cite> then get all of the users’ batches.</li>
+<li><strong>workspace</strong> (<em>string</em>) – (<cite>optional</cite>) workspace to list batches for.  If <cite>none</cite> then list batch(es) for all of the users’ workspaces.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>A HTTP Response object. The two most important elements of this object are:</p>
+<ul>
+<li><p class="first"><strong>status_code</strong> (<cite>integer</cite>): the HTTP status code:</p>
+<blockquote>
+<div><ul class="simple">
+<li>200 OK: Request was successful</li>
+<li>404 NOT FOUND: batch id was not found (for the user)</li>
+<li>404 NOT FOUND: workspace was not found (for the user)</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>json()</strong> (<cite>Dictionary</cite>): information about the batch (or a list of Dictionaries), the possible keys are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>migration_id</strong> (<cite>integer</cite>) batch id.</li>
+<li><strong>user</strong> (<cite>string</cite>) the name of the user that the batch belongs to.</li>
+<li><strong>workspace</strong> (<cite>string</cite>) the workspace the batch belongs to</li>
+<li><strong>label</strong> (<cite>string</cite>) the label for the batch</li>
+<li><strong>stage</strong> (<cite>string</cite>) the stage of the batch</li>
+<li><strong>storage</strong> (<cite>string</cite>) the external storage the batch is on</li>
+<li><strong>external_id</strong> (<cite>string</cite>) the unique id of the batch on the external storage</li>
+<li><strong>registered_date</strong> (<cite>string</cite>) the date the batch was uploaded</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><p><a class="reference external" href="http://docs.python-requests.org/en/master/api/#requests.Response">requests.Response</a></p>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="jdma_lib.get_files">
+<code class="descclassname">jdma_lib.</code><code class="descname">get_files</code><span class="sig-paren">(</span><em>name</em>, <em>batch_id=None</em>, <em>workspace=None</em>, <em>limit=0</em>, <em>digest=0</em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_lib.get_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of files that belong to a batch.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>string</em>) – (<cite>required</cite>) name of the user to get files for.</li>
+<li><strong>batch_id</strong> (<em>integer</em>) – (<cite>optional</cite>) batch id to list files for.  If <cite>none</cite> then get all of the users’ files.</li>
+<li><strong>workspace</strong> (<em>string</em>) – (<cite>optional</cite>) workspace to list files for.  If <cite>none</cite> then list files for all of the users’ workspaces.</li>
+<li><strong>limit</strong> (<em>integer</em>) – (<cite>optional</cite>) limit the number of files returned.</li>
+<li><strong>digest</strong> (<em>integer</em>) – (<cite>optional</cite>) output the digest (checksum) for each file.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>A HTTP Response object. The two most important elements of this object are:</p>
+<ul>
+<li><p class="first"><strong>status_code</strong> (<cite>integer</cite>): the HTTP status code:</p>
+<blockquote>
+<div><ul class="simple">
+<li>200 OK: Request was successful</li>
+<li>404 NOT FOUND: name not supplied</li>
+<li>404 NOT FOUND: batch id was not found (for the user)</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>json()</strong> (<cite>List</cite>): a list of files, each one containing a Dictionary, the format is:</p>
+<blockquote>
+<div><ul>
+<li><p class="first"><strong>migration_id</strong> (<cite>integer</cite>) the unique id of the batch</p>
+</li>
+<li><p class="first"><strong>user</strong> (<cite>string</cite>) the user the batch belongs to</p>
+</li>
+<li><p class="first"><strong>workspace</strong> (<cite>string</cite>) the workspace the batch resides in</p>
+</li>
+<li><p class="first"><strong>label</strong> (<cite>string</cite>) the batch label</p>
+</li>
+<li><p class="first"><strong>storage</strong> (<cite>string</cite>) the external storage the batch resides on</p>
+</li>
+<li><p class="first"><strong>archives</strong> (<cite>list of dictionaries</cite>) a list of archives that makes up the batch, each entry in the list is a dictionary, the format of which is:</p>
+<blockquote>
+<div><ul>
+<li><p class="first"><strong>archive_id</strong> (<cite>string</cite>) the unique ID of the archive</p>
+</li>
+<li><p class="first"><strong>pk</strong> (<cite>integer</cite>) the numeric ID of the archive</p>
+</li>
+<li><p class="first"><strong>size</strong> (<cite>integer</cite>) the total size of the archive in bytes</p>
+</li>
+<li><p class="first"><strong>limit</strong> (<cite>integer</cite>) the limit of the returned number of files</p>
+</li>
+<li><p class="first"><strong>digest</strong> (<cite>string</cite>) the SHA256 digest (checksum) of the total archive (if packed)</p>
+</li>
+<li><p class="first"><strong>files</strong> (<cite>list of dictionaries</cite>) a list of files that make up the archive.  Each entry is a dictionary, the format of which is:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>pk</strong> (<cite>integer</cite>) the numeric ID of the file</li>
+<li><strong>path</strong> (<cite>string</cite>) the full, original path of the file</li>
+<li><strong>size</strong> (<cite>integer</cite>) the size of the file, in bytes</li>
+<li><strong>digest</strong> (<cite>string</cite>) the SH256 digest (checksum) of the file</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><p><a class="reference external" href="http://docs.python-requests.org/en/master/api/#requests.Response">requests.Response</a></p>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="jdma_lib.get_archives">
+<code class="descclassname">jdma_lib.</code><code class="descname">get_archives</code><span class="sig-paren">(</span><em>name</em>, <em>batch_id=None</em>, <em>workspace=None</em>, <em>limit=0</em>, <em>digest=0</em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_lib.get_archives" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of archives that are in a batch.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>string</em>) – (<cite>required</cite>) name of the user to get archives for.</li>
+<li><strong>batch_id</strong> (<em>integer</em>) – (<cite>optional</cite>) batch id to list archives for.  If <cite>none</cite> then get all of the users’ archives.</li>
+<li><strong>workspace</strong> (<em>string</em>) – (<cite>optional</cite>) workspace to list archives for.  If <cite>none</cite> then list archives for all of the users’ workspaces.</li>
+<li><strong>limit</strong> (<em>integer</em>) – (<cite>optional</cite>) limit the number of archives returned.</li>
+<li><strong>digest</strong> (<em>integer</em>) – (<cite>optional</cite>) output the digest (checksum) for each archive.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>A HTTP Response object. The two most important elements of this object are:</p>
+<ul>
+<li><p class="first"><strong>status_code</strong> (<cite>integer</cite>): the HTTP status code:</p>
+<blockquote>
+<div><ul class="simple">
+<li>200 OK: Request was successful</li>
+<li>404 NOT FOUND: name was not supplied</li>
+<li>404 NOT FOUND: batch id was not found (for the user)</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>json()</strong> (<cite>List</cite>): a list of archives, each one containing a Dictionary, the format is:</p>
+<blockquote>
+<div><ul>
+<li><p class="first"><strong>migration_id</strong> (<cite>integer</cite>) the unique id of the batch</p>
+</li>
+<li><p class="first"><strong>user</strong> (<cite>string</cite>) the user the batch belongs to</p>
+</li>
+<li><p class="first"><strong>workspace</strong> (<cite>string</cite>) the workspace the batch resides in</p>
+</li>
+<li><p class="first"><strong>label</strong> (<cite>string</cite>) the batch label</p>
+</li>
+<li><p class="first"><strong>storage</strong> (<cite>string</cite>) the external storage the batch resides on</p>
+</li>
+<li><p class="first"><strong>archives</strong> (<cite>list of dictionaries</cite>) a list of archives that makes up the batch, each entry in the list is a dictionary, the format of which is:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>archive_id</strong> (<cite>string</cite>) the unique ID of the archive</li>
+<li><strong>pk</strong> (<cite>integer</cite>) the numeric ID of the archive</li>
+<li><strong>size</strong> (<cite>integer</cite>) the total size of the archive in bytes</li>
+<li><strong>limit</strong> (<cite>integer</cite>) the limit of the returned number of files</li>
+<li><strong>digest</strong> (<cite>string</cite>) the SHA256 digest (checksum) of the total archive (if packed)</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><p><a class="reference external" href="http://docs.python-requests.org/en/master/api/#requests.Response">requests.Response</a></p>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="file-transfer-functions">
+<h2>File transfer functions<a class="headerlink" href="#file-transfer-functions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="jdma_lib.upload_files">
+<code class="descclassname">jdma_lib.</code><code class="descname">upload_files</code><span class="sig-paren">(</span><em>name</em>, <em>workspace=None</em>, <em>filelist=[]</em>, <em>label=None</em>, <em>request_type=None</em>, <em>storage=None</em>, <em>credentials=None</em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_lib.upload_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Put a list of files to a storage backend.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>string</em>) – (<cite>required</cite>) name of the user to get archives for.</li>
+<li><strong>workspace</strong> (<em>string</em>) – (<cite>optional</cite>) workspace to put files to.</li>
+<li><strong>filelist</strong> (<em>list</em><em>[</em><em>string</em><em>]</em>) – (<cite>optional</cite>) list of files to put to storage.  Absolute paths must be used.</li>
+<li><strong>label</strong> (<em>string</em>) – (<cite>optional</cite>) user label to give to the batch.  If omitted a default will be used.</li>
+<li><strong>request_type</strong> (<em>string</em>) – (<cite>optional</cite>) request type for putting files to storage.  Can be either <cite>PUT</cite>, which is non-destructive, or <cite>MIGRATE</cite> which will delete the source files after a successful upload.</li>
+<li><strong>storage</strong> (<em>string</em>) – (<cite>optional</cite>) the storage backend to put the files to.  e.g. <cite>objecstore</cite> or <cite>elastictape</cite>.</li>
+<li><strong>credentials</strong> (<em>Dictionary</em><em>[</em><em>string</em><em>]</em>) – (<cite>optional</cite>) value:key pairs of credentials required by backend and groupworkspace.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>A HTTP Response object. The two most important elements of this object are:</p>
+<ul>
+<li><p class="first"><strong>status_code</strong> (<cite>integer</cite>): the HTTP status code:</p>
+<blockquote>
+<div><ul class="simple">
+<li>200 OK: Request was successful</li>
+<li>403 FORBIDDEN: User not initialised yet</li>
+<li>403 FORBIDDEN: User does not have write permissions or the workspace does not exist for external storage</li>
+<li>403 FORBIDDEN: User does not have write permission for file/directory</li>
+<li>403 FORBIDDEN: User has insufficient quota remaining for workspace for external storage</li>
+<li>403 FORBIDDEN: Filelist or directory is already in a batch</li>
+<li>404 NOT FOUND: Name not supplied</li>
+<li>404 NOT FOUND: No request type supplied</li>
+<li>404 NOT FOUND: Invalid request method</li>
+<li>404 NOT FOUND: No workspace supplied</li>
+<li>404 NOT FOUND: Workspace has no associated groupworkspace quota set</li>
+<li>404 NOT FOUND: No directory path or filelist supplied</li>
+<li>404 NOT FOUND: Filelist is empty</li>
+<li>404 NOT FOUND: External storage not specified in PUT / MIGRATE request</li>
+<li>404 NOT FOUND: Path does not exist</li>
+<li>404 NOT FOUND: External storage has not been attached to the groupworkspace</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>json()</strong> (<cite>List</cite>): a Dictionary containing information about the uploaded batch, the format is:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>name</strong> (<cite>string</cite>) user name for the request (input data)</li>
+<li><strong>batch_id</strong> (<cite>integer</cite>) the assigned batch id</li>
+<li><strong>workspace</strong> (<cite>string</cite>) workspace (input data)</li>
+<li><strong>filelist</strong> (<cite>string</cite>) filelist (input data)</li>
+<li><strong>label</strong> (<cite>string</cite>) label (input data)</li>
+<li><strong>request_id</strong> (<cite>integer</cite>) assigned id of the request</li>
+<li><strong>request_type</strong> request_type = PUT | MIGRATE (input data)</li>
+<li><strong>storage</strong> (<cite>string</cite>) storage (input data)</li>
+<li><strong>filelist</strong> (<cite>List</cite>) the list of files in the request (input data but may be modified by request)</li>
+<li><strong>request_id</strong> (<cite>integer</cite>) assigned id of the request</li>
+<li><strong>stage</strong> (<cite>string</cite>) the stage that the request is at</li>
+<li><strong>registered_date</strong> (<cite>string</cite>) the date the request was made</li>
+<li><strong>error</strong> (<cite>string</cite>) the error description if an error occurred</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><p><a class="reference external" href="http://docs.python-requests.org/en/master/api/#requests.Response">requests.Response</a></p>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="jdma_lib.delete_batch">
+<code class="descclassname">jdma_lib.</code><code class="descname">delete_batch</code><span class="sig-paren">(</span><em>name</em>, <em>batch_id=None</em>, <em>storage=None</em>, <em>credentials=None</em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_lib.delete_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a single batch from a storage backend.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>string</em>) – (<cite>required</cite>) name of the user to get archives for.</li>
+<li><strong>batch_id</strong> (<em>integer</em>) – (<cite>optional</cite>) unique id of the batch</li>
+<li><strong>credentials</strong> (<em>Dictionary</em><em>[</em><em>string</em><em>]</em>) – (<cite>optional</cite>) value:key pairs of credentials required by backend and groupworkspace.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>A HTTP Response object. The two most important elements of this object are:</p>
+<ul>
+<li><p class="first"><strong>status_code</strong> (<cite>integer</cite>): the HTTP status code:</p>
+<blockquote>
+<div><ul class="simple">
+<li>200 OK: Request was successful</li>
+<li>403 FORBIDDEN User does not have permission to delete batch</li>
+<li>403 FORBIDDEN Duplicate DELETE request made</li>
+<li>404 NOT FOUND No batch id supplied</li>
+<li>404 NOT FOUND Batch not found</li>
+<li>404 NOT FOUND: batch id was not found (for the user)</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>json()</strong> (<cite>Dictionary</cite>): a Dictionary containing information about the deleted batch, the format is:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>name</strong> (<cite>string</cite>) user name for the request (input data)</li>
+<li><strong>batch_id</strong> (<cite>integer</cite>) batch id (input data)</li>
+<li><strong>storage</strong> (<cite>string</cite>) storage the batch is stored on (input data)</li>
+<li><strong>request_id</strong> (<cite>integer</cite>) assigned id of the request</li>
+<li><strong>request_type</strong> (<cite>string</cite>) = DELETE</li>
+<li><strong>workspace</strong> (<cite>string</cite>) workspace that the batch is stored in</li>
+<li><strong>stage</strong> (<cite>string</cite>) the stage that the request is at</li>
+<li><strong>registered_date</strong> (<cite>string</cite>) the date the request was made</li>
+<li><strong>label</strong> (<cite>string</cite>) label of the batch</li>
+<li><strong>error</strong> (<cite>string</cite>) the error description if an error occurred</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><p><a class="reference external" href="http://docs.python-requests.org/en/master/api/#requests.Response">requests.Response</a></p>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="jdma_lib.download_files">
+<code class="descclassname">jdma_lib.</code><code class="descname">download_files</code><span class="sig-paren">(</span><em>name</em>, <em>batch_id=None</em>, <em>filelist=[]</em>, <em>target_dir=None</em>, <em>credentials=None</em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_lib.download_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download files from a storage backend.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>string</em>) – (<cite>required</cite>) name of the user to get archives for.</li>
+<li><strong>batch_id</strong> (<em>integer</em>) – (<cite>optional</cite>) unique id of the batch</li>
+<li><strong>filelist</strong> (<em>list</em><em>[</em><em>string</em><em>]</em>) – (<cite>optional</cite>) list of files to put to storage.  Absolute paths must be used.</li>
+<li><strong>target_dir</strong> (<em>string</em>) – (<cite>optional</cite>) path to download the files to.</li>
+<li><strong>credentials</strong> (<em>Dictionary</em><em>[</em><em>string</em><em>]</em>) – (<cite>optional</cite>) value:key pairs of credentials required by backend and groupworkspace.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>A HTTP Response object. The two most important elements of this object are:</p>
+<ul>
+<li><p class="first"><strong>status_code</strong> (<cite>integer</cite>): the HTTP status code:</p>
+<blockquote>
+<div><ul class="simple">
+<li>200 OK: Request was successful</li>
+<li>403 FORBIDDEN: User not initialised yet</li>
+<li>403 FORBIDDEN: User does not have permission to request batch</li>
+<li>403 FORBIDDEN: Batch stage is: (~ON_STORAGE).  Cannot retrieve (GET) until stage is ON_STORAGE</li>
+<li>403 FORBIDDEN: Duplicate GET request made</li>
+<li>403 FORBIDDEN: User does not have write permission to the directory</li>
+<li>403 FORBIDDEN: Insufficient diskspace for the retrieval (GET)</li>
+<li>404 NOT FOUND: No request type supplied</li>
+<li>404 NOT FOUND: Invalid request method</li>
+<li>404 NOT FOUND: No batch id supplied</li>
+<li>404 NOT FOUND: Batch not found</li>
+<li>404 NOT FOUND: Target path not supplied</li>
+<li>404 NOT FOUND: Parent of target path does not exist</li>
+<li>404 NOT FOUND: Requested file list contains zero files that belong to batch</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>json()</strong> (<cite>List</cite>): a Dictionary containing information about the downloaded batch, the format is:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>name</strong> (<cite>string</cite>) user name for the request (input data)</li>
+<li><strong>batch_id</strong> (<cite>integer</cite>) batch id (input data)</li>
+<li><strong>storage</strong> (<cite>string</cite>) storage the batch is stored on (input data)</li>
+<li><strong>filelist</strong> (<cite>List</cite>) the list of files downloaded (input data but may be modified by the request)</li>
+<li><strong>target_path</strong> (<cite>string</cite>) the directory the files have been downloaded to</li>
+<li><strong>request_id</strong> (<cite>integer</cite>) assigned id of the request</li>
+<li><strong>request_type</strong> (<cite>string</cite>) = GET</li>
+<li><strong>workspace</strong> (<cite>string</cite>) workspace that the batch is stored in</li>
+<li><strong>stage</strong> (<cite>string</cite>) the stage that the request is at</li>
+<li><strong>registered_date</strong> (<cite>string</cite>) the date the request was made</li>
+<li><strong>label</strong> (<cite>string</cite>) label of the batch</li>
+<li><strong>error</strong> (<cite>string</cite>) the error description if an error occurred</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><p><a class="reference external" href="http://docs.python-requests.org/en/master/api/#requests.Response">requests.Response</a></p>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="jdma_lib.modify_batch">
+<code class="descclassname">jdma_lib.</code><code class="descname">modify_batch</code><span class="sig-paren">(</span><em>name</em>, <em>batch_id=None</em>, <em>label=None</em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_lib.modify_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modify the details of a batch.  Currently limited to changing the label</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>string</em>) – (<cite>required</cite>) name of the user to get archives for.</li>
+<li><strong>batch_id</strong> (<em>integer</em>) – (<cite>required</cite>) unique id of the batch</li>
+<li><strong>label</strong> (<em>string</em>) – (<cite>optional</cite>) new batch label</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>A HTTP Response object. The two most important elements of this object are:</p>
+<ul>
+<li><p class="first"><strong>status_code</strong> (<cite>integer</cite>): the HTTP status code:</p>
+<blockquote>
+<div><ul class="simple">
+<li>200 OK: Request was successful</li>
+<li>403 FORBIDDEN: Cannot edit this batch as they do not own it</li>
+<li>404 NOT FOUND: No name supplied</li>
+<li>404 NOT FOUND: No batch id supplied</li>
+<li>404 NOT FOUND: No label supplied</li>
+<li>404 NOT FOUND: Batch id not found</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>json()</strong> (<cite>Dictionary</cite>): a Dictionary containing information about the modified batch, the format is:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>name</strong> (<cite>string</cite>) user name for the request (input data)</li>
+<li><strong>batch_id</strong> (<cite>integer</cite>) batch id (input data)</li>
+<li><strong>label</strong> (<cite>string</cite>) new label of the batch (input data)</li>
+<li><strong>error</strong> (<cite>string</cite>) the error description if an error occurred</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><p><a class="reference external" href="http://docs.python-requests.org/en/master/api/#requests.Response">requests.Response</a></p>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="transfer_states.html" class="btn btn-neutral float-right" title="Transfer states" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="jdma_client.html" class="btn btn-neutral" title="Command Reference" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Centre for Environmental Data Analysis, Science and Technologies Facilities Council, UK Research and Innovation..
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/language_data.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,539 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Transfer states &mdash; JDMA 0.2 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="JDMA 0.2 documentation" href="../index.html"/>
+        <link rel="next" title="Configuration File" href="configuration_file.html"/>
+        <link rel="prev" title="JDMA library" href="jdma_lib.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> JDMA
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction to JDMA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jdma_client.html">Command Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jdma_lib.html">JDMA library</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Transfer states</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#request-states">Request states</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#put-or-migrate-states">PUT or MIGRATE states</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-states">GET states</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#delete-states">DELETE states</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#failed-state">FAILED state</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#batch-states">Batch states</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configuration_file.html">Configuration File</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">JDMA</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Transfer states</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/jdma_client/transfer_states.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="transfer-states">
+<h1>Transfer states<a class="headerlink" href="#transfer-states" title="Permalink to this headline">¶</a></h1>
+<p>When the JDMA is asked to PUT, MIGRATE, GET or DELETE some data, the request
+goes through a number of states, and the batch also has a number of possible
+states.  The states can be queried by using the <code class="docutils literal notranslate"><span class="pre">jdma</span> <span class="pre">request</span> <span class="pre">&lt;id&gt;</span></code> command
+from <code class="docutils literal notranslate"><span class="pre">jdma_client</span></code> or the <code class="docutils literal notranslate"><span class="pre">get_request</span></code> function from <code class="docutils literal notranslate"><span class="pre">jdma_lib</span></code></p>
+<div class="section" id="request-states">
+<h2>Request states<a class="headerlink" href="#request-states" title="Permalink to this headline">¶</a></h2>
+<p>There is a function for a mapping between the numerical code for PUT, MIGRATE, GET
+or DELETE requests and a string representation in <code class="docutils literal notranslate"><span class="pre">jdma_client.jdma_common.get_request_type</span></code></p>
+<p>There is a function for a mapping between the numerical code for the stage returned by
+<code class="docutils literal notranslate"><span class="pre">get_request</span></code> and a string representation in <code class="docutils literal notranslate"><span class="pre">jdma_client.jdma_common.get_request_stage</span></code></p>
+<div class="section" id="put-or-migrate-states">
+<h3>PUT or MIGRATE states<a class="headerlink" href="#put-or-migrate-states" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="21%" />
+<col width="74%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">0</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'PUT_START'</span></code></td>
+<td><ul class="first last simple">
+<li>register <code class="docutils literal notranslate"><span class="pre">PUT</span></code> request with JDMA</li>
+<li>lock the migration files (transfer ownership to root)</li>
+<li>create a filelist for directories</li>
+<li>calculate the digests (checksums) for the files</li>
+<li><strong>TRANSITION</strong> <code class="docutils literal notranslate"><span class="pre">PUT_START</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">PUT_PACKING</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">1</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'PUT_PENDING'</span></code></td>
+<td><ul class="first last simple">
+<li>create an upload batch on the external storage backend</li>
+<li>set the batch state to PUTTING</li>
+<li>initiate the transfer</li>
+<li><strong>TRANSITION</strong> <code class="docutils literal notranslate"><span class="pre">PUT_PENDING</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">PUTTING</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">2</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'PUT_PACKING'</span></code></td>
+<td><p class="first">Some backends require the files to be packed into tarfiles before transfer
+to the storage.  If this is the case for this transfer then:</p>
+<ul class="last simple">
+<li>create the staging directory</li>
+<li>create the tarfiles in the staging directory</li>
+<li>calculate the digest (checksum) for the tarfile</li>
+<li><strong>TRANSITION</strong> <code class="docutils literal notranslate"><span class="pre">PUT_PACKING</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">PUT_PENDING</span></code> (always)</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">3</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'PUTTING'</span></code></td>
+<td><ul class="first last simple">
+<li>upload the batch to the external storage backend</li>
+<li>close the upload batch on the external storage backend</li>
+<li><strong>TRANSITION</strong> <code class="docutils literal notranslate"><span class="pre">PUTTING</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">VERIFY_PENDING</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">4</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'VERIFY_PENDING'</span></code></td>
+<td><ul class="first last simple">
+<li>create the temporary verification directory</li>
+<li>create a download batch on the storage for the verification</li>
+<li><strong>TRANSITION</strong> <code class="docutils literal notranslate"><span class="pre">VERIFY_PENDING</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">VERIFY_GETTING</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">5</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'VERIFY_GETTING'</span></code></td>
+<td><ul class="first last simple">
+<li>download the batch to the temporary verification directory</li>
+<li>close the download batch on the external storage</li>
+<li><strong>TRANSITION</strong> <code class="docutils literal notranslate"><span class="pre">VERIFY_GETTING</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">VERIFYING</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">6</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'VERIFYING'</span></code></td>
+<td><ul class="first last simple">
+<li>verify the batch files - make sure that the digest of the downloaded
+files matches those of the digest calculated in PUT_PACKING or
+PUT_START</li>
+<li>set the batch state to ON_STORAGE</li>
+<li><strong>TRANSITION</strong> <code class="docutils literal notranslate"><span class="pre">VERIFYING</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">PUT_TIDY</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">7</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'PUT_TIDY'</span></code></td>
+<td><ul class="first last simple">
+<li>delete the staged archive tarfiles (created in PUT_PACKING)</li>
+<li>delete the verified downloaded archive tarfiles (created in
+VERIFY_GETTING)</li>
+<li>delete the original files if request_type == MIGRATE or restore
+permissions on original files if request_type == PUT</li>
+<li><strong>TRANSITION</strong> <code class="docutils literal notranslate"><span class="pre">PUT_TIDY</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">PUT_COMPLETED</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">8</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'PUT_COMPLETED'</span></code></td>
+<td><ul class="first last simple">
+<li>indicate that the request is completed. This status will remain for 72
+hours after the request is completed</li>
+<li>send the notification email that the upload of the batch has completed
+successfully</li>
+<li>subtract the uploaded data volume amount from the workspace quota</li>
+<li>set the batch status to <code class="docutils literal notranslate"><span class="pre">ON_STORAGE</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="get-states">
+<h3>GET states<a class="headerlink" href="#get-states" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="7%" />
+<col width="19%" />
+<col width="74%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">100</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'GET_START'</span></code></td>
+<td><ul class="first last simple">
+<li>create the target directory for the download</li>
+<li>create the download staging directory, if the batch is packed</li>
+<li><strong>TRANSITION</strong> <code class="docutils literal notranslate"><span class="pre">GET_START</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">GET_PENDING</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">101</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'GET_PENDING'</span></code></td>
+<td><ul class="first last simple">
+<li>create a download batch on the external storage</li>
+<li>initiate the transfer</li>
+<li><strong>TRANSITION</strong> <code class="docutils literal notranslate"><span class="pre">GET_PENDING</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">GETTING</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">102</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'GETTING'</span></code></td>
+<td><ul class="first last simple">
+<li>download the batch, either to the target directory or to the download
+staging directory if the batch is packed</li>
+<li>close the download batch on the external storage</li>
+<li><strong>TRANSITION</strong> <code class="docutils literal notranslate"><span class="pre">GETTING</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">GET_UNPACKING</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">103</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'GET_UNPACKING'</span></code></td>
+<td><ul class="first last simple">
+<li>if the batch is packed:</li>
+<li>check the digest of the batch tarfile matches that in the database</li>
+<li>unpack the tar archives from the download staging directory to the
+target directory</li>
+<li><strong>TRANSITION</strong> <code class="docutils literal notranslate"><span class="pre">GET_UNPACKING</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">GET_RESTORE</span></code> (always)</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">104</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'GET_RESTORE'</span></code></td>
+<td><ul class="first last simple">
+<li>restore the uid, gid and permissions to the files unpacked from the tar
+archive</li>
+<li><strong>TRANSITION</strong> <code class="docutils literal notranslate"><span class="pre">GET_RESTORE</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">GET_TIDY</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">105</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'GET_TIDY'</span></code></td>
+<td><ul class="first last simple">
+<li>delete the files from the download staging directory</li>
+<li><strong>TRANSITION</strong> <code class="docutils literal notranslate"><span class="pre">GET_TIDY</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">GET_COMPLETED</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">106</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'GET_COMPLETED'</span></code></td>
+<td><ul class="first last simple">
+<li>indicate that the request is completed. This status will remain for 72
+hours after the request is completed</li>
+<li>send the email notification informing the user that the batch has been
+downloaded successfully</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="delete-states">
+<h3>DELETE states<a class="headerlink" href="#delete-states" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="7%" />
+<col width="22%" />
+<col width="71%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">200</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'DELETE_START'</span></code></td>
+<td><ul class="first last simple">
+<li>lock the batch that is going to be deleted</li>
+<li><strong>TRANSITION</strong> <code class="docutils literal notranslate"><span class="pre">DELETE_START</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">DELETE_PENDING</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">201</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'DELETE_PENDING'</span></code></td>
+<td><ul class="first last simple">
+<li>create a delete batch on the external storage</li>
+<li><strong>TRANSITION</strong> <code class="docutils literal notranslate"><span class="pre">DELETE_PENDING</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">DELETING</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">202</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'DELETING'</span></code></td>
+<td><ul class="first last simple">
+<li>delete the batch from the external STORAGE</li>
+<li>close the delete batch</li>
+<li><strong>TRANSITION</strong> <code class="docutils literal notranslate"><span class="pre">DELETING</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">DELETE_TIDY</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">203</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'DELETE_TIDY'</span></code></td>
+<td><ul class="first last simple">
+<li>delete any container for the batch on the external storage</li>
+<li>delete the archive files if batch exists and stage &gt; PUT_PACKING</li>
+<li>delete the verify files if batch exists and stage &gt; VERIFY_PENDING</li>
+<li>restore permissions on original files if request_type == PUT and / or
+stage &lt; PUT_TIDY</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">204</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'DELETE_COMPLETED'</span></code></td>
+<td><ul class="first last simple">
+<li>send the email notification informing the user that the batch has
+been deleted successfully</li>
+<li>indicate that the batch is deleted by setting its status to DELETED
+in the database</li>
+<li>update the quota for the backend storage (add back the used space)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="failed-state">
+<h3>FAILED state<a class="headerlink" href="#failed-state" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="8%" />
+<col width="12%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">1000</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'FAILED'</span></code></td>
+<td><ul class="first last simple">
+<li>The request has failed. The failure reason is given by the <code class="docutils literal notranslate"><span class="pre">request</span></code> command
+of the <code class="docutils literal notranslate"><span class="pre">jdma</span></code> command line client or by the <code class="docutils literal notranslate"><span class="pre">get_request</span></code> function of the
+<code class="docutils literal notranslate"><span class="pre">jdma_lib</span></code>, in the “failure_reason” field in the returned JSON</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="batch-states">
+<h2>Batch states<a class="headerlink" href="#batch-states" title="Permalink to this headline">¶</a></h2>
+<p>There is a function for a mapping between the numerical code returned by <code class="docutils literal notranslate"><span class="pre">get_batch</span></code>
+and a string representation in <code class="docutils literal notranslate"><span class="pre">jdma_client.jdma_common.get_batch_stage</span></code></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="17%" />
+<col width="78%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">0</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'ON_DISK'</span></code></td>
+<td>The data is at its original location, on the (POSIX) disk</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">1</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'PUTTING'</span></code></td>
+<td>The data is in the process of being transferred to the external storage system</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">2</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'ON_STORAGE'</span></code></td>
+<td>The transfer is complete and the data is on the external</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">3</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'FAILED'</span></code></td>
+<td>The transfer failed.  The failure reason is given by the <code class="docutils literal notranslate"><span class="pre">request</span></code> command
+of the <code class="docutils literal notranslate"><span class="pre">jdma</span></code> command line client or by the <code class="docutils literal notranslate"><span class="pre">get_request</span></code> function of the
+<code class="docutils literal notranslate"><span class="pre">jdma_lib</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">4</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'DELETING'</span></code></td>
+<td>The batch is in the process of being deleted from the external storage</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">5</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'DELETED'</span></code></td>
+<td>The batch has been deleted</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="configuration_file.html" class="btn btn-neutral float-right" title="Configuration File" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="jdma_lib.html" class="btn btn-neutral" title="JDMA library" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Centre for Environmental Data Analysis, Science and Technologies Facilities Council, UK Research and Innovation..
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/language_data.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
