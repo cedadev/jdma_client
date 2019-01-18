@@ -14,7 +14,7 @@ import json
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-from jdma_common import *
+from jdma_client.jdma_common import *
 
 ##### User functions - interact with HTTP API to manipulate users         ######
 
