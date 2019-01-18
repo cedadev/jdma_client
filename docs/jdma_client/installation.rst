@@ -15,6 +15,10 @@ user space or home directory.
 
   * ``source ~/jdma_venv/bin/activate``
 
-4. install the jdma client into the virtualenv using pip and the URL of JDMA on the github repository:
+4. clone the jdma client from the github repository:
 
-  * ``pip install -e git+https://github.com/cedadev/jdma_client#egg=jdma_client``
+  * ``git clone https://github.com/cedadev/jdma_client.git``
+
+4. install the jdma client into the virtualenv using pip and the cloned repository:
+
+  * ``pip install -e ./jdma_client``
