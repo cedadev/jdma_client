@@ -19,6 +19,6 @@ user space or home directory.
 
   * ``git clone https://github.com/cedadev/jdma_client.git``
 
-4. install the jdma client into the virtualenv using pip and the cloned repository:
+5. install the jdma client into the virtualenv using pip and the cloned repository:
 
   * ``pip install -e ./jdma_client``
