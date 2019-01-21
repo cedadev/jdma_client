@@ -1,10 +1,10 @@
 """Common functions for the jdma client"""
-import ldap3
 from jinja2 import Environment, FunctionLoader
 import os
 import sys
 import json
 import math
+import requests
 
 ####################### Settings for the user / server etc ####################
 
@@ -18,7 +18,7 @@ class settings:
     # get the user from the environment
     USER = os.environ["USER"] # the USER name
     # version of this software
-    VERSION = "0.2.3"
+    VERSION = "0.2.4"
     VERIFY = False
     user_credentials = {}
     DEBUG = False
@@ -111,23 +111,11 @@ def get_permissions_string(p):
 
 ##### Create / read the credentials file stored in ~/.jdma.json ################
 
-def create_credentials_file(name):
+def create_credentials_file(name, workspace="default"):
     ("""Create the credentials file.  It is JSON formatted""")
-    # get the default groupworkspace from the ldap
-    server = ldap3.Server("ldap://homer.esc.rl.ac.uk")
-    base = "OU=ceda,OU=Groups,O=hpc,DC=rl,DC=ac,DC=uk"
-    query = "(memberUid={})".format(name)
-    with ldap3.Connection(server, auto_bind=True) as conn:
-        result = conn.search(base, query, attributes=['*'])
-    workspace = ""
-    for r in conn.entries:
-        group = r.cn.value
-        if "gws" in group:
-            workspace = group[4:].decode("utf-8")
-            break
-    # check that a workspace was found for this user
-    if workspace == "":
-        raise Exception("User {} is not a member of any group workspace".format(
+    # check that a default workspace was supplied for this user
+    if workspace == "default":
+        raise Exception("A default workspace was not supplied for User {}".format(
             name
         ))
     # form the config file name

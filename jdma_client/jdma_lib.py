@@ -18,11 +18,12 @@ from jdma_client.jdma_common import *
 
 ##### User functions - interact with HTTP API to manipulate users         ######
 
-def create_user(name, email=None):
+def create_user(name, email=None, workspace="default"):
     """Create a user with the username: name
 
        :param string name: (`required`) name of the user to create
        :param string email: (`optional`) email address of user for notifications
+       :param string workspace: (`optional`) default workspace of the user
 
        :return: A HTTP Response object. The two most important elements of this object are:
 
@@ -42,7 +43,7 @@ def create_user(name, email=None):
        :rtype: `requests.Response <http://docs.python-requests.org/en/master/api/#requests.Response>`_
        """
     # create the credentials file - this function will check whether it exists
-    create_credentials_file(name)
+    create_credentials_file(name, workspace)
     url = settings.JDMA_API_URL + "user"
     data = {"name" : name}
     if email is not None:

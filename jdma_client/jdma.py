@@ -56,8 +56,11 @@ def do_init(args):
     if args.email:
         email = args.email
 
+    if args.workspace:
+        workspace = args.workspace
+
     # call the library function
-    response = create_user(settings.USER, email)
+    response = create_user(settings.USER, email, workspace)
     # check the response code
     if response.status_code == 200:
         data = response.json()
@@ -69,6 +72,10 @@ def do_init(args):
               "    Username : {}\n"
               "    Email    : {}\n"
         ).format(bcolors.GREEN, bcolors.ENDC, data["name"], data["email"]))
+    elif response.status_code == 403:   # forbidden = user already created
+        sys.stdout.write((
+              "{}** SUCCESS ** - user already created{}\n"
+        ).format(bcolors.GREEN, bcolors.ENDC))
     else:
         error_message(response, "cannot initialise user", args.json)
 
