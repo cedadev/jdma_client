@@ -18,7 +18,7 @@ in the :doc:`installation` section.
 Once the JDMA client software is installed, and the virtual environment is
 activated, the user needs to initialise their account with the command:
 
-``jdma init <email_address>``
+``jdma init <email_address> -w <default_workspace>``
 
 which returns, on success:
 
