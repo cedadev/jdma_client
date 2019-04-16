@@ -19,17 +19,19 @@ PUT or MIGRATE states
 ^^^^^^^^^^^^^^^^^^^^^
 +-----+---------------------+---------------------------------------------------------------------------+
 |``0``|``'PUT_START'``      | - register ``PUT`` request with JDMA                                      |
-|     |                     | - lock the migration files (transfer ownership to root)                   |
+|     |                     | - **TRANSITION** ``PUT_START`` -> ``PUT_BUILDING``                        |
++-----+---------------------+---------------------------------------------------------------------------+
+|``1``|``'PUT_BUILDING'``   | - lock the migration files (transfer ownership to root)                   |
 |     |                     | - create a filelist for directories                                       |
 |     |                     | - calculate the digests (checksums) for the files                         |
-|     |                     | - **TRANSITION** ``PUT_START`` -> ``PUT_PACKING``                         |
+|     |                     | - **TRANSITION** ``PUT_BUILDING`` -> ``PUT_PACKING``                      |
 +-----+---------------------+---------------------------------------------------------------------------+
-|``1``|``'PUT_PENDING'``    | - create an upload batch on the external storage backend                  |
+|``2``|``'PUT_PENDING'``    | - create an upload batch on the external storage backend                  |
 |     |                     | - set the batch state to PUTTING                                          |
 |     |                     | - initiate the transfer                                                   |
 |     |                     | - **TRANSITION** ``PUT_PENDING`` -> ``PUTTING``                           |
 +-----+---------------------+---------------------------------------------------------------------------+
-|``2``|``'PUT_PACKING'``    | Some backends require the files to be packed into tarfiles before transfer|
+|``3``|``'PUT_PACKING'``    | Some backends require the files to be packed into tarfiles before transfer|
 |     |                     | to the storage.  If this is the case for this transfer then:              |
 |     |                     |                                                                           |
 |     |                     | - create the staging directory                                            |
@@ -37,32 +39,32 @@ PUT or MIGRATE states
 |     |                     | - calculate the digest (checksum) for the tarfile                         |
 |     |                     | - **TRANSITION** ``PUT_PACKING`` -> ``PUT_PENDING`` (always)              |
 +-----+---------------------+---------------------------------------------------------------------------+
-|``3``|``'PUTTING'``        | - upload the batch to the external storage backend                        |
+|``4``|``'PUTTING'``        | - upload the batch to the external storage backend                        |
 |     |                     | - close the upload batch on the external storage backend                  |
 |     |                     | - **TRANSITION** ``PUTTING`` -> ``VERIFY_PENDING``                        |
 +-----+---------------------+---------------------------------------------------------------------------+
-|``4``|``'VERIFY_PENDING'`` | - create the temporary verification directory                             |
+|``5``|``'VERIFY_PENDING'`` | - create the temporary verification directory                             |
 |     |                     | - create a download batch on the storage for the verification             |
 |     |                     | - **TRANSITION** ``VERIFY_PENDING`` -> ``VERIFY_GETTING``                 |
 +-----+---------------------+---------------------------------------------------------------------------+
-|``5``|``'VERIFY_GETTING'`` | - download the batch to the temporary verification directory              |
+|``6``|``'VERIFY_GETTING'`` | - download the batch to the temporary verification directory              |
 |     |                     | - close the download batch on the external storage                        |
 |     |                     | - **TRANSITION** ``VERIFY_GETTING`` -> ``VERIFYING``                      |
 +-----+---------------------+---------------------------------------------------------------------------+
-|``6``|``'VERIFYING'``      | - verify the batch files - make sure that the digest of the downloaded    |
+|``7``|``'VERIFYING'``      | - verify the batch files - make sure that the digest of the downloaded    |
 |     |                     |   files matches those of the digest calculated in PUT_PACKING or          |
 |     |                     |   PUT_START                                                               |
 |     |                     | - set the batch state to ON_STORAGE                                       |
 |     |                     | - **TRANSITION** ``VERIFYING`` -> ``PUT_TIDY``                            |
 +-----+---------------------+---------------------------------------------------------------------------+
-|``7``|``'PUT_TIDY'``       | - delete the staged archive tarfiles (created in PUT_PACKING)             |
+|``8``|``'PUT_TIDY'``       | - delete the staged archive tarfiles (created in PUT_PACKING)             |
 |     |                     | - delete the verified downloaded archive tarfiles (created in             |
 |     |                     |   VERIFY_GETTING)                                                         |
 |     |                     | - delete the original files if request_type == MIGRATE or restore         |
 |     |                     |   permissions on original files if request_type == PUT                    |
 |     |                     | - **TRANSITION** ``PUT_TIDY`` -> ``PUT_COMPLETED``                        |
 +-----+---------------------+---------------------------------------------------------------------------+
-|``8``|``'PUT_COMPLETED'``  | - indicate that the request is completed. This status will remain for 72  |
+|``9``|``'PUT_COMPLETED'``  | - indicate that the request is completed. This status will remain for 72  |
 |     |                     |   hours after the request is completed                                    |
 |     |                     | - send the notification email that the upload of the batch has completed  |
 |     |                     |   successfully                                                            |

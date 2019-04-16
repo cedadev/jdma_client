@@ -12,13 +12,15 @@ class settings:
     """Settings for the jdma command line tool."""
     # location of the jdma_control server / app
     JDMA_SERVER_URL = "https://jdma-test.ceda.ac.uk/jdma_control"
+    # !!! Test server - don't commit with this line !!!
+    #JDMA_SERVER_URL = "https://192.168.51.26/jdma_control"
     JDMA_API_URL = JDMA_SERVER_URL + "/api/v1/"
     # template for the .config file
     JDMA_CONFIG_URL = "https://raw.githubusercontent.com/cedadev/jdma_client/master/jdma_client/.jdma.json.template"
     # get the user from the environment
     USER = os.environ["USER"] # the USER name
     # version of this software
-    VERSION = "0.2.4"
+    VERSION = "0.2.15"
     VERIFY = False
     user_credentials = {}
     DEBUG = False
@@ -63,14 +65,15 @@ def get_request_type(req_type):
 def get_request_stage(stage):
     request_stages = {
           0 : 'PUT_START',
-          1 : 'PUT_PENDING',
-          2 : 'PUT_PACK',
-          3 : 'PUTTING',
-          4 : 'VERIFY_PENDING',
-          5 : 'VERIFY_GETTING',
-          6 : 'VERIFYING',
-          7 : 'PUT_TIDY',
-          8 : 'PUT_COMPLETED',
+          1 : 'PUT_BUILDING',
+          2 : 'PUT_PENDING',
+          3 : 'PUT_PACK',
+          4 : 'PUTTING',
+          5 : 'VERIFY_PENDING',
+          6 : 'VERIFY_GETTING',
+          7 : 'VERIFYING',
+          8 : 'PUT_TIDY',
+          9 : 'PUT_COMPLETED',
         100 : 'GET_START',
         101 : 'GET_PENDING',
         102 : 'GETTING',
@@ -232,7 +235,8 @@ def error_message(response, message, output_json):
         out_message += " : {}{}\n"
     else:
         out_message += "{}{}\n"
-    sys.stdout.write((out_message
+    sys.stdout.write((
+        out_message
     ).format(bcolors.RED, message, user, error, bcolors.ENDC))
     if settings.DEBUG and response is not None:
         print_response_error(response)

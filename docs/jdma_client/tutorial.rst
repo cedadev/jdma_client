@@ -204,14 +204,15 @@ values describing the process that is currently happening.  These stages are
 (in order):
 
 1.  ``PUT_START``
-2.  ``PUT_PACKING``
-3.  ``PUT_PENDING``
-4.  ``PUTTING``
-5.  ``VERIFY_PENDING``
-6.  ``VERIFY_GETTING``
-7.  ``VERIFYING``
-8.  ``PUT_TIDY``
-9.  ``PUT_COMPLETED``
+2   ``PUT_BUILDING``
+3.  ``PUT_PACKING``
+4.  ``PUT_PENDING``
+5.  ``PUTTING``
+6.  ``VERIFY_PENDING``
+7.  ``VERIFY_GETTING``
+8.  ``VERIFYING``
+9.  ``PUT_TIDY``
+10.  ``PUT_COMPLETED``
 
 When the stage ``PUT_COMPLETED`` is reached the data is successfully stored on
 the external storage and can then be downloaded.
