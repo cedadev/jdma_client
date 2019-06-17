@@ -1064,16 +1064,14 @@ def main():
 
     method = globals().get("do_" + args.cmd)
 
-    # try:
-    #     method(args)
-    # except KeyboardInterrupt:
-    #     sys.stdout.write(("{}\n").format(bcolors.ENDC))
-    # except Exception as e:
-    #     sys.stdout.write((
-    #         "{}** ERROR ** - {} {}\n"
-    #     ).format(bcolors.RED, str(e), bcolors.ENDC))
-
-    method(args)
+    try:
+        method(args)
+    except KeyboardInterrupt:
+        sys.stdout.write(("{}\n").format(bcolors.ENDC))
+    except Exception as e:
+        sys.stdout.write((
+            "{}** ERROR ** - {} {}\n"
+        ).format(bcolors.RED, str(e), bcolors.ENDC))
 
 if __name__ == "__main__":
     main()
