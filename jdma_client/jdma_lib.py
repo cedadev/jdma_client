@@ -162,7 +162,7 @@ def get_request(name, req_id=None):
     return response
 
 
-def get_batch(name, batch_id=None, workspace=None):
+def get_batch(name, batch_id=None, workspace=None, label=None):
     """Get a list of a user's batches or the details of a single batch.
 
        :param string name: (`required`) name of the user.
@@ -196,6 +196,8 @@ def get_batch(name, batch_id=None, workspace=None):
         url += ";migration_id=" + str(batch_id)
     if workspace != None:
         url += ";workspace=" + workspace
+    if label != None:
+        url += ";label=" + label
     response = requests.get(url, verify=settings.VERIFY)
     return response
 
@@ -287,7 +289,7 @@ def get_archives(name, batch_id=None, workspace=None, limit=0, digest=0):
        :param integer limit: (`optional`) limit the number of archives returned.
        :param integer digest: (`optional`) output the digest (checksum) for each archive.
 
-       :return: A HTTP Response object. The two most important elements of this object are:
+       :return: A HTTP Response object. The two most important elementsof this object are:
 
             - **status_code** (`integer`): the HTTP status code:
 
@@ -337,7 +339,7 @@ def upload_files(name, workspace=None, filelist=[], label=None, request_type=Non
        :param list[`string`] filelist: (`optional`) list of files to put to storage.  Absolute paths must be used.
        :param string label: (`optional`) user label to give to the batch.  If omitted a default will be used.
        :param string request_type: (`optional`) request type for putting files to storage.  Can be either `PUT`, which is non-destructive, or `MIGRATE` which will delete the source files after a successful upload.
-       :param string storage: (`optional`) the storage backend to put the files to.  e.g. `objecstore` or `elastictape`.
+       :param string storage: (`optional`) the storage backend to put the files to.  e.g. `objectstore` or `elastictape`.
        :param Dictionary[`string`] credentials: (`optional`) value:key pairs of credentials required by backend and groupworkspace.
 
        :return: A HTTP Response object. The two most important elements of this object are:

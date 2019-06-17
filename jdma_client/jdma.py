@@ -284,17 +284,21 @@ def do_batch(args):
             workspace = None
     else:
         workspace = args.workspace
-    # determine whether we should list one batch or many
+    # determine whether we should list one batch or many, or list by label
+    label_id = None
     if len(args.arg):
         batch_id = int(args.arg)
     else:
+        if args.label:
+            label_id = args.label
         batch_id = None
 
     # send the HTTP request
     response = get_batch(
         name=settings.USER,
         batch_id=batch_id,
-        workspace=workspace
+        workspace=workspace,
+        label=label_id
     )
 
     if response.status_code == 200:
@@ -303,7 +307,7 @@ def do_batch(args):
         if args.json == True:
             print(data)
             return
-        if batch_id is None:
+        if batch_id is None and label_id is None:
             list_batches(data, workspace)
             return
         display_batch(data)
@@ -1060,15 +1064,16 @@ def main():
 
     method = globals().get("do_" + args.cmd)
 
-    try:
-        method(args)
-    except KeyboardInterrupt:
-        sys.stdout.write(("{}\n").format(bcolors.ENDC))
-    except Exception as e:
-        sys.stdout.write((
-            "{}** ERROR ** - {} {}\n"
-        ).format(bcolors.RED, str(e), bcolors.ENDC))
+    # try:
+    #     method(args)
+    # except KeyboardInterrupt:
+    #     sys.stdout.write(("{}\n").format(bcolors.ENDC))
+    # except Exception as e:
+    #     sys.stdout.write((
+    #         "{}** ERROR ** - {} {}\n"
+    #     ).format(bcolors.RED, str(e), bcolors.ENDC))
 
+    method(args)
 
 if __name__ == "__main__":
     main()
