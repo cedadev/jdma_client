@@ -20,7 +20,7 @@ class settings:
     # get the user from the environment
     USER = os.environ["USER"] # the USER name
     # version of this software
-    VERSION = "0.2.15"
+    VERSION = "0.2.16"
     VERIFY = False
     user_credentials = {}
     DEBUG = False
