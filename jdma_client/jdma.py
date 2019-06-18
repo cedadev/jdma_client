@@ -314,7 +314,11 @@ def do_batch(args):
         return True
 
     else:
-        error_msg = ("cannot list batch {}").format(str(batch_id))
+        if batch_id:
+            error_msg = ("cannot list batch {}").format(str(batch_id))
+        elif label_id:
+            error_msg = ("cannot list batch with label {}").format(str(label_id))
+
         if workspace != None:
             error_msg += " in workspace " + workspace
         error_msg += " for user"
