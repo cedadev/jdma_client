@@ -19,31 +19,31 @@ Options:
 
 Help command
 ------------
-.. autofunction:: jdma.do_help
+.. autofunction:: jdma_client.jdma.do_help
 
 User and system commands
 ------------------------
-.. autofunction:: jdma.do_init
-.. autofunction:: jdma.do_email
-.. autofunction:: jdma.do_info
-.. autofunction:: jdma.do_notify
-.. autofunction:: jdma.do_storage
+.. autofunction:: jdma_client.jdma.do_init
+.. autofunction:: jdma_client.jdma.do_email
+.. autofunction:: jdma_client.jdma.do_info
+.. autofunction:: jdma_client.jdma.do_notify
+.. autofunction:: jdma_client.jdma.do_storage
 
 Data transfer commands
 ----------------------
-.. autofunction:: jdma.do_put
-.. autofunction:: jdma.do_migrate
-.. autofunction:: jdma.do_get
-.. autofunction:: jdma.do_delete
+.. autofunction:: jdma_client.jdma.do_put
+.. autofunction:: jdma_client.jdma.do_migrate
+.. autofunction:: jdma_client.jdma.do_get
+.. autofunction:: jdma_client.jdma.do_delete
 
 Data transfer properties and status commands
 --------------------------------------------
-.. autofunction:: jdma.do_label
-.. autofunction:: jdma.do_request
-.. autofunction:: jdma.do_batch
-.. autofunction:: jdma.do_files
-.. autofunction:: jdma.do_archives
+.. autofunction:: jdma_client.jdma.do_label
+.. autofunction:: jdma_client.jdma.do_request
+.. autofunction:: jdma_client.jdma.do_batch
+.. autofunction:: jdma_client.jdma.do_files
+.. autofunction:: jdma_client.jdma.do_archives
 
 Options
 -------
-.. autofunction:: jdma.main
+.. autofunction:: jdma_client.jdma.main
