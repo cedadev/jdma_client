@@ -56,8 +56,11 @@ def do_init(args):
     if args.email:
         email = args.email
 
+    if args.workspace:
+        workspace = args.workspace
+
     # call the library function
-    response = create_user(settings.USER, email)
+    response = create_user(settings.USER, email, workspace)
     # check the response code
     if response.status_code == 200:
         data = response.json()
@@ -69,6 +72,10 @@ def do_init(args):
               "    Username : {}\n"
               "    Email    : {}\n"
         ).format(bcolors.GREEN, bcolors.ENDC, data["name"], data["email"]))
+    elif response.status_code == 403:   # forbidden = user already created
+        sys.stdout.write((
+              "{}** SUCCESS ** - user already created{}\n"
+        ).format(bcolors.GREEN, bcolors.ENDC))
     else:
         error_message(response, "cannot initialise user", args.json)
 
@@ -277,17 +284,21 @@ def do_batch(args):
             workspace = None
     else:
         workspace = args.workspace
-    # determine whether we should list one batch or many
+    # determine whether we should list one batch or many, or list by label
+    label_id = None
     if len(args.arg):
         batch_id = int(args.arg)
     else:
+        if args.label:
+            label_id = args.label
         batch_id = None
 
     # send the HTTP request
     response = get_batch(
         name=settings.USER,
         batch_id=batch_id,
-        workspace=workspace
+        workspace=workspace,
+        label=label_id
     )
 
     if response.status_code == 200:
@@ -296,14 +307,18 @@ def do_batch(args):
         if args.json == True:
             print(data)
             return
-        if batch_id is None:
+        if batch_id is None and label_id is None:
             list_batches(data, workspace)
             return
         display_batch(data)
         return True
 
     else:
-        error_msg = ("cannot list batch {}").format(str(batch_id))
+        if batch_id:
+            error_msg = ("cannot list batch {}").format(str(batch_id))
+        elif label_id:
+            error_msg = ("cannot list batch with label {}").format(str(label_id))
+
         if workspace != None:
             error_msg += " in workspace " + workspace
         error_msg += " for user"
@@ -1063,7 +1078,6 @@ def main():
         sys.stdout.write((
             "{}** ERROR ** - {} {}\n"
         ).format(bcolors.RED, str(e), bcolors.ENDC))
-
 
 if __name__ == "__main__":
     main()
