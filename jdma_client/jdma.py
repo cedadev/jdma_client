@@ -395,7 +395,8 @@ def migrate_or_put(args, request_type):
         label=label,
         request_type=request_type,
         storage=storage,
-        credentials=credentials)
+        credentials=credentials
+    )
 
     if response.status_code == 200:
         data = response.json()
@@ -620,7 +621,8 @@ def do_get(args):
         batch_id=batch_id,
         filelist=filelist,
         target_dir=target_dir,
-        credentials=credentials)
+        credentials=credentials
+    )
 
     if response.status_code == 200:
         data = response.json()
