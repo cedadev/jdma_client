@@ -137,12 +137,14 @@ DELETE states
 
 FAILED state
 ^^^^^^^^^^^^
-+--------+------------+---------------------------------------------------------------------------------+
-|``1000``|``'FAILED'``| - The request has failed. The failure reason is given by the ``request`` command|
-|        |            |   of the ``jdma`` command line client or by the ``get_request`` function of the |
-|        |            |   ``jdma_lib``, in the "failure_reason" field in the returned JSON              |
-+--------+------------+---------------------------------------------------------------------------------+
-
++--------+----------------------+-----------------------------------------------------------------------+
+|``1000``|``'FAILED'``          | - The request has failed. The failure reason is given by the          |
+|        |                      |   ``request`` command of the ``jdma`` command line client or by the   |
+|        |                      |   ``get_request`` function of the ``jdma_lib``, in the                |
+|        |                      |   "failure_reason" field in the returned JSON                         |
++--------+----------------------+-----------------------------------------------------------------------+
+|``1000``|``'FAILED_COMPLETED'``| - All clean up for the FAILED request has completed.                  |
++--------+----------------------+-----------------------------------------------------------------------+
 Batch states
 ------------
 

@@ -87,7 +87,8 @@ def get_request_stage(stage):
         202 : 'DELETING',
         203 : 'DELETE_TIDY',
         204 : 'DELETE_COMPLETED',
-       1000 : 'FAILED'
+       1000 : 'FAILED',
+       1001 : 'FAILED_COMPLETED'
     }
 
     return request_stages[stage]
