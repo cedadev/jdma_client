@@ -312,12 +312,13 @@ def do_batch(args):
             return
         display_batch(data)
         return True
-
     else:
         if batch_id:
             error_msg = ("cannot list batch {}").format(str(batch_id))
         elif label_id:
             error_msg = ("cannot list batch with label {}").format(str(label_id))
+        else:
+            error_msg = "Error"
 
         if workspace != None:
             error_msg += " in workspace " + workspace
