@@ -17,4 +17,4 @@ user space or home directory.
 
 4. install the jdma client into the virtualenv using pip and the URL of JDMA on the github repository:
 
-  * ``pip install -e git+https://github.com/cedadev/jdma_client#egg=jdma_client``
+  * ``pip install git+https://github.com/cedadev/jdma_client``
