@@ -154,8 +154,28 @@ def do_request(args):
     else:
         req_id = None
 
-    # make the request using the library
-    response = get_request(name=settings.USER, req_id=req_id)
+    ### Optionally filter on the workspace.
+    # get the workspace from the arguments, default to list all the user's
+    # requests
+    if args.workspace == "default":
+        if args.filter == "workspace":
+            try:
+                workspace = settings.user_credentials["default_gws"]
+            except:
+                workspace = None
+        else:
+            workspace = None
+    elif args.workspace == "all":
+        workspace = None
+    else:
+        workspace = args.workspace
+
+    response = get_request(
+        name=settings.USER,
+        workspace=workspace,
+        req_id=req_id,
+        ffilter=args.filter
+    )
     # process if returned
     if response.status_code == 200:
         data = response.json()
@@ -199,8 +219,12 @@ def do_request(args):
             ).format(data["failure_reason"]))
     else:
         # get the reason why it failed
-        message = "cannot list request {} for user".format(req_id)
-        error_message(response, message, args.json)
+        error_msg = "cannot list request {} ".format(req_id)
+
+        if workspace != None:
+            error_msg += "in workspace " + workspace
+        error_msg += " for user"
+        error_message(response, error_msg, args.json)
 
 
 def list_requests(data):
@@ -213,17 +237,18 @@ def list_requests(data):
         # print the header
         sys.stdout.write(bcolors.MAGENTA)
         sys.stdout.write((
-            "{:>6} {:<8} {:<8} {:<16} {:16} {:<16} {:<17} {:<11}\n"
-        ).format("req id", "type", "batch id", "workspace",
+            "{:>6} {:<8} {:<8} {:<16} {:<16} {:16} {:<16} {:<17} {:<11}\n"
+        ).format("req id", "type", "batch id", "user", "workspace",
                  "batch label", "storage", "date", "stage"))
         sys.stdout.write(bcolors.ENDC)
         for r in data["requests"]:
             sys.stdout.write((
-                "{:>6} {:<8} {:<8} {:<16} {:16} {:<16} {:<17} {:<11}"
+                "{:>6} {:<8} {:<8} {:<16} {:<16} {:16} {:<16} {:<17} {:<11}"
             ).format(
                 r["request_id"],
                 get_request_type(r["request_type"]),
                 r["migration_id"],
+                r["user"],
                 r["workspace"],
                 r["label"][0:16],
                 r["storage"][0:16],
@@ -276,14 +301,21 @@ def do_batch(args):
     ### Send the HTTP request (GET) to get the details of a single migration
     ### for the user.
     ### Optionally filter on the workspace.
-    # get the workspace from the arguments, or from the config file
+    # get the workspace from the arguments, default to list all of the users
+    # batches
     if args.workspace == "default":
-        try:
-            workspace = settings.user_credentials["default_gws"]
-        except:
+        if args.filter == "workspace":
+            try:
+                workspace = settings.user_credentials["default_gws"]
+            except:
+                workspace = None
+        else:
             workspace = None
+    elif args.workspace == "all":
+        workspace = None
     else:
         workspace = args.workspace
+
     # determine whether we should list one batch or many, or list by label
     label_id = None
     if len(args.arg):
@@ -298,7 +330,8 @@ def do_batch(args):
         name=settings.USER,
         batch_id=batch_id,
         workspace=workspace,
-        label=label_id
+        label=label_id,
+        ffilter=args.filter
     )
 
     if response.status_code == 200:
@@ -313,6 +346,7 @@ def do_batch(args):
         display_batch(data)
         return True
     else:
+        error_data = response.json()
         if batch_id:
             error_msg = ("cannot list batch {}").format(str(batch_id))
         elif label_id:
@@ -320,8 +354,8 @@ def do_batch(args):
         else:
             error_msg = "Error"
 
-        if workspace != None:
-            error_msg += " in workspace " + workspace
+        if "workspace" in error_data:
+            error_msg += " in workspace " + error_data["workspace"]
         error_msg += " for user"
         error_message(response, error_msg, args.json)
         return False
@@ -345,15 +379,16 @@ def list_batches(data, workspace=None):
         # print the header
         sys.stdout.write(bcolors.MAGENTA)
         sys.stdout.write((
-            "{:>8} {:<16} {:<16} {:<16} {:<17} {:<11}\n"
-        ).format("batch id", "workspace", "batch label",
+            "{:>8} {:<16} {:<16} {:<16} {:<16} {:<17} {:<11}\n"
+        ).format("batch id", "user", "workspace", "batch label",
                  "storage", "date", "stage"))
         sys.stdout.write(bcolors.ENDC)
         for r in data["migrations"]:
             sys.stdout.write((
-                "{:>8} {:<16} {:<16} {:<16} {:<17} {:<11}\n"
+                "{:>8} {:<16} {:<16} {:<16} {:<16} {:<17} {:<11}\n"
             ).format(
                 r["migration_id"],
+                r["user"][0:16],
                 r["workspace"][0:16],
                 r["label"][0:16],
                 r["storage"][0:16],
@@ -525,7 +560,11 @@ def do_delete(args):
         prompt_message = "Do you wish to continue? [y/N] "
         # prompt user to confirm
         sys.stdout.write(bcolors.RED + prompt_message)
-        answer = str(raw_input())
+        # python 3 compatibility here
+        try:
+            answer = str(raw_input())
+        except:
+            answer = str(input())
         sys.stdout.write(bcolors.ENDC)
         if answer != "y" and answer != "Y":
             return # do nothing
@@ -729,10 +768,15 @@ def do_files(args):
         batch_id = None
 
     if args.workspace == "default":
-        try:
-            workspace = settings.user_credentials["default_gws"]
-        except:
+        if args.filter == "workspace":
+            try:
+                workspace = settings.user_credentials["default_gws"]
+            except:
+                workspace = None
+        else:
             workspace = None
+    elif args.workspace == "all":
+        workspace = None
     else:
         workspace = args.workspace
 
@@ -831,11 +875,21 @@ def do_files(args):
                         sys.stdout.write(bcolors.ENDC+"\n")
                         c_f += 1
                     c_a += 1
+        return True
 
     else:
-        error_msg = "cannot list files"
-        error_message(response, error_msg, args.json)
+        error_data = response.json()
+        if batch_id:
+            error_msg = ("cannot list files in batch {}").format(batch_id)
+        else:
+            error_msg = ("cannot list files")
 
+        if "workspace" in error_data:
+            error_msg += " in workspace " + error_data["workspace"]
+
+        error_msg += " for user"
+        error_message(response, error_msg, args.json)
+        return False
 
 def do_archives(args):
     ("""**archives** *<batch_id>* : List the archives in a batch."""
@@ -848,10 +902,15 @@ def do_archives(args):
         batch_id = None
 
     if args.workspace == "default":
-        try:
-            workspace = settings.user_credentials["default_gws"]
-        except:
+        if args.filter == "workspace":
+            try:
+                workspace = settings.user_credentials["default_gws"]
+            except:
+                workspace = None
+        else:
             workspace = None
+    elif args.workspace == "all":
+        workspace = None
     else:
         workspace = args.workspace
 
@@ -969,7 +1028,9 @@ def main():
     """
 | ``-e|--email=EMAIL`` : Email address for user in the init and email commands.
 
-| ``-w|--workspace=WORKSPACE`` : Group workspace to use in the request.
+| ``-w|--workspace=WORKSPACE`` : Group workspace to use in the request. Use ``all`` to list all workspaces for a user.
+
+| ``-f|--filter=user|workspace`` : List either the requests or batches for just a user or for all users in a workspace.
 
 | ``-l|--label=LABEL`` : Label to name or update the request."
 
@@ -985,7 +1046,7 @@ def main():
 
 | ``-t | --simple`` : Output simple listings for files and archives commands.
 
-| ``-f | --force`` : Force deletion of batch, rather than prompting for user confirmation.
+| ``-F | --force`` : Force deletion of batch, rather than prompting for user confirmation.
 
     """
     command_help = "Type help <command> to get help on a specific command"
@@ -1017,6 +1078,11 @@ def main():
     parser.add_argument(
         "-w", "--workspace", action="store", default="default",
         help="Group workspace to use in the request."
+    )
+    parser.add_argument(
+        "-f", "--filter", action="store", default="user",
+        help=("Filter to use when listing batches or requests. Options are "
+              "user | workspace, default is user")
     )
     parser.add_argument(
         "-l", "--label", action="store", default="",
@@ -1053,7 +1119,7 @@ def main():
         help=("Output simple listings for files and archives commands.")
     )
     parser.add_argument(
-        "-f", "--force", action="store_true", default="False",
+        "-F", "--force", action="store_true", default="False",
         help=("Force deletion of batch, rather than prompting for user "
               "confirmation")
     )

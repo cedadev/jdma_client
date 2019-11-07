@@ -123,11 +123,12 @@ def info_user(name):
 
 ##### Request functions - interact with HTTP API to manipulate requests   ######
 
-def get_request(name, req_id=None):
+def get_request(name, req_id=None, workspace=None, ffilter=None):
     """Get a list of a user's requests or the details of a single request.
 
        :param string name: (`required`) name of the user.
        :param integer req_id: (`optional`) request id to list.  If `none` then get all of the user's requests.
+       :param string ffilter: (`optional`) filter the results on `user` name or `workspace`
 
        :return: A HTTP Response object. The two most important elements of this object are:
 
@@ -157,17 +158,22 @@ def get_request(name, req_id=None):
     url = settings.JDMA_API_URL + "request?name=" + name
     if req_id != None:
         url += ";request_id=" + str(req_id)
+    if workspace != None:
+        url += ";workspace=" + workspace
+    if ffilter != None:
+        url += ";filter=" + ffilter
     # send the request
     response = requests.get(url, verify=settings.VERIFY)
     return response
 
 
-def get_batch(name, batch_id=None, workspace=None, label=None):
+def get_batch(name, batch_id=None, workspace=None, label=None, ffilter=None):
     """Get a list of a user's batches or the details of a single batch.
 
        :param string name: (`required`) name of the user.
        :param integer batch_id: (`optional`) batch id to list.  If `none` then get all of the users' batches.
        :param string workspace: (`optional`) workspace to list batches for.  If `none` then list batch(es) for all of the users' workspaces.
+       :param string ffilter: (`optional`) filter the results on `user` name or `workspace`
 
        :return: A HTTP Response object. The two most important elements of this object are:
 
@@ -198,6 +204,8 @@ def get_batch(name, batch_id=None, workspace=None, label=None):
         url += ";workspace=" + workspace
     if label != None:
         url += ";label=" + label
+    if ffilter != None:
+        url += ";filter=" + ffilter
     response = requests.get(url, verify=settings.VERIFY)
     return response
 

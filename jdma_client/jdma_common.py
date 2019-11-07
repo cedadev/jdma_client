@@ -11,20 +11,21 @@ import requests
 class settings:
     """Settings for the jdma command line tool."""
     # location of the jdma_control server / app
-    JDMA_SERVER_URL = "https://jdma1.ceda.ac.uk/jdma_control"
+    #JDMA_SERVER_URL = "https://jdma1.ceda.ac.uk/jdma_control"
     # !!! Test servers - don't commit with these lines !!!
     #JDMA_SERVER_URL = "https://jdma-test.ceda.ac.uk/jdma_control"
-    #JDMA_SERVER_URL = "https://192.168.51.26/jdma_control"
+    JDMA_SERVER_URL = "https://192.168.51.26/jdma_control"
     JDMA_API_URL = JDMA_SERVER_URL + "/api/v1/"
     # template for the .config file
     JDMA_CONFIG_URL = "https://raw.githubusercontent.com/cedadev/jdma_client/master/jdma_client/.jdma.json.template"
     # get the user from the environment
-    USER = os.environ["USER"] # the USER name
+    #USER = os.environ["USER"] # the USER name
+    USER = "mpritcha"
     # version of this software
-    VERSION = "0.2.18"
+    VERSION = "0.2.22"
     VERIFY = False
     user_credentials = {}
-    DEBUG = False
+    DEBUG = True
 
 ##### Lovely colours! ######
 
@@ -218,12 +219,15 @@ def error_message(response, message, output_json):
     # get the reason why it failed
     user = settings.USER
     error = ""
+    workspace = ""
     try:
         json_response = response.json()
         if 'error' in json_response:
             error = json_response['error']
         if 'name' in json_response:
             user = json_response['name']
+        if 'workspace' in json_response:
+            workspace = json_response['workspace']
         if output_json == True:
             output_json(json_response)
             return
@@ -233,6 +237,8 @@ def error_message(response, message, output_json):
         except:
             error = ""
     out_message = "{}** ERROR ** - {} {}"
+    # if workspace != "":
+    #     out_message += " in workspace {}".format(workspace)
     if error != "":
         out_message += " : {}{}\n"
     else:
