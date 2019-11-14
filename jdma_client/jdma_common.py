@@ -19,8 +19,7 @@ class settings:
     # template for the .config file
     JDMA_CONFIG_URL = "https://raw.githubusercontent.com/cedadev/jdma_client/master/jdma_client/.jdma.json.template"
     # get the user from the environment
-    #USER = os.environ["USER"] # the USER name
-    USER = "mpritcha"
+    USER = os.environ["USER"] # the USER name
     # version of this software
     VERSION = "0.2.22"
     VERIFY = False
