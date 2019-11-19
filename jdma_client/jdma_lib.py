@@ -232,7 +232,7 @@ def get_storage():
     return response
 
 
-def get_files(name, batch_id=None, workspace=None, limit=0, digest=0):
+def get_files(name, batch_id=None, workspace=None, limit=0, digest=0, ffilter=None):
     """Get a list of files that belong to a batch.
 
        :param string name: (`required`) name of the user to get files for.
@@ -278,6 +278,8 @@ def get_files(name, batch_id=None, workspace=None, limit=0, digest=0):
         url += ";migration_id=" + str(batch_id)
     if workspace is not None:
         url += ";workspace=" + workspace
+    if ffilter != None:
+        url += ";filter=" + ffilter
 
     # add the limit (the number of files output)
     url += ";limit=" + str(limit)
@@ -288,7 +290,7 @@ def get_files(name, batch_id=None, workspace=None, limit=0, digest=0):
     return response
 
 
-def get_archives(name, batch_id=None, workspace=None, limit=0, digest=0):
+def get_archives(name, batch_id=None, workspace=None, limit=0, digest=0, ffilter=None):
     """Get a list of archives that are in a batch.
 
        :param string name: (`required`) name of the user to get archives for.
@@ -327,6 +329,8 @@ def get_archives(name, batch_id=None, workspace=None, limit=0, digest=0):
         url += ";migration_id=" + str(batch_id)
     if workspace:
         url += ";workspace=" + workspace
+    if ffilter != None:
+        url += ";filter=" + ffilter
 
     # add the limit (the number of files output)
     url += ";limit=" + str(limit)
