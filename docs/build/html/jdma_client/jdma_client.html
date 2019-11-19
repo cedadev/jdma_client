@@ -171,6 +171,7 @@
 <div class="line"><code class="docutils literal notranslate"><span class="pre">[-h|--help]</span></code></div>
 <div class="line"><code class="docutils literal notranslate"><span class="pre">[-e|--email=EMAIL]</span></code></div>
 <div class="line"><code class="docutils literal notranslate"><span class="pre">[-w|--workspace=WORKSPACE]</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">[-f]--filter=workspace|user]</span></code></div>
 <div class="line"><code class="docutils literal notranslate"><span class="pre">[-l|--label=LABEL]</span></code></div>
 <div class="line"><code class="docutils literal notranslate"><span class="pre">[-r|--target=TARGET]</span></code></div>
 <div class="line"><code class="docutils literal notranslate"><span class="pre">[-s|--storage=STORAGE]</span></code></div>
@@ -178,7 +179,7 @@
 <div class="line"><code class="docutils literal notranslate"><span class="pre">[-d|--digest]</span></code></div>
 <div class="line"><code class="docutils literal notranslate"><span class="pre">[-j|--json]</span></code></div>
 <div class="line"><code class="docutils literal notranslate"><span class="pre">[-t|--simple]</span></code></div>
-<div class="line"><code class="docutils literal notranslate"><span class="pre">[-f|--force]</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">[-F|--force]</span></code></div>
 </div>
 </div></blockquote>
 <div class="section" id="help-command">
@@ -304,7 +305,10 @@ Use the <em>–simple</em> option to produce a simply formatted list which can b
 <div class="line"><code class="docutils literal notranslate"><span class="pre">-e|--email=EMAIL</span></code> : Email address for user in the init and email commands.</div>
 </div>
 <div class="line-block">
-<div class="line"><code class="docutils literal notranslate"><span class="pre">-w|--workspace=WORKSPACE</span></code> : Group workspace to use in the request.</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">-w|--workspace=WORKSPACE</span></code> : Group workspace to use in the request. Use <code class="docutils literal notranslate"><span class="pre">all</span></code> to list all workspaces for a user.</div>
+</div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">-f|--filter=user|workspace</span></code> : List either the requests or batches for just a user or for all users in a workspace.</div>
 </div>
 <div class="line-block">
 <div class="line"><code class="docutils literal notranslate"><span class="pre">-l|--label=LABEL</span></code> : Label to name or update the request.”</div>
@@ -328,7 +332,7 @@ Use the <em>–simple</em> option to produce a simply formatted list which can b
 <div class="line"><code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">|</span> <span class="pre">--simple</span></code> : Output simple listings for files and archives commands.</div>
 </div>
 <div class="line-block">
-<div class="line"><code class="docutils literal notranslate"><span class="pre">-f</span> <span class="pre">|</span> <span class="pre">--force</span></code> : Force deletion of batch, rather than prompting for user confirmation.</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">-F</span> <span class="pre">|</span> <span class="pre">--force</span></code> : Force deletion of batch, rather than prompting for user confirmation.</div>
 </div>
 </dd></dl>
 

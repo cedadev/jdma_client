@@ -11,10 +11,10 @@ import requests
 class settings:
     """Settings for the jdma command line tool."""
     # location of the jdma_control server / app
-    JDMA_SERVER_URL = "https://jdma1.ceda.ac.uk/jdma_control"
+    #JDMA_SERVER_URL = "https://jdma1.ceda.ac.uk/jdma_control"
     # !!! Test servers - don't commit with these lines !!!
     #JDMA_SERVER_URL = "https://jdma-test.ceda.ac.uk/jdma_control"
-    #JDMA_SERVER_URL = "https://192.168.51.26/jdma_control"
+    JDMA_SERVER_URL = "https://192.168.51.26/jdma_control"
     JDMA_API_URL = JDMA_SERVER_URL + "/api/v1/"
     # template for the .config file
     JDMA_CONFIG_URL = "https://raw.githubusercontent.com/cedadev/jdma_client/master/jdma_client/.jdma.json.template"

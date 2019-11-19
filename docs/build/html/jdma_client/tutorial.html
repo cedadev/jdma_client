@@ -314,12 +314,25 @@ uploaded</p>
 <p><code class="docutils literal notranslate"><span class="pre">jdma</span> <span class="pre">request</span></code></p>
 <p>Which returns a list of all the requests a user has made, information about the
 requests and the stage each request is at:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>req id type     batch id workspace        batch label      storage          date              stage
-    17 PUT      8        cedaproc         jdma_test        elastictape      2018-12-17 16:15  PUTTING
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>req id type     batch id user            workspace        batch label      storage          date              stage
+    17 PUT      8        nrmassey        cedaproc         jdma_test        elastictape      2018-12-17 16:15  PUTTING
 </pre></div>
 </div>
 <p>A list of stages and what they mean is available in the section
 <a class="reference internal" href="transfer_states.html"><span class="doc">Transfer states</span></a>.</p>
+<p>Group workspace managers can list requests for all users in a group workspace by
+using the <cite>-f</cite> filter option: <cite>-f workspace</cite> (the <cite>-w &lt;workspace&gt;</cite> is optional,
+and the default workspace will be used if this argument is not supplied):</p>
+<p><code class="docutils literal notranslate"><span class="pre">jdma</span> <span class="pre">request</span> <span class="pre">-f</span> <span class="pre">workspace</span> <span class="pre">-w</span> <span class="pre">&lt;workspace&gt;</span></code></p>
+<p>which returns:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>req id type     batch id user             workspace        batch label      storage          date              stage
+     5 PUT      5        mpritcha         cedaproc         ukmo-mslp-data   objectstore      2019-11-07 10:25  PUT_COMPLETED
+     7 GET      5        nrmassey         cedaproc         ukmo-mslp-data   objectstore      2019-11-07 14:52  GET_COMPLETED
+     8 PUT      6        nrmassey         cedaproc         nrmassey         objectstore      2019-11-14 15:23  PUT_START
+     9 GET      1        mpritcha         cedaproc         plotting_talk    objectstore      2019-11-14 15:39  GET_START
+    10 GET      5        mpritcha         cedaproc         ukmo-mslp-data   objectstore      2019-11-14 15:39  GET_START
+</pre></div>
+</div>
 <p>To get information about a specific request use the command:</p>
 <p><code class="docutils literal notranslate"><span class="pre">jdma</span> <span class="pre">request</span> <span class="pre">&lt;req_id&gt;</span></code></p>
 <p>which returns:</p>
@@ -337,11 +350,15 @@ requests and the stage each request is at:</p>
 <p>This has assigned both a Request id (<code class="docutils literal notranslate"><span class="pre">17</span></code>) and a Batch id (<code class="docutils literal notranslate"><span class="pre">8</span></code>) to the
 request.  These ids are used for identifying the request and batch in the
 subsequent commands.</p>
+<p>If the user is a group workspace manager then they can list requests for other
+users in the GWS as well, even if they do not own the request, simply by using
+the request number.</p>
 <p>While the data is being transferred, the stage will go through a number of
 values describing the process that is currently happening.  These stages are
 (in order):</p>
 <ol class="arabic simple">
 <li><code class="docutils literal notranslate"><span class="pre">PUT_START</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">PUT_BUILDING</span></code></li>
 <li><code class="docutils literal notranslate"><span class="pre">PUT_PACKING</span></code></li>
 <li><code class="docutils literal notranslate"><span class="pre">PUT_PENDING</span></code></li>
 <li><code class="docutils literal notranslate"><span class="pre">PUTTING</span></code></li>
@@ -376,17 +393,27 @@ completion.</p>
 as batches, they can list the batches that belong to them with the command:</p>
 <p><code class="docutils literal notranslate"><span class="pre">jdma</span> <span class="pre">batch</span></code></p>
 <p>which results in:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>batch id workspace        batch label      storage          date              stage
-       7 cpdn_rapidwatch  OXPEWWES_2_calib elastictape      2018-10-05 13:54  ON_STORAGE
-       8 cedaproc         jdma_test        elastictape      2018-12-17 16:15  PUTTING
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>batch id user             workspace        batch label      storage          date              stage
+       7 nrmassey         cpdn_rapidwatch  OXPEWWES_2_calib elastictape      2018-10-05 13:54  ON_STORAGE
+       8 nrmassey         cedaproc         jdma_test        elastictape      2018-12-17 16:15  PUTTING
 </pre></div>
 </div>
 <p>For more information about batches, see the <a class="reference internal" href="glossary.html#batches"><span class="std std-ref">Batches</span></a> section.</p>
 <p>Users can filter which workspace they list batches for using the <cite>-w &lt;workspace&gt;</cite>
 option:</p>
 <p><code class="docutils literal notranslate"><span class="pre">jdma</span> <span class="pre">batch</span> <span class="pre">-w</span> <span class="pre">&lt;workspace&gt;</span></code></p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>batch id workspace        batch label      storage          date              stage
-       7 cpdn_rapidwatch  OXPEWWES_2_calib elastictape      2018-10-05 13:54  ON_STORAGE
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>batch id user             workspace        batch label      storage          date              stage
+       7 nrmassey         cpdn_rapidwatch  OXPEWWES_2_calib elastictape      2018-10-05 13:54  ON_STORAGE
+</pre></div>
+</div>
+<p>Group workspace managers can list batches for all users in a group workspace by
+using the <cite>-f</cite> filter option: <cite>-f workspace</cite> (the <cite>-w &lt;workspace&gt;</cite> is optional,
+and the default workspace will be used if this argument is not supplied):</p>
+<p><code class="docutils literal notranslate"><span class="pre">jdma</span> <span class="pre">batch</span> <span class="pre">-f</span> <span class="pre">workspace</span> <span class="pre">-w</span> <span class="pre">cedaproc</span></code></p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>batch id user             workspace        batch label      storage          date              stage
+       1 nrmassey         cedaproc         plotting_talk    objectstore      2019-11-04 17:05  ON_STORAGE
+       5 mpritcha         cedaproc         ukmo-mslp-data   objectstore      2019-11-07 10:25  ON_STORAGE
+       6 nrmassey         cedaproc         nrmassey         objectstore      2019-11-14 15:23  ON_DISK
 </pre></div>
 </div>
 <p>To get information about a specific batch, the batch id can be supplied to the
@@ -403,49 +430,77 @@ batch command:</p>
     Stage        : ON_STORAGE
 </pre></div>
 </div>
+<p>If the user is a group workspace manager then they can list batches for other
+users in the GWS as well, even if they do not own the batch, simply by using the
+batch number.</p>
 </div>
 <div class="section" id="archives">
 <h3>Archives<a class="headerlink" href="#archives" title="Permalink to this headline">¶</a></h3>
 <p>To see which archives belong to the user, use the command:</p>
 <p><code class="docutils literal notranslate"><span class="pre">jdma</span> <span class="pre">archives</span></code></p>
 <p>which returns:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>b.id workspace       batch label  storage      archive                size
-   7 cpdn_rapidwatch OXPEWWES_2_c elastictape  archive_0000000002  71.7 MB
-   8 cedaproc        jdma_test    elastictape  archive_0000000003  25.0 GB
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>b.id user             workspace       batch label  storage      archive                size
+   7 nrmassey         cpdn_rapidwatch OXPEWWES_2_c elastictape  archive_0000000002  71.7 MB
+   8 nrmassey         cedaproc        jdma_test    elastictape  archive_0000000003  25.0 GB
 </pre></div>
 </div>
-<p>or list the archives in a single batch:</p>
+<p>To show just the archives in a particular workspace use the <cite>-w &lt;workspace&gt;</cite>
+option:</p>
+<p><code class="docutils literal notranslate"><span class="pre">jdma</span> <span class="pre">archives</span> <span class="pre">-w</span> <span class="pre">&lt;workspace&gt;</span></code></p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>b.id user             workspace       batch label  storage      archive                size
+   7 nrmassey         cpdn_rapidwatch OXPEWWES_2_c elastictape  archive_0000000002  71.7 MB
+</pre></div>
+</div>
+<p>Group workspace managers can list batches for all users in a group workspace by
+using the <cite>-f</cite> filter option: <cite>-f workspace</cite> (the <cite>-w &lt;workspace&gt;</cite> is optional,
+and the default workspace will be used if this argument is not supplied):</p>
+<p><code class="docutils literal notranslate"><span class="pre">jdma</span> <span class="pre">archives</span> <span class="pre">-f</span> <span class="pre">workspace</span> <span class="pre">-w</span> <span class="pre">cedaproc</span></code>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>b.id user             workspace    batch label  storage      archive                size
+   1 nrmassey         cedaproc     plotting_tal objectstore  archive_0000000001  26.6 MB
+                                                             archive_0000000002 296.0 MB
+   5 mpritcha         cedaproc     ukmo-mslp-da objectstore  archive_0000000062   1.2 MB
+                                                             archive_0000000006   1.0 MB
+</pre></div>
+</div>
+<p>To list the archives in a single batch:</p>
 <p><code class="docutils literal notranslate"><span class="pre">jdma</span> <span class="pre">archives</span> <span class="pre">&lt;batch_id&gt;</span></code></p>
+<p>If the user is a group workspace manager then they can list archives in the
+batches of other users in the GWS as well, even if they do not own the batch,
+simply by using the batch number.</p>
 </div>
 <div class="section" id="files">
 <h3>Files<a class="headerlink" href="#files" title="Permalink to this headline">¶</a></h3>
 <p>To get a list of files belonging to the user, use the command:</p>
 <p><code class="docutils literal notranslate"><span class="pre">jdma</span> <span class="pre">files</span></code></p>
-<p>This returns all of the files for the user, so it is more useful to list the
+<p>To limit this to a single workspace:</p>
+<p><code class="docutils literal notranslate"><span class="pre">jdma</span> <span class="pre">files</span> <span class="pre">-w</span> <span class="pre">&lt;workspace&gt;</span></code></p>
+<p>To list all the files for all users in a workspace:</p>
+<p><code class="docutils literal notranslate"><span class="pre">jdma</span> <span class="pre">files</span> <span class="pre">-f</span> <span class="pre">workspace</span> <span class="pre">-w</span> <span class="pre">&lt;workspace&gt;</span></code></p>
+<p>This returns all of the files for the user(s), so it is more useful to list the
 files in a batch:</p>
 <p><code class="docutils literal notranslate"><span class="pre">jdma</span> <span class="pre">files</span> <span class="pre">&lt;batch_id&gt;</span></code></p>
 <p>which returns:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>b.id workspace    batch label  storage      archive            file                                                                 size
-   7 cedaproc     OXPEWWES_2_c elastictape  archive_0000000002 ents/2003_2004/oxfaga_2003-09-01T01-00-00_2004-04-08T07-00-00.nc   4.0 MB
-                                                               ents/1993_1994/oxfaga_1993-09-01T01-00-00_1994-04-29T19-00-00.nc   3.9 MB
-                                                               ents/1990_1991/oxfaga_1990-09-01T01-00-00_1991-04-30T19-00-00.nc   3.8 MB
-                                                               ents/2007_2008/oxfaga_2007-09-01T01-00-00_2008-04-29T19-00-00.nc   3.8 MB
-                                                               ents/1994_1995/oxfaga_1994-09-01T07-00-00_1995-04-22T19-00-00.nc   3.7 MB
-                                                               ents/1995_1996/oxfaga_1995-09-02T01-00-00_1996-04-30T19-00-00.nc   3.7 MB
-                                                               ents/1996_1997/oxfaga_1996-09-01T01-00-00_1997-04-28T07-00-00.nc   3.7 MB
-                                                               ents/1997_1998/oxfaga_1997-09-01T01-00-00_1998-04-29T07-00-00.nc   3.7 MB
-                                                               ents/1991_1992/oxfaga_1991-09-01T13-00-00_1992-04-13T01-00-00.nc   3.6 MB
-                                                               ents/1992_1993/oxfaga_1992-09-01T01-00-00_1993-04-11T13-00-00.nc   3.6 MB
-                                                               ents/2002_2003/oxfaga_2002-09-01T01-00-00_2003-04-30T01-00-00.nc   3.6 MB
-                                                               ents/2000_2001/oxfaga_2000-09-01T01-00-00_2001-04-08T01-00-00.nc   3.6 MB
-                                                               ents/2008_2009/oxfaga_2008-09-01T01-00-00_2009-04-01T07-00-00.nc   3.6 MB
-                                                               ents/2005_2006/oxfaga_2005-09-01T01-00-00_2006-04-29T13-00-00.nc   3.6 MB
-                                                               ents/1999_2000/oxfaga_1999-09-01T01-00-00_2000-04-12T13-00-00.nc   3.5 MB
-                                                               ents/1998_1999/oxfaga_1998-09-01T01-00-00_1999-04-20T19-00-00.nc   3.5 MB
-                                                               ents/2006_2007/oxfaga_2006-09-01T01-00-00_2007-04-27T01-00-00.nc   3.5 MB
-                                                               ents/2004_2005/oxfaga_2004-09-01T01-00-00_2005-04-20T13-00-00.nc   3.5 MB
-                                                               ents/2001_2002/oxfaga_2001-09-01T01-00-00_2002-04-30T19-00-00.nc   3.4 MB
-                                                               ents/1989_1990/oxfaga_1989-12-01T01-00-00_1990-04-01T19-00-00.nc   2.5 MB
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>b.id workspace    user             batch label  storage      archive            file                                                                 size
+   7 cedaproc     nrmassey         OXPEWWES_2_c elastictape  archive_0000000002 ents/2003_2004/oxfaga_2003-09-01T01-00-00_2004-04-08T07-00-00.nc   4.0 MB
+                                                                                ents/1993_1994/oxfaga_1993-09-01T01-00-00_1994-04-29T19-00-00.nc   3.9 MB
+                                                                                ents/1990_1991/oxfaga_1990-09-01T01-00-00_1991-04-30T19-00-00.nc   3.8 MB
+                                                                                ents/2007_2008/oxfaga_2007-09-01T01-00-00_2008-04-29T19-00-00.nc   3.8 MB
+                                                                                ents/1994_1995/oxfaga_1994-09-01T07-00-00_1995-04-22T19-00-00.nc   3.7 MB
+                                                                                ents/1995_1996/oxfaga_1995-09-02T01-00-00_1996-04-30T19-00-00.nc   3.7 MB
+                                                                                ents/1996_1997/oxfaga_1996-09-01T01-00-00_1997-04-28T07-00-00.nc   3.7 MB
+                                                                                ents/1997_1998/oxfaga_1997-09-01T01-00-00_1998-04-29T07-00-00.nc   3.7 MB
+                                                                                ents/1991_1992/oxfaga_1991-09-01T13-00-00_1992-04-13T01-00-00.nc   3.6 MB
+                                                                                ents/1992_1993/oxfaga_1992-09-01T01-00-00_1993-04-11T13-00-00.nc   3.6 MB
+                                                                                ents/2002_2003/oxfaga_2002-09-01T01-00-00_2003-04-30T01-00-00.nc   3.6 MB
+                                                                                ents/2000_2001/oxfaga_2000-09-01T01-00-00_2001-04-08T01-00-00.nc   3.6 MB
+                                                                                ents/2008_2009/oxfaga_2008-09-01T01-00-00_2009-04-01T07-00-00.nc   3.6 MB
+                                                                                ents/2005_2006/oxfaga_2005-09-01T01-00-00_2006-04-29T13-00-00.nc   3.6 MB
+                                                                                ents/1999_2000/oxfaga_1999-09-01T01-00-00_2000-04-12T13-00-00.nc   3.5 MB
+                                                                                ents/1998_1999/oxfaga_1998-09-01T01-00-00_1999-04-20T19-00-00.nc   3.5 MB
+                                                                                ents/2006_2007/oxfaga_2006-09-01T01-00-00_2007-04-27T01-00-00.nc   3.5 MB
+                                                                                ents/2004_2005/oxfaga_2004-09-01T01-00-00_2005-04-20T13-00-00.nc   3.5 MB
+                                                                                ents/2001_2002/oxfaga_2001-09-01T01-00-00_2002-04-30T19-00-00.nc   3.4 MB
+                                                                                ents/1989_1990/oxfaga_1989-12-01T01-00-00_1990-04-01T19-00-00.nc   2.5 MB
 </pre></div>
 </div>
 <p>This produces a hierarchical view of the files, showing which batch and archive
@@ -474,6 +529,9 @@ files with full pathnames, the <code class="docutils literal notranslate"><span 
 /group_workspaces/jasmin4/cedaproc/nrmassey/OXPEWWES_2/calibration/events/1989_1990/oxfaga_1989-12-01T01-00-00_1990-04-01T19-00-00.nc
 </pre></div>
 </div>
+<p>If the user is a group workspace manager then they can list files in the
+batches of other users in the GWS as well, even if they do not own the batch,
+simply by using the batch number.</p>
 </div>
 </div>
 <div class="section" id="downloading-data-from-a-storage-system">
@@ -587,7 +645,7 @@ completion.</p>
 <p>When a user instructs JDMA to <code class="docutils literal notranslate"><span class="pre">put</span></code> or <code class="docutils literal notranslate"><span class="pre">migrate</span></code> some data to JDMA, the
 <strong>request</strong> will go through a number of stages.  These stages are listed below,
 and more information is available at <a class="reference internal" href="transfer_states.html"><span class="doc">Transfer states</span></a>.</p>
-<p><code class="docutils literal notranslate"><span class="pre">PUT_START</span> <span class="pre">-&gt;</span> <span class="pre">PUT_PACKING</span> <span class="pre">-&gt;</span> <span class="pre">PUT_PENDING</span> <span class="pre">-&gt;</span> <span class="pre">PUTTING</span> <span class="pre">-&gt;</span> <span class="pre">VERIFY_PENDING</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">PUT_START</span> <span class="pre">-&gt;</span> <span class="pre">PUT_BUILDING</span> <span class="pre">-&gt;</span> <span class="pre">PUT_PACKING</span> <span class="pre">-&gt;</span> <span class="pre">PUT_PENDING</span> <span class="pre">-&gt;</span> <span class="pre">PUTTING</span> <span class="pre">-&gt;</span> <span class="pre">VERIFY_PENDING</span></code></p>
 <p>By this stage (<code class="docutils literal notranslate"><span class="pre">VERIFY_PENDING</span></code>) the data has been transferred to the external
 storage system.  However, to ensure that the data held on the storage is not
 corrupt and matches exactly the data before the transfer, a verification stage

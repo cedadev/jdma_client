@@ -190,14 +190,21 @@ or DELETE requests and a string representation in <code class="docutils literal 
 <td><code class="docutils literal notranslate"><span class="pre">'PUT_START'</span></code></td>
 <td><ul class="first last simple">
 <li>register <code class="docutils literal notranslate"><span class="pre">PUT</span></code> request with JDMA</li>
-<li>lock the migration files (transfer ownership to root)</li>
-<li>create a filelist for directories</li>
-<li>calculate the digests (checksums) for the files</li>
-<li><strong>TRANSITION</strong> <code class="docutils literal notranslate"><span class="pre">PUT_START</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">PUT_PACKING</span></code></li>
+<li><strong>TRANSITION</strong> <code class="docutils literal notranslate"><span class="pre">PUT_START</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">PUT_BUILDING</span></code></li>
 </ul>
 </td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">1</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'PUT_BUILDING'</span></code></td>
+<td><ul class="first last simple">
+<li>lock the migration files (transfer ownership to root)</li>
+<li>create a filelist for directories</li>
+<li>calculate the digests (checksums) for the files</li>
+<li><strong>TRANSITION</strong> <code class="docutils literal notranslate"><span class="pre">PUT_BUILDING</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">PUT_PACKING</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">2</span></code></td>
 <td><code class="docutils literal notranslate"><span class="pre">'PUT_PENDING'</span></code></td>
 <td><ul class="first last simple">
 <li>create an upload batch on the external storage backend</li>
@@ -207,7 +214,7 @@ or DELETE requests and a string representation in <code class="docutils literal 
 </ul>
 </td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">2</span></code></td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">3</span></code></td>
 <td><code class="docutils literal notranslate"><span class="pre">'PUT_PACKING'</span></code></td>
 <td><p class="first">Some backends require the files to be packed into tarfiles before transfer
 to the storage.  If this is the case for this transfer then:</p>
@@ -219,7 +226,7 @@ to the storage.  If this is the case for this transfer then:</p>
 </ul>
 </td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">3</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">4</span></code></td>
 <td><code class="docutils literal notranslate"><span class="pre">'PUTTING'</span></code></td>
 <td><ul class="first last simple">
 <li>upload the batch to the external storage backend</li>
@@ -228,7 +235,7 @@ to the storage.  If this is the case for this transfer then:</p>
 </ul>
 </td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">4</span></code></td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">5</span></code></td>
 <td><code class="docutils literal notranslate"><span class="pre">'VERIFY_PENDING'</span></code></td>
 <td><ul class="first last simple">
 <li>create the temporary verification directory</li>
@@ -237,7 +244,7 @@ to the storage.  If this is the case for this transfer then:</p>
 </ul>
 </td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">5</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">6</span></code></td>
 <td><code class="docutils literal notranslate"><span class="pre">'VERIFY_GETTING'</span></code></td>
 <td><ul class="first last simple">
 <li>download the batch to the temporary verification directory</li>
@@ -246,7 +253,7 @@ to the storage.  If this is the case for this transfer then:</p>
 </ul>
 </td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">6</span></code></td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">7</span></code></td>
 <td><code class="docutils literal notranslate"><span class="pre">'VERIFYING'</span></code></td>
 <td><ul class="first last simple">
 <li>verify the batch files - make sure that the digest of the downloaded
@@ -257,7 +264,7 @@ PUT_START</li>
 </ul>
 </td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">7</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">8</span></code></td>
 <td><code class="docutils literal notranslate"><span class="pre">'PUT_TIDY'</span></code></td>
 <td><ul class="first last simple">
 <li>delete the staged archive tarfiles (created in PUT_PACKING)</li>
@@ -269,7 +276,7 @@ permissions on original files if request_type == PUT</li>
 </ul>
 </td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">8</span></code></td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">9</span></code></td>
 <td><code class="docutils literal notranslate"><span class="pre">'PUT_COMPLETED'</span></code></td>
 <td><ul class="first last simple">
 <li>indicate that the request is completed. This status will remain for 72
@@ -426,16 +433,24 @@ in the database</li>
 <table border="1" class="docutils">
 <colgroup>
 <col width="8%" />
-<col width="12%" />
-<col width="80%" />
+<col width="22%" />
+<col width="70%" />
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">1000</span></code></td>
 <td><code class="docutils literal notranslate"><span class="pre">'FAILED'</span></code></td>
 <td><ul class="first last simple">
-<li>The request has failed. The failure reason is given by the <code class="docutils literal notranslate"><span class="pre">request</span></code> command
-of the <code class="docutils literal notranslate"><span class="pre">jdma</span></code> command line client or by the <code class="docutils literal notranslate"><span class="pre">get_request</span></code> function of the
-<code class="docutils literal notranslate"><span class="pre">jdma_lib</span></code>, in the “failure_reason” field in the returned JSON</li>
+<li>The request has failed. The failure reason is given by the
+<code class="docutils literal notranslate"><span class="pre">request</span></code> command of the <code class="docutils literal notranslate"><span class="pre">jdma</span></code> command line client or by the
+<code class="docutils literal notranslate"><span class="pre">get_request</span></code> function of the <code class="docutils literal notranslate"><span class="pre">jdma_lib</span></code>, in the
+“failure_reason” field in the returned JSON</li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">1000</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'FAILED_COMPLETED'</span></code></td>
+<td><ul class="first last simple">
+<li>All clean up for the FAILED request has completed.</li>
 </ul>
 </td>
 </tr>

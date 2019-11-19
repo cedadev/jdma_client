@@ -8,6 +8,7 @@ Options:
   | ``[-h|--help]``
   | ``[-e|--email=EMAIL]``
   | ``[-w|--workspace=WORKSPACE]``
+  | ``[-f]--filter=workspace|user]``
   | ``[-l|--label=LABEL]``
   | ``[-r|--target=TARGET]``
   | ``[-s|--storage=STORAGE]``
@@ -15,7 +16,7 @@ Options:
   | ``[-d|--digest]``
   | ``[-j|--json]``
   | ``[-t|--simple]``
-  | ``[-f|--force]``
+  | ``[-F|--force]``
 
 Help command
 ------------
