@@ -189,7 +189,7 @@ def do_request(args):
             return
         # list the requests if no req_id is given
         if req_id is None:
-            list_requests(data)
+            list_requests(data, args)
             return
         # print the response
         sys.stdout.write(bcolors.MAGENTA)
@@ -232,7 +232,7 @@ def do_request(args):
         error_message(response, error_msg, args.json)
 
 
-def list_requests(data):
+def list_requests(data, args):
     ("""Called from do_requests if request_id is None.  Lists all the """
      """requests.""")
     n_req = len(data["requests"])
