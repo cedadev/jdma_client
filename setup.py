@@ -9,7 +9,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='jdma_client',
-    version='0.2.2',
+    version='0.2.24',
     packages=['jdma_client'],
     install_requires=['requests',
                       'python_dateutil',

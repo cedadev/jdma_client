@@ -3,5 +3,5 @@ python_dateutil==2.6.1
 pyOpenSSL==17.5.0
 ndg-httpsclient==0.4.3
 pyasn1==0.3.7
-cryptography=2.3.1
-ldap3=2.3
+cryptography==2.3.1
+ldap3==2.3
