@@ -838,7 +838,7 @@ def do_files(args):
                 ).format("b.id", "user", "workspace", "batch label",
                          "storage", "archive", "file", "size"))
                 if args.digest == True:
-                    sys.stdout.write((" {:<64}").format("digest"))
+                    sys.stdout.write(("{:<72}").format(" digest"))
                 sys.stdout.write("\n"+bcolors.ENDC)
             for r in data["migrations"]:
                 # print the migration details and the first archive details
@@ -887,7 +887,11 @@ def do_files(args):
                                  size))
                         if args.digest == True:
                             digest = f["digest"]
-                            sys.stdout.write((" {:<64}").format(digest))
+                            digest_format = f["digest_format"]
+                            sys.stdout.write(("{:>8}:{:<64}").format(
+                                digest_format,
+                                digest
+                            ))
                         sys.stdout.write(bcolors.ENDC+"\n")
                         c_f += 1
                     c_a += 1
@@ -973,7 +977,7 @@ def do_archives(args):
                 ).format("b.id", "user", "workspace", "batch label",
                          "storage", "archive", "size"))
                 if args.digest == True:
-                    sys.stdout.write((" {:<32}").format("digest"))
+                    sys.stdout.write((" {:<40}").format("digest"))
                 sys.stdout.write("\n"+bcolors.ENDC)
             for r in data["migrations"]:
                 # print the migration details and the first archive details
@@ -994,7 +998,10 @@ def do_archives(args):
                              a["archive_id"][0:20],
                              sizeof_fmt(a["size"])))
                     if args.digest == True:
-                        sys.stdout.write((" {:<32}").format(a["digest"]))
+                        sys.stdout.write(("{:>8}:{:<32}").format(
+                            a["digest_format"],
+                            a["digest"]
+                        ))
                     sys.stdout.write("\n")
                 # underline the last one
                 ac = 1
@@ -1008,7 +1015,10 @@ def do_archives(args):
                              a["archive_id"][0:20],
                              sizeof_fmt(a["size"])))
                         if args.digest == True:
-                            sys.stdout.write((" {:<32}").format(a["digest"]))
+                            sys.stdout.write(("{:>8}:{:<32}").format(
+                                a["digest_format"],
+                                a["digest"]
+                            ))
                         sys.stdout.write("\n"+bcolors.ENDC)
                     else:
                         sys.stdout.write(a["archive_id"] + "\n")
@@ -1073,7 +1083,7 @@ def main():
 
 | ``-n | --limit`` : Limit the number of files output when using the **files** or **archives** command.
 
-| ``-d | --digest`` : Show the SHA256 digest when using the files or archives command.
+| ``-d | --digest`` : Show the digest when using the files or archives command.
 
 | ``-j | --json`` : Output JSON, rather than formatted output, for all commands.
 
@@ -1140,7 +1150,7 @@ def main():
     )
     parser.add_argument(
         "-d", "--digest", action="store_true", default="False",
-        help=("Show the SHA256 digest when using the files or "
+        help=("Show the digest when using the files or "
               " archives command.")
     )
     parser.add_argument(
