@@ -20,8 +20,8 @@ class settings:
     JDMA_CONFIG_URL = "https://raw.githubusercontent.com/cedadev/jdma_client/master/jdma_client/.jdma.json.template"
     # get the user from the environment
     USER = os.environ["USER"] # the USER name
-    # version of this software
-    VERSION = "0.2.24"
+    # version of this software - try to keep in sync with server
+    VERSION = "0.2.26"
     VERIFY = False
     user_credentials = {}
     DEBUG = True
