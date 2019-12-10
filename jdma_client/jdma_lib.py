@@ -262,13 +262,15 @@ def get_files(name, batch_id=None, workspace=None, limit=0, digest=0, ffilter=No
                     - **pk** (`integer`) the numeric ID of the archive
                     - **size** (`integer`) the total size of the archive in bytes
                     - **limit** (`integer`) the limit of the returned number of files
-                    - **digest** (`string`) the SHA256 digest (checksum) of the total archive (if packed)
+                    - **digest** (`string`) the digest (checksum) of the total archive (if packed)
+                    - **digest_format** (`string`) the algorithm of the digest
                     - **files** (`list of dictionaries`) a list of files that make up the archive.  Each entry is a dictionary, the format of which is:
 
                         - **pk** (`integer`) the numeric ID of the file
                         - **path** (`string`) the full, original path of the file
                         - **size** (`integer`) the size of the file, in bytes
-                        - **digest** (`string`) the SH256 digest (checksum) of the file
+                        - **digest** (`string`) the digest (checksum) of the file
+                        - **digest_format** (`string`) the algorithm of the digest
 
        :rtype: `requests.Response <http://docs.python-requests.org/en/master/api/#requests.Response>`_
     """
@@ -320,7 +322,8 @@ def get_archives(name, batch_id=None, workspace=None, limit=0, digest=0, ffilter
                     - **pk** (`integer`) the numeric ID of the archive
                     - **size** (`integer`) the total size of the archive in bytes
                     - **limit** (`integer`) the limit of the returned number of files
-                    - **digest** (`string`) the SHA256 digest (checksum) of the total archive (if packed)
+                    - **digest** (`string`) the digest (checksum) of the total archive (if packed)
+                    - **digest_format** (`string`) the algorithm of the digest
 
        :rtype: `requests.Response <http://docs.python-requests.org/en/master/api/#requests.Response>`_
     """
