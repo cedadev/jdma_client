@@ -13,10 +13,7 @@ setup(
     packages=['jdma_client'],
     install_requires=['requests',
                       'python_dateutil',
-                      'pyOpenSSL',
-                      'ndg-httpsclient',
                       'jinja2',
-                      'pyasn1',
                       'ldap3'
     ],
     include_package_data=True,
@@ -33,10 +30,9 @@ setup(
         'License :: OSI Approved :: BSD License', # example license
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        # Replace these appropriately if you are stuck on Python 2.
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
     ],

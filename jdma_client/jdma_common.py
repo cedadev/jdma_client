@@ -277,7 +277,7 @@ def read_filelist(path):
     # split the file and add to the data as "filelist" - add the absolute
     # paths, though
     flist_split = flist.split()
-    flist_split = map(str.strip, flist_split)
+    flist_split = list(map(str.strip, flist_split))
 
     filelist = []
     for f in flist_split:

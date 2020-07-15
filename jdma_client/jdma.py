@@ -14,13 +14,13 @@ if not sys.warnoptions:
 
 import os
 import argparse
-import json
 
 # import the jdma_lib library
 from jdma_client.jdma_lib import *
 from jdma_client.jdma_common import *
 
 # definitions for commands
+
 
 def do_help(args):
     """**help** *<command>* : get help for a command."""
@@ -44,7 +44,7 @@ def do_help(args):
         cmds.sort()
         print("Available commands are:")
         for cmd in cmds:
-            print ("\t" + cmd)
+            print("\t" + cmd)
 
 
 def do_init(args):
@@ -343,7 +343,7 @@ def do_batch(args):
         data = response.json()
         # check if the JSON option was chosen
         if args.json == True:
-            print(data)
+            sys.stdout.write(data)
             return
         if batch_id is None and label_id is None:
             list_batches(data, workspace)
@@ -575,9 +575,9 @@ def do_delete(args):
         sys.stdout.write(bcolors.RED + prompt_message)
         # python 3 compatibility here
         try:
-            answer = str(raw_input())
+            answer = str(eval(input()))
         except:
-            answer = str(input())
+            answer = str(eval(input()))
         sys.stdout.write(bcolors.ENDC)
         if answer != "y" and answer != "Y":
             return # do nothing

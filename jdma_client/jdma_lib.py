@@ -121,7 +121,7 @@ def info_user(name):
     return response
 
 
-##### Request functions - interact with HTTP API to manipulate requests   ######
+# Request functions - interact with HTTP API to manipulate requests  #
 
 def get_request(name, req_id=None, workspace=None, ffilter=None):
     """Get a list of a user's requests or the details of a single request.
