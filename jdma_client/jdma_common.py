@@ -11,7 +11,7 @@ import requests
 class settings:
     """Settings for the jdma command line tool."""
     # location of the jdma_control server / app
-    JDMA_SERVER_URL = "https://jdma1.ceda.ac.uk/jdma_control"
+    JDMA_SERVER_URL = "https://jdma.ceda.ac.uk/jdma_control"
     # !!! Test servers - don't commit with these lines !!!
     #JDMA_SERVER_URL = "https://jdma-test.ceda.ac.uk/jdma_control"
     #JDMA_SERVER_URL = "https://192.168.51.26/jdma_control"
@@ -21,7 +21,7 @@ class settings:
     # get the user from the environment
     USER = os.environ["USER"] # the USER name
     # version of this software - try to keep in sync with server
-    VERSION = "0.2.26"
+    VERSION = "0.2.27"
     VERIFY = False
     user_credentials = {}
     DEBUG = True
