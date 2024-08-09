@@ -1,87 +1,52 @@
-
-
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tutorial &mdash; JDMA 0.2 documentation</title>
-  
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
 
   
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
-  
-  
-
-  
-
-  
-  
-    
-
-  
-
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=10f1778b"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Glossary" href="glossary.html" />
     <link rel="prev" title="Installation" href="installation.html" /> 
-
-  
-  <script src="../_static/js/modernizr.min.js"></script>
-
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
-          
+        <div class="wy-side-nav-search" >
 
           
-            <a href="../index.html" class="icon icon-home"> JDMA
           
-
-          
+          <a href="../index.html" class="icon icon-home">
+            JDMA
           </a>
-
-          
-            
-            
               <div class="version">
                 0.2
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction to JDMA</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
@@ -121,78 +86,40 @@
 <li class="toctree-l1"><a class="reference internal" href="configuration_file.html">Configuration File</a></li>
 </ul>
 
-            
-          
         </div>
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">JDMA</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../index.html">Docs</a> &raquo;</li>
-        
-      <li>Tutorial</li>
-    
-    
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Tutorial</li>
       <li class="wy-breadcrumbs-aside">
-        
-            
             <a href="../_sources/jdma_client/tutorial.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="tutorial">
-<h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
+             
+  <section id="tutorial">
+<h1>Tutorial<a class="headerlink" href="#tutorial" title="Link to this heading"></a></h1>
 <p>This tutorial documents how to use JDMA from the <code class="docutils literal notranslate"><span class="pre">jdma</span></code> command line interface
 for a typical user workflow.  It details how to set up the user to use JDMA,
 and examples of data migration and retrieval.  All of the functions of JDMA will
 be covered in this tutorial.</p>
-<div class="section" id="setting-up-the-user-user-settings-and-user-info">
-<h2>Setting up the user, user settings and user info<a class="headerlink" href="#setting-up-the-user-user-settings-and-user-info" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="initialisation">
-<h3>Initialisation<a class="headerlink" href="#initialisation" title="Permalink to this headline">¶</a></h3>
+<section id="setting-up-the-user-user-settings-and-user-info">
+<h2>Setting up the user, user settings and user info<a class="headerlink" href="#setting-up-the-user-user-settings-and-user-info" title="Link to this heading"></a></h2>
+<section id="initialisation">
+<h3>Initialisation<a class="headerlink" href="#initialisation" title="Link to this heading"></a></h3>
 <p>To use JDMA, first install the JDMA client software by following the instructions
 in the <a class="reference internal" href="installation.html"><span class="doc">Installation</span></a> section.</p>
 <p>Once the JDMA client software is installed, and the virtual environment is
@@ -206,16 +133,16 @@ activated, the user needs to initialise their account with the command:</p>
 </div>
 <p>This will do two things:</p>
 <ol class="arabic simple">
-<li>Create a user account on the JDMA server.</li>
-<li>Create a configuration file in the user’s home directory with the path
+<li><p>Create a user account on the JDMA server.</p></li>
+<li><p>Create a configuration file in the user’s home directory with the path
 <code class="docutils literal notranslate"><span class="pre">~/.jdma.json</span></code>.  See the section <a class="reference internal" href="configuration_file.html"><span class="doc">Configuration File</span></a> for full
 details of this file.  The user may wish to change the <code class="docutils literal notranslate"><span class="pre">default_storage</span></code>
 and <code class="docutils literal notranslate"><span class="pre">default_gws</span></code> settings in the configuration file to their preferred
-defaults.</li>
+defaults.</p></li>
 </ol>
-</div>
-<div class="section" id="user-info">
-<h3>User info<a class="headerlink" href="#user-info" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="user-info">
+<h3>User info<a class="headerlink" href="#user-info" title="Link to this heading"></a></h3>
 <p>The user can get the details stored on the server with the command:</p>
 <p><code class="docutils literal notranslate"><span class="pre">jdma</span> <span class="pre">info</span></code></p>
 <p>which will return, on success:</p>
@@ -225,9 +152,9 @@ defaults.</li>
    notify  : off
 </pre></div>
 </div>
-</div>
-<div class="section" id="user-settings">
-<h3>User settings<a class="headerlink" href="#user-settings" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="user-settings">
+<h3>User settings<a class="headerlink" href="#user-settings" title="Link to this heading"></a></h3>
 <p>JDMA has the ability to notify a user, via email, when their data migration or
 retrieval has completed.  These notifications can be switched on or off, and
 rely on a valid email address for the user.  These settings can be changed using
@@ -249,9 +176,9 @@ result in:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>** SUCCESS ** - user notifications updated to: *on*
 </pre></div>
 </div>
-</div>
-<div class="section" id="listing-storage">
-<h3>Listing storage<a class="headerlink" href="#listing-storage" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="listing-storage">
+<h3>Listing storage<a class="headerlink" href="#listing-storage" title="Link to this heading"></a></h3>
 <p>The storage systems that data can be uploaded to can be listed with the command:</p>
 <p><code class="docutils literal notranslate"><span class="pre">jdma</span> <span class="pre">storage</span></code></p>
 <p>which results in:</p>
@@ -270,10 +197,10 @@ user’s <code class="docutils literal notranslate"><span class="pre">.jdma.json
 using a text editor, and the <code class="docutils literal notranslate"><span class="pre">Short</span> <span class="pre">ID</span></code> of the storage system should be set
 for the <code class="docutils literal notranslate"><span class="pre">default_storage</span></code> field.  See the section <a class="reference internal" href="configuration_file.html"><span class="doc">Configuration File</span></a>
 for full details of this file.</p>
-</div>
-</div>
-<div class="section" id="uploading-data-to-a-storage-system">
-<h2>Uploading data to a storage system<a class="headerlink" href="#uploading-data-to-a-storage-system" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="uploading-data-to-a-storage-system">
+<h2>Uploading data to a storage system<a class="headerlink" href="#uploading-data-to-a-storage-system" title="Link to this heading"></a></h2>
 <p>There are two different methods of uploading data with JDMA: <code class="docutils literal notranslate"><span class="pre">PUT</span></code> and
 <code class="docutils literal notranslate"><span class="pre">MIGRATE</span></code>.  <code class="docutils literal notranslate"><span class="pre">PUT</span></code> uploads the data and leaves the data where it is, whereas
 <code class="docutils literal notranslate"><span class="pre">MIGRATE</span></code> uploads the data and then <strong>deletes</strong> the data from its original
@@ -283,8 +210,8 @@ first is to specify the directory at the command.  The second is to specify a
 list of file-names to upload in a text-file.  The file-names in the text-file
 must contain the full path to the file and be separated by a line break (i.e.
 each file-name is on a separate line.)</p>
-<div class="section" id="put">
-<h3>Put<a class="headerlink" href="#put" title="Permalink to this headline">¶</a></h3>
+<section id="put">
+<h3>Put<a class="headerlink" href="#put" title="Link to this heading"></a></h3>
 <p>To begin a <code class="docutils literal notranslate"><span class="pre">PUT</span></code> upload of a directory to a storage system use the command:</p>
 <p><code class="docutils literal notranslate"><span class="pre">jdma</span> <span class="pre">-s</span> <span class="pre">&lt;storage_short_id&gt;</span> <span class="pre">-w</span> <span class="pre">&lt;workspace&gt;</span> <span class="pre">put</span> <span class="pre">&lt;directory&gt;</span></code></p>
 <p>The <code class="docutils literal notranslate"><span class="pre">-s</span> <span class="pre">&lt;storage_short_id&gt;</span></code> can be omitted.  In this case the data will be
@@ -307,9 +234,9 @@ uploaded</p>
     Stage        : PUT_START
 </pre></div>
 </div>
-</div>
-<div class="section" id="request">
-<h3>Request<a class="headerlink" href="#request" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="request">
+<h3>Request<a class="headerlink" href="#request" title="Link to this heading"></a></h3>
 <p>To query which requests a user has made, use the command:</p>
 <p><code class="docutils literal notranslate"><span class="pre">jdma</span> <span class="pre">request</span></code></p>
 <p>Which returns a list of all the requests a user has made, information about the
@@ -357,16 +284,16 @@ the request number.</p>
 values describing the process that is currently happening.  These stages are
 (in order):</p>
 <ol class="arabic simple">
-<li><code class="docutils literal notranslate"><span class="pre">PUT_START</span></code></li>
-<li><code class="docutils literal notranslate"><span class="pre">PUT_BUILDING</span></code></li>
-<li><code class="docutils literal notranslate"><span class="pre">PUT_PACKING</span></code></li>
-<li><code class="docutils literal notranslate"><span class="pre">PUT_PENDING</span></code></li>
-<li><code class="docutils literal notranslate"><span class="pre">PUTTING</span></code></li>
-<li><code class="docutils literal notranslate"><span class="pre">VERIFY_PENDING</span></code></li>
-<li><code class="docutils literal notranslate"><span class="pre">VERIFY_GETTING</span></code></li>
-<li><code class="docutils literal notranslate"><span class="pre">VERIFYING</span></code></li>
-<li><code class="docutils literal notranslate"><span class="pre">PUT_TIDY</span></code></li>
-<li><code class="docutils literal notranslate"><span class="pre">PUT_COMPLETED</span></code></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PUT_START</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PUT_BUILDING</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PUT_PACKING</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PUT_PENDING</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PUTTING</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">VERIFY_PENDING</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">VERIFY_GETTING</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">VERIFYING</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PUT_TIDY</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PUT_COMPLETED</span></code></p></li>
 </ol>
 <p>When the stage <code class="docutils literal notranslate"><span class="pre">PUT_COMPLETED</span></code> is reached the data is successfully stored on
 the external storage and can then be downloaded.</p>
@@ -383,12 +310,12 @@ user will get an email notification once their batch has fully uploaded.</p>
 <p>The final stage for a <code class="docutils literal notranslate"><span class="pre">put</span></code> request is <code class="docutils literal notranslate"><span class="pre">PUT_COMPLETED</span></code>.  Requests that
 have reached this stage will be shown in the list of requests for one day after
 completion.</p>
-</div>
-</div>
-<div class="section" id="querying-data-on-a-storage-system">
-<h2>Querying data on a storage system<a class="headerlink" href="#querying-data-on-a-storage-system" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="batches">
-<h3>Batches<a class="headerlink" href="#batches" title="Permalink to this headline">¶</a></h3>
+</section>
+</section>
+<section id="querying-data-on-a-storage-system">
+<h2>Querying data on a storage system<a class="headerlink" href="#querying-data-on-a-storage-system" title="Link to this heading"></a></h2>
+<section id="batches">
+<h3>Batches<a class="headerlink" href="#batches" title="Link to this heading"></a></h3>
 <p>When a user has some data stored on one or more of the external storage systems,
 as batches, they can list the batches that belong to them with the command:</p>
 <p><code class="docutils literal notranslate"><span class="pre">jdma</span> <span class="pre">batch</span></code></p>
@@ -433,9 +360,9 @@ batch command:</p>
 <p>If the user is a group workspace manager then they can list batches for other
 users in the GWS as well, even if they do not own the batch, simply by using the
 batch number.</p>
-</div>
-<div class="section" id="archives">
-<h3>Archives<a class="headerlink" href="#archives" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="archives">
+<h3>Archives<a class="headerlink" href="#archives" title="Link to this heading"></a></h3>
 <p>To see which archives belong to the user, use the command:</p>
 <p><code class="docutils literal notranslate"><span class="pre">jdma</span> <span class="pre">archives</span></code></p>
 <p>which returns:</p>
@@ -467,9 +394,9 @@ and the default workspace will be used if this argument is not supplied):</p>
 <p>If the user is a group workspace manager then they can list archives in the
 batches of other users in the GWS as well, even if they do not own the batch,
 simply by using the batch number.</p>
-</div>
-<div class="section" id="files">
-<h3>Files<a class="headerlink" href="#files" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="files">
+<h3>Files<a class="headerlink" href="#files" title="Link to this heading"></a></h3>
 <p>To get a list of files belonging to the user, use the command:</p>
 <p><code class="docutils literal notranslate"><span class="pre">jdma</span> <span class="pre">files</span></code></p>
 <p>To limit this to a single workspace:</p>
@@ -532,10 +459,10 @@ files with full pathnames, the <code class="docutils literal notranslate"><span 
 <p>If the user is a group workspace manager then they can list files in the
 batches of other users in the GWS as well, even if they do not own the batch,
 simply by using the batch number.</p>
-</div>
-</div>
-<div class="section" id="downloading-data-from-a-storage-system">
-<h2>Downloading data from a storage system<a class="headerlink" href="#downloading-data-from-a-storage-system" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="downloading-data-from-a-storage-system">
+<h2>Downloading data from a storage system<a class="headerlink" href="#downloading-data-from-a-storage-system" title="Link to this heading"></a></h2>
 <p>A user can download the files contained in an uploaded batch with the command:</p>
 <p><code class="docutils literal notranslate"><span class="pre">jdma</span> <span class="pre">-r</span> <span class="pre">&lt;target_path&gt;</span> <span class="pre">get</span> <span class="pre">&lt;batch_id&gt;</span></code></p>
 <p>which, on success, produces:</p>
@@ -592,9 +519,9 @@ is used) has fully downloaded.</p>
 <p>The final stage for a <code class="docutils literal notranslate"><span class="pre">get</span></code> request is <code class="docutils literal notranslate"><span class="pre">GET_COMPLETED</span></code>.  Requests that
 have reached this stage will be shown in the list of requests for one day after
 completion.</p>
-</div>
-<div class="section" id="deleting-data-on-a-storage-system">
-<h2>Deleting data on a storage system<a class="headerlink" href="#deleting-data-on-a-storage-system" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="deleting-data-on-a-storage-system">
+<h2>Deleting data on a storage system<a class="headerlink" href="#deleting-data-on-a-storage-system" title="Link to this heading"></a></h2>
 <p>Users can delete batches from a storage system.  Deleting a batch will also
 delete any requests associated with it. For example, the <code class="docutils literal notranslate"><span class="pre">put</span></code> request issued
 to upload the batch to the storage system may still be progressing.  If a
@@ -637,11 +564,11 @@ user will get an email notification once their batch is deleted.</p>
 <p>The final stage for a <code class="docutils literal notranslate"><span class="pre">delete</span></code> request is <code class="docutils literal notranslate"><span class="pre">DELETE_COMPLETED</span></code>.  Requests that
 have reached this stage will be shown in the list of requests for one day after
 completion.</p>
-</div>
-<div class="section" id="data-flow">
-<h2>Data flow<a class="headerlink" href="#data-flow" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="put-or-migrate-requests">
-<h3>PUT or MIGRATE requests<a class="headerlink" href="#put-or-migrate-requests" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="data-flow">
+<h2>Data flow<a class="headerlink" href="#data-flow" title="Link to this heading"></a></h2>
+<section id="put-or-migrate-requests">
+<h3>PUT or MIGRATE requests<a class="headerlink" href="#put-or-migrate-requests" title="Link to this heading"></a></h3>
 <p>When a user instructs JDMA to <code class="docutils literal notranslate"><span class="pre">put</span></code> or <code class="docutils literal notranslate"><span class="pre">migrate</span></code> some data to JDMA, the
 <strong>request</strong> will go through a number of stages.  These stages are listed below,
 and more information is available at <a class="reference internal" href="transfer_states.html"><span class="doc">Transfer states</span></a>.</p>
@@ -663,9 +590,9 @@ will, however, will remain on the storage.</p>
 <p><code class="docutils literal notranslate"><span class="pre">ON_DISK</span> <span class="pre">-&gt;</span> <span class="pre">PUTTING</span> <span class="pre">-&gt;</span> <span class="pre">ON_STORAGE</span></code></p>
 <p>With <code class="docutils literal notranslate"><span class="pre">ON_STORAGE</span></code> being the last stage and recording that the data uploaded
 to the storage successfully.</p>
-</div>
-<div class="section" id="get-requests">
-<h3>GET requests<a class="headerlink" href="#get-requests" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="get-requests">
+<h3>GET requests<a class="headerlink" href="#get-requests" title="Link to this heading"></a></h3>
 <p>When a user instructs JDMA to <code class="docutils literal notranslate"><span class="pre">get</span></code> some data from JDMA, the
 <strong>request</strong> will go through a number of stages.  These stages are listed below,
 and more information is available at <a class="reference internal" href="transfer_states.html"><span class="doc">Transfer states</span></a>.</p>
@@ -680,72 +607,44 @@ stages are:</p>
 <p><code class="docutils literal notranslate"><span class="pre">GET_RESTORE</span> <span class="pre">-&gt;</span> <span class="pre">GET_TIDY</span> <span class="pre">-&gt;</span> <span class="pre">GET_COMPLETED</span></code></p>
 <p>The request will stay in the <code class="docutils literal notranslate"><span class="pre">GET_COMPLETED</span></code> stage for one day after
 completion and then the request will be removed from JDMA.</p>
-</div>
-<div class="section" id="delete-requests">
-<h3>DELETE requests<a class="headerlink" href="#delete-requests" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="delete-requests">
+<h3>DELETE requests<a class="headerlink" href="#delete-requests" title="Link to this heading"></a></h3>
 <p>When a user instructs JDMA to <code class="docutils literal notranslate"><span class="pre">delete</span></code> some data from JDMA, the
 <strong>request</strong> will go through a number of stages.  These stages are listed below,
 and more information is available at <a class="reference internal" href="transfer_states.html"><span class="doc">Transfer states</span></a>.</p>
 <p><code class="docutils literal notranslate"><span class="pre">DELETE_START</span> <span class="pre">-&gt;</span> <span class="pre">DELETE_PENDING</span> <span class="pre">-&gt;</span> <span class="pre">DELETING</span> <span class="pre">-&gt;</span> <span class="pre">DELETE_TIDY</span> <span class="pre">-&gt;</span> <span class="pre">DELETE_COMPLETED</span></code></p>
 <p>The request will stay in the <code class="docutils literal notranslate"><span class="pre">DELETE_COMPLETED</span></code> stage for one day after
 completion and then the request will be removed from JDMA.</p>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="glossary.html" class="btn btn-neutral float-right" title="Glossary" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="installation.html" class="btn btn-neutral" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="glossary.html" class="btn btn-neutral float-right" title="Glossary" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &copy; Copyright 2018, Centre for Environmental Data Analysis, Science and Technologies Facilities Council, UK Research and Innovation.
-
-    </p>
+    <p>&#169; Copyright 2018, Centre for Environmental Data Analysis, Science and Technologies Facilities Council, UK Research and Innovation..</p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });

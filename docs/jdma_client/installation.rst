@@ -15,6 +15,26 @@ user space or home directory.
 
   * ``source ~/jdma_venv/bin/activate``
 
-4. install the jdma client into the virtualenv using pip and the cloned repository:
+4. install the JDMA client into the virtualenv using pip and the cloned repository:
 
   * ``pip install git+https://github.com/cedadev/jdma_client``
+
+.. note::
+  | In **August 2024** the JDMA server was upgraded to a new operating system.
+  | This requires an upgraded JDMA client to be installed.
+  | If you were using JDMA prior to **August 2024** then you will *have* to upgrade your client.
+  | This is a straightforward process:
+
+  1. Activate the virtual environment as above:
+    
+    * ``source ~/jdma_venv/bin/activate``
+
+  2. Install the upgraded JDMA client:
+
+    * ``pip install --upgrade git+https://github.com/cedadev/jdma_client``
+
+  3. Check the version of the JDMA client:
+
+    * ``pip list | grep jdma-client``
+
+    The correct version is ``1.0.1``

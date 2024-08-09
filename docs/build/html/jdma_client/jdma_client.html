@@ -1,98 +1,89 @@
-
-
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Command Reference &mdash; JDMA 0.2 documentation</title>
-  
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
 
   
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
-  
-  
-
-  
-
-  
-  
-    
-
-  
-
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=10f1778b"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="JDMA library" href="jdma_lib.html" />
     <link rel="prev" title="Glossary" href="glossary.html" /> 
-
-  
-  <script src="../_static/js/modernizr.min.js"></script>
-
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
-          
+        <div class="wy-side-nav-search" >
 
           
-            <a href="../index.html" class="icon icon-home"> JDMA
           
-
-          
+          <a href="../index.html" class="icon icon-home">
+            JDMA
           </a>
-
-          
-            
-            
               <div class="version">
                 0.2
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction to JDMA</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Command Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#help-command">Help command</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#user-and-system-commands">User and system commands</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#data-transfer-commands">Data transfer commands</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#data-transfer-properties-and-status-commands">Data transfer properties and status commands</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#options">Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#help-command">Help command</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#jdma_client.jdma.do_help"><code class="docutils literal notranslate"><span class="pre">do_help()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#user-and-system-commands">User and system commands</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#jdma_client.jdma.do_init"><code class="docutils literal notranslate"><span class="pre">do_init()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#jdma_client.jdma.do_email"><code class="docutils literal notranslate"><span class="pre">do_email()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#jdma_client.jdma.do_info"><code class="docutils literal notranslate"><span class="pre">do_info()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#jdma_client.jdma.do_notify"><code class="docutils literal notranslate"><span class="pre">do_notify()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#jdma_client.jdma.do_storage"><code class="docutils literal notranslate"><span class="pre">do_storage()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#data-transfer-commands">Data transfer commands</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#jdma_client.jdma.do_put"><code class="docutils literal notranslate"><span class="pre">do_put()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#jdma_client.jdma.do_migrate"><code class="docutils literal notranslate"><span class="pre">do_migrate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#jdma_client.jdma.do_get"><code class="docutils literal notranslate"><span class="pre">do_get()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#jdma_client.jdma.do_delete"><code class="docutils literal notranslate"><span class="pre">do_delete()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#data-transfer-properties-and-status-commands">Data transfer properties and status commands</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#jdma_client.jdma.do_label"><code class="docutils literal notranslate"><span class="pre">do_label()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#jdma_client.jdma.do_request"><code class="docutils literal notranslate"><span class="pre">do_request()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#jdma_client.jdma.do_batch"><code class="docutils literal notranslate"><span class="pre">do_batch()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#jdma_client.jdma.do_files"><code class="docutils literal notranslate"><span class="pre">do_files()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#jdma_client.jdma.do_archives"><code class="docutils literal notranslate"><span class="pre">do_archives()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#options">Options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#jdma_client.jdma.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="jdma_lib.html">JDMA library</a></li>
@@ -100,70 +91,32 @@
 <li class="toctree-l1"><a class="reference internal" href="configuration_file.html">Configuration File</a></li>
 </ul>
 
-            
-          
         </div>
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">JDMA</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../index.html">Docs</a> &raquo;</li>
-        
-      <li>Command Reference</li>
-    
-    
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Command Reference</li>
       <li class="wy-breadcrumbs-aside">
-        
-            
             <a href="../_sources/jdma_client/jdma_client.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="command-reference">
-<h1>Command Reference<a class="headerlink" href="#command-reference" title="Permalink to this headline">¶</a></h1>
+             
+  <section id="command-reference">
+<h1>Command Reference<a class="headerlink" href="#command-reference" title="Link to this heading"></a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">jdma</span> <span class="pre">command</span> <span class="pre">[command]</span> <span class="pre">[arg]</span> <span class="pre">[options]</span></code></p>
 <p>Options:</p>
 <blockquote>
@@ -182,61 +135,61 @@
 <div class="line"><code class="docutils literal notranslate"><span class="pre">[-F|--force]</span></code></div>
 </div>
 </div></blockquote>
-<div class="section" id="help-command">
-<h2>Help command<a class="headerlink" href="#help-command" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="jdma_client.jdma.do_help">
-<code class="descclassname">jdma_client.jdma.</code><code class="descname">do_help</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_help" title="Permalink to this definition">¶</a></dt>
+<section id="help-command">
+<h2>Help command<a class="headerlink" href="#help-command" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="jdma_client.jdma.do_help">
+<span class="sig-prename descclassname"><span class="pre">jdma_client.jdma.</span></span><span class="sig-name descname"><span class="pre">do_help</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_help" title="Link to this definition"></a></dt>
 <dd><p><strong>help</strong> <em>&lt;command&gt;</em> : get help for a command.</p>
 </dd></dl>
 
-</div>
-<div class="section" id="user-and-system-commands">
-<h2>User and system commands<a class="headerlink" href="#user-and-system-commands" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="jdma_client.jdma.do_init">
-<code class="descclassname">jdma_client.jdma.</code><code class="descname">do_init</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_init" title="Permalink to this definition">¶</a></dt>
+</section>
+<section id="user-and-system-commands">
+<h2>User and system commands<a class="headerlink" href="#user-and-system-commands" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="jdma_client.jdma.do_init">
+<span class="sig-prename descclassname"><span class="pre">jdma_client.jdma.</span></span><span class="sig-name descname"><span class="pre">do_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_init" title="Link to this definition"></a></dt>
 <dd><p><strong>init</strong> <em>&lt;email address&gt;</em> : Initialise the Joint-Storage Data Migration App for your JASMIN login.  Creates a configuration file at <code class="docutils literal notranslate"><span class="pre">~/.jdma.json</span></code>.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="jdma_client.jdma.do_email">
-<code class="descclassname">jdma_client.jdma.</code><code class="descname">do_email</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_email" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="jdma_client.jdma.do_email">
+<span class="sig-prename descclassname"><span class="pre">jdma_client.jdma.</span></span><span class="sig-name descname"><span class="pre">do_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_email" title="Link to this definition"></a></dt>
 <dd><p><strong>email</strong> <em>&lt;email address&gt;</em> : Set / update your email address for notifications.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="jdma_client.jdma.do_info">
-<code class="descclassname">jdma_client.jdma.</code><code class="descname">do_info</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_info" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="jdma_client.jdma.do_info">
+<span class="sig-prename descclassname"><span class="pre">jdma_client.jdma.</span></span><span class="sig-name descname"><span class="pre">do_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_info" title="Link to this definition"></a></dt>
 <dd><p><strong>info</strong> : get information about you, including email address and notification setting.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="jdma_client.jdma.do_notify">
-<code class="descclassname">jdma_client.jdma.</code><code class="descname">do_notify</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_notify" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="jdma_client.jdma.do_notify">
+<span class="sig-prename descclassname"><span class="pre">jdma_client.jdma.</span></span><span class="sig-name descname"><span class="pre">do_notify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_notify" title="Link to this definition"></a></dt>
 <dd><p><strong>notify</strong> : Switch on / off email notifications of the completion of GET | PUT | MIGRATE requests.  Default is on.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="jdma_client.jdma.do_storage">
-<code class="descclassname">jdma_client.jdma.</code><code class="descname">do_storage</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_storage" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="jdma_client.jdma.do_storage">
+<span class="sig-prename descclassname"><span class="pre">jdma_client.jdma.</span></span><span class="sig-name descname"><span class="pre">do_storage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_storage" title="Link to this definition"></a></dt>
 <dd><p><strong>storage</strong> : list the storage targets that batches can be written to.</p>
 </dd></dl>
 
-</div>
-<div class="section" id="data-transfer-commands">
-<h2>Data transfer commands<a class="headerlink" href="#data-transfer-commands" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="jdma_client.jdma.do_put">
-<code class="descclassname">jdma_client.jdma.</code><code class="descname">do_put</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_put" title="Permalink to this definition">¶</a></dt>
+</section>
+<section id="data-transfer-commands">
+<h2>Data transfer commands<a class="headerlink" href="#data-transfer-commands" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="jdma_client.jdma.do_put">
+<span class="sig-prename descclassname"><span class="pre">jdma_client.jdma.</span></span><span class="sig-name descname"><span class="pre">do_put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_put" title="Link to this definition"></a></dt>
 <dd><p><strong>put</strong> <em>&lt;path&gt;|&lt;filelist&gt;</em>: Create a batch upload of the current directory, or directory in <em>&lt;path&gt;</em> or a list of files.
 Use <em>–label=</em> to give the batch a label.
 Use <em>–storage</em> to specify which external storage to target for the migration.  Use command <strong>storage</strong> to list all the available storage targets.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="jdma_client.jdma.do_migrate">
-<code class="descclassname">jdma_client.jdma.</code><code class="descname">do_migrate</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_migrate" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="jdma_client.jdma.do_migrate">
+<span class="sig-prename descclassname"><span class="pre">jdma_client.jdma.</span></span><span class="sig-name descname"><span class="pre">do_migrate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_migrate" title="Link to this definition"></a></dt>
 <dd><p><strong>migrate</strong> <em>&lt;path&gt;|&lt;filelist&gt;</em>: Create a batch upload of the current directory, or directory in <em>&lt;path&gt;</em> or a list of files.
 Use <em>–label=</em> to give the batch a label.
 Use <em>–storage</em> to specify which external storage to target for the migration.
@@ -244,9 +197,9 @@ Use command <strong>storage</strong> to list all the available storage targets.
 The data in the directory or filelist will be deleted after the upload is completed.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="jdma_client.jdma.do_get">
-<code class="descclassname">jdma_client.jdma.</code><code class="descname">do_get</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_get" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="jdma_client.jdma.do_get">
+<span class="sig-prename descclassname"><span class="pre">jdma_client.jdma.</span></span><span class="sig-name descname"><span class="pre">do_get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_get" title="Link to this definition"></a></dt>
 <dd><p><strong>get</strong> <em>&lt;batch_id&gt;</em> : Retrieve a batch upload of a directory or filelist with the id <em>&lt;request_id&gt;</em>.
 A different target directory to the original directory can be specified with <em>–target=</em>.</p>
 <p><strong>get</strong> <em>&lt;batch_id&gt;</em> <em>&lt;filelist&gt;</em> : Retrieve a (subset) list of files from a batch with <em>&lt;batch_id&gt;</em>.
@@ -254,53 +207,53 @@ A different target directory to the original directory can be specified with <em
 The filenames in the filelist must be the relative path, as obtained by <code class="docutils literal notranslate"><span class="pre">jdma</span> <span class="pre">--simple</span> <span class="pre">files</span> <span class="pre">&lt;batch_id&gt;</span></code>.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="jdma_client.jdma.do_delete">
-<code class="descclassname">jdma_client.jdma.</code><code class="descname">do_delete</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_delete" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="jdma_client.jdma.do_delete">
+<span class="sig-prename descclassname"><span class="pre">jdma_client.jdma.</span></span><span class="sig-name descname"><span class="pre">do_delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_delete" title="Link to this definition"></a></dt>
 <dd><p><strong>delete</strong> <em>&lt;batch_id&gt;</em> : Delete the batch with <em>&lt;batch_id&gt;</em> from the
 storage</p>
 </dd></dl>
 
-</div>
-<div class="section" id="data-transfer-properties-and-status-commands">
-<h2>Data transfer properties and status commands<a class="headerlink" href="#data-transfer-properties-and-status-commands" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="jdma_client.jdma.do_label">
-<code class="descclassname">jdma_client.jdma.</code><code class="descname">do_label</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_label" title="Permalink to this definition">¶</a></dt>
+</section>
+<section id="data-transfer-properties-and-status-commands">
+<h2>Data transfer properties and status commands<a class="headerlink" href="#data-transfer-properties-and-status-commands" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="jdma_client.jdma.do_label">
+<span class="sig-prename descclassname"><span class="pre">jdma_client.jdma.</span></span><span class="sig-name descname"><span class="pre">do_label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_label" title="Link to this definition"></a></dt>
 <dd><p><strong>label</strong> <em>&lt;batch_id&gt;</em> : Change the label of the batch with <em>&lt;batch_id&gt;</em>.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="jdma_client.jdma.do_request">
-<code class="descclassname">jdma_client.jdma.</code><code class="descname">do_request</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_request" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="jdma_client.jdma.do_request">
+<span class="sig-prename descclassname"><span class="pre">jdma_client.jdma.</span></span><span class="sig-name descname"><span class="pre">do_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_request" title="Link to this definition"></a></dt>
 <dd><p><strong>request</strong> <em>&lt;request_id&gt;</em> : List all requests, or the details of a particular request with &lt;request_id&gt;.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="jdma_client.jdma.do_batch">
-<code class="descclassname">jdma_client.jdma.</code><code class="descname">do_batch</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_batch" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="jdma_client.jdma.do_batch">
+<span class="sig-prename descclassname"><span class="pre">jdma_client.jdma.</span></span><span class="sig-name descname"><span class="pre">do_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_batch" title="Link to this definition"></a></dt>
 <dd><p><strong>batch</strong> <em>&lt;batch_id&gt;</em> : List all batches, or all the details of a particular batch with <em>&lt;batch_id&gt;</em>.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="jdma_client.jdma.do_files">
-<code class="descclassname">jdma_client.jdma.</code><code class="descname">do_files</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_files" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="jdma_client.jdma.do_files">
+<span class="sig-prename descclassname"><span class="pre">jdma_client.jdma.</span></span><span class="sig-name descname"><span class="pre">do_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_files" title="Link to this definition"></a></dt>
 <dd><p><strong>files</strong> <em>&lt;batch_id&gt;</em> : List the original paths of files in a batch.
 Use the <em>–simple</em> option to produce a simply formatted list which can be used in conjunction with the <strong>get</strong> command to get a subset of the batch.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="jdma_client.jdma.do_archives">
-<code class="descclassname">jdma_client.jdma.</code><code class="descname">do_archives</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_archives" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="jdma_client.jdma.do_archives">
+<span class="sig-prename descclassname"><span class="pre">jdma_client.jdma.</span></span><span class="sig-name descname"><span class="pre">do_archives</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.do_archives" title="Link to this definition"></a></dt>
 <dd><p><strong>archives</strong> <em>&lt;batch_id&gt;</em> : List the archives in a batch.</p>
 </dd></dl>
 
-</div>
-<div class="section" id="options">
-<h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="jdma_client.jdma.main">
-<code class="descclassname">jdma_client.jdma.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.main" title="Permalink to this definition">¶</a></dt>
+</section>
+<section id="options">
+<h2>Options<a class="headerlink" href="#options" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="jdma_client.jdma.main">
+<span class="sig-prename descclassname"><span class="pre">jdma_client.jdma.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#jdma_client.jdma.main" title="Link to this definition"></a></dt>
 <dd><div class="line-block">
 <div class="line"><code class="docutils literal notranslate"><span class="pre">-e|--email=EMAIL</span></code> : Email address for user in the init and email commands.</div>
 </div>
@@ -323,7 +276,7 @@ Use the <em>–simple</em> option to produce a simply formatted list which can b
 <div class="line"><code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">|</span> <span class="pre">--limit</span></code> : Limit the number of files output when using the <strong>files</strong> or <strong>archives</strong> command.</div>
 </div>
 <div class="line-block">
-<div class="line"><code class="docutils literal notranslate"><span class="pre">-d</span> <span class="pre">|</span> <span class="pre">--digest</span></code> : Show the SHA256 digest when using the files or archives command.</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">-d</span> <span class="pre">|</span> <span class="pre">--digest</span></code> : Show the digest when using the files or archives command.</div>
 </div>
 <div class="line-block">
 <div class="line"><code class="docutils literal notranslate"><span class="pre">-j</span> <span class="pre">|</span> <span class="pre">--json</span></code> : Output JSON, rather than formatted output, for all commands.</div>
@@ -336,62 +289,34 @@ Use the <em>–simple</em> option to produce a simply formatted list which can b
 </div>
 </dd></dl>
 
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="jdma_lib.html" class="btn btn-neutral float-right" title="JDMA library" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="glossary.html" class="btn btn-neutral" title="Glossary" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="glossary.html" class="btn btn-neutral float-left" title="Glossary" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="jdma_lib.html" class="btn btn-neutral float-right" title="JDMA library" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &copy; Copyright 2018, Centre for Environmental Data Analysis, Science and Technologies Facilities Council, UK Research and Innovation.
-
-    </p>
+    <p>&#169; Copyright 2018, Centre for Environmental Data Analysis, Science and Technologies Facilities Council, UK Research and Innovation..</p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
