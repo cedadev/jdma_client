@@ -157,11 +157,11 @@ def get_request(name, req_id=None, workspace=None, ffilter=None):
     """
     url = settings.JDMA_API_URL + "request?name=" + name
     if req_id != None:
-        url += ";request_id=" + str(req_id)
+        url += "&request_id=" + str(req_id)
     if workspace != None:
-        url += ";workspace=" + workspace
+        url += "&workspace=" + workspace
     if ffilter != None:
-        url += ";filter=" + ffilter
+        url += "&filter=" + ffilter
     # send the request
     response = requests.get(url, verify=settings.VERIFY)
     return response
@@ -199,13 +199,13 @@ def get_batch(name, batch_id=None, workspace=None, label=None, ffilter=None):
     # send the HTTP request
     url = settings.JDMA_API_URL + "migration?name=" + name
     if batch_id != None:
-        url += ";migration_id=" + str(batch_id)
+        url += "&migration_id=" + str(batch_id)
     if workspace != None:
-        url += ";workspace=" + workspace
+        url += "&workspace=" + workspace
     if label != None:
-        url += ";label=" + label
+        url += "&label=" + label
     if ffilter != None:
-        url += ";filter=" + ffilter
+        url += "&filter=" + ffilter
     response = requests.get(url, verify=settings.VERIFY)
     return response
 
@@ -262,29 +262,31 @@ def get_files(name, batch_id=None, workspace=None, limit=0, digest=0, ffilter=No
                     - **pk** (`integer`) the numeric ID of the archive
                     - **size** (`integer`) the total size of the archive in bytes
                     - **limit** (`integer`) the limit of the returned number of files
-                    - **digest** (`string`) the SHA256 digest (checksum) of the total archive (if packed)
+                    - **digest** (`string`) the digest (checksum) of the total archive (if packed)
+                    - **digest_format** (`string`) the algorithm of the digest
                     - **files** (`list of dictionaries`) a list of files that make up the archive.  Each entry is a dictionary, the format of which is:
 
                         - **pk** (`integer`) the numeric ID of the file
                         - **path** (`string`) the full, original path of the file
                         - **size** (`integer`) the size of the file, in bytes
-                        - **digest** (`string`) the SH256 digest (checksum) of the file
+                        - **digest** (`string`) the digest (checksum) of the file
+                        - **digest_format** (`string`) the algorithm of the digest
 
        :rtype: `requests.Response <http://docs.python-requests.org/en/master/api/#requests.Response>`_
     """
 
     url = settings.JDMA_API_URL + "file?name=" + settings.USER
     if batch_id is not None:
-        url += ";migration_id=" + str(batch_id)
+        url += "&migration_id=" + str(batch_id)
     if workspace is not None:
-        url += ";workspace=" + workspace
+        url += "&workspace=" + workspace
     if ffilter != None:
-        url += ";filter=" + ffilter
+        url += "&filter=" + ffilter
 
     # add the limit (the number of files output)
-    url += ";limit=" + str(limit)
+    url += "&limit=" + str(limit)
     # add whether to list the digest or not
-    url += ";digest="+ str(digest)
+    url += "&digest="+ str(digest)
     # do the request (POST)
     response = requests.get(url, verify=settings.VERIFY)
     return response
@@ -320,22 +322,23 @@ def get_archives(name, batch_id=None, workspace=None, limit=0, digest=0, ffilter
                     - **pk** (`integer`) the numeric ID of the archive
                     - **size** (`integer`) the total size of the archive in bytes
                     - **limit** (`integer`) the limit of the returned number of files
-                    - **digest** (`string`) the SHA256 digest (checksum) of the total archive (if packed)
+                    - **digest** (`string`) the digest (checksum) of the total archive (if packed)
+                    - **digest_format** (`string`) the algorithm of the digest
 
        :rtype: `requests.Response <http://docs.python-requests.org/en/master/api/#requests.Response>`_
     """
     url = settings.JDMA_API_URL + "archive?name=" + settings.USER
     if batch_id:
-        url += ";migration_id=" + str(batch_id)
+        url += "&migration_id=" + str(batch_id)
     if workspace:
-        url += ";workspace=" + workspace
+        url += "&workspace=" + workspace
     if ffilter != None:
-        url += ";filter=" + ffilter
+        url += "&filter=" + ffilter
 
     # add the limit (the number of files output)
-    url += ";limit=" + str(limit)
+    url += "&limit=" + str(limit)
     # add whether to list the digest or not
-    url += ";digest=" + str(digest)
+    url += "&digest=" + str(digest)
     # do the request (POST)
     response = requests.get(url, verify=settings.VERIFY)
 
@@ -553,7 +556,7 @@ def modify_batch(name, batch_id=None, label=None):
     # PUT URL for migration
     url = settings.JDMA_API_URL + "migration/?name=" + settings.USER
     if batch_id:
-        url += ";migration_id=" + str(batch_id)
+        url += "&migration_id=" + str(batch_id)
     data = {}
     if label:
         data["label"] = label
